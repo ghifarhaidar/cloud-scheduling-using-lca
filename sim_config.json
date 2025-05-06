@@ -1,0 +1,46 @@
+{
+  "hosts": [
+    {
+      "pes": 8,
+      "mips": 2000,
+      "ram": 2048,
+      "bw": 20000,
+      "storage": 1000000
+    }
+  ],
+  "vms": [
+    {
+      "pes": 1,
+      "mips": 2000,
+      "ram": 2048,
+      "bw": 20000,
+      "size": 1000000
+    }
+  ],
+  "cloudlets": [
+    {
+      "pes": 1,
+      "length": 10000,
+      "fileSize": 3000,
+      "outputSize": 3000
+    },
+    {
+      "pes": 1,
+      "length": 10000,
+      "fileSize": 3000,
+      "outputSize": 3000
+    },
+    {
+      "pes": 1,
+      "length": 10000,
+      "fileSize": 3000,
+      "outputSize": 3000
+    },
+    {
+      "pes": 1,
+      "length": 100000,
+      "fileSize": 3000,
+      "outputSize": 3000
+    }
+  ]
+}
