@@ -4,7 +4,7 @@ import random
 
 L = 6  
 L_half = L // 2  
-S = 100 
+S = 10 
 n = 10 
 p_c = 0.3
 PSI1 = 0.2
@@ -43,9 +43,9 @@ class LeagueChampionshipAlgorithm(object):
         B = list(X)
         fB = list(fX)
 
-        fbest = min(fB) 
+        f_best = min(fB) 
         f_bList = list()
-        f_bList.append(fbest)
+        f_bList.append(f_best)
 
         t = 1
 
@@ -55,7 +55,22 @@ class LeagueChampionshipAlgorithm(object):
         while t < self.S * (self.L - 1):
             if self.L % 2 == 1:
                 X.append(DUMMY_TEAM.copy())
-            
+
+            Y = self.get_Y()
+
+            # for _ , i in enumerate(schedule):
+                # print("team ",_ ,": " , i)
+
+            for l in range(L):
+                teamA, teamB, teamC, teamD = self.teamClassification(t, l)
+                # print (teamA, teamB, teamC, teamD)
+                winner1 = self.winORlose(X, teamA, teamB, fX, f_best)
+                winner2 = self.winORlose(X, teamC, teamD, fX, f_best)
+                # nextX[X.index(teamA)] = self.setTeamFormation(
+                #     X, B, Y, teamA, teamB, teamC, teamD, winner1, winner2)
+
+
+
             if t % (self.L - 1) == 0:
                 #self.addOnModule() #add-onを追加できる
                 schedule = self.leagueSchedule(t)
@@ -117,7 +132,45 @@ class LeagueChampionshipAlgorithm(object):
             
         return schedule
 
-    def fitness(self):
-        pass
+    def teamClassification(self,t,l):
+        tmp_t = t%(self.L - 1)
+        teamA = l
+        teamB = schedule[l][tmp_t-2]
+        teamC = schedule[l][tmp_t-1]
+        teamD = schedule[teamC][tmp_t-2]
+
+        return teamA,teamB,teamC,teamD
+
+
+    def winORlose(self, X, team1, team2, fX, f_best):
+        winPoint = (fX[team2] - f_best) / (
+            fX[team2] + fX[team1] - 2.0 * f_best)
+
+        random_point = random.uniform(0.0, 1.0)
+        print(fX[team1], fX[team2],winPoint)
+        if winPoint == 0.0:
+            winner = team2
+        elif winPoint == 1.0:
+            winner = team1
+        else:
+            if random_point <= winPoint:
+                winner = team1
+            else:
+                winner = team2
+        return winner
+    
+    
+    def fitness(self,X):
+        random_list = random.sample(range(1, 1000 + 1), len(X))
+        return random_list
+    
+    def get_Y(self):
+        return 1
 
     
+    
+
+
+
+LCA = LeagueChampionshipAlgorithm()
+LCA.league()
