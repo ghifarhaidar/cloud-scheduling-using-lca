@@ -1,6 +1,6 @@
 import numpy as np
 import random
-
+import math
 
 L = 6  
 L_half = L // 2  
@@ -64,8 +64,8 @@ class LeagueChampionshipAlgorithm(object):
             for l in range(L):
                 teamA, teamB, teamC, teamD = self.teamClassification(t, l)
                 # print (teamA, teamB, teamC, teamD)
-                winner1 = self.winORlose(X, teamA, teamB, fX, f_best)
-                winner2 = self.winORlose(X, teamC, teamD, fX, f_best)
+                winner1 = self.winORlose(teamA, teamB, fX, f_best)
+                winner2 = self.winORlose(teamC, teamD, fX, f_best)
                 # nextX[X.index(teamA)] = self.setTeamFormation(
                 #     X, B, Y, teamA, teamB, teamC, teamD, winner1, winner2)
 
@@ -79,7 +79,7 @@ class LeagueChampionshipAlgorithm(object):
         return f_bList
 
     def getRandomTeam(self):
-        team = [round(random.uniform(0, 10.0), 6) for i in range(n)]
+        team = [round(random.uniform(0, 10.0), 6) for i in range(self.n)]
         return team
     
     def getRandomTeams(self, L):
@@ -142,7 +142,7 @@ class LeagueChampionshipAlgorithm(object):
         return teamA,teamB,teamC,teamD
 
 
-    def winORlose(self, X, team1, team2, fX, f_best):
+    def winORlose(self, team1, team2, fX, f_best):
         winPoint = (fX[team2] - f_best) / (
             fX[team2] + fX[team1] - 2.0 * f_best)
 
@@ -165,7 +165,22 @@ class LeagueChampionshipAlgorithm(object):
         return random_list
     
     def get_Y(self):
-        return 1
+        q0 = 1  
+        Y = list() 
+        y_sample = [i for i in range(self.n)]
+        for i in range(L):
+            y = [0] * self.n
+            a = random.uniform(0.0, 1.0)
+            flagNum = (math.log(1 - (1 - (1 - p_c)**(self.n - q0 + 1)) * a) //
+                       math.log(1 - p_c)) + q0 - 1
+            q = int(flagNum)
+            poInt = list(random.sample(range(self.n), q))  
+            poInt.sort()
+            for pos in poInt:
+                y[pos] = 1
+            Y.append(y)
+        return Y
+
 
     
     
@@ -173,4 +188,6 @@ class LeagueChampionshipAlgorithm(object):
 
 
 LCA = LeagueChampionshipAlgorithm()
-LCA.league()
+Y = LCA.get_Y()
+for i in Y:
+    print(i)
