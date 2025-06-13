@@ -37,3 +37,4 @@ build/
 ### Mac OS ###
 .DS_Store
 lca/schedule_sample.txt
+lca/LCA.txt

@@ -2,7 +2,7 @@ import numpy as np
 import random
 import math
 
-L = 6
+L = 101
 L_half = L // 2
 S = 10
 n = 10
@@ -25,7 +25,7 @@ class LeagueChampionshipAlgorithm(object):
         return
 
     def league(self):
-        path_w = "LCA.txt"
+        path_w = "lca/LCA.txt"
         wfile = open(path_w, mode='w')
 
         X = self.getRandomTeams(self.L)
@@ -37,7 +37,7 @@ class LeagueChampionshipAlgorithm(object):
             self.L += 1
             self.L_half += 1
 
-        fX = list(0 for _ in range(L))
+        fX = list(0 for _ in range(self.L))
         fX = self.fitness(X)
         nextX = list(X)
 
@@ -53,22 +53,34 @@ class LeagueChampionshipAlgorithm(object):
         global schedule, genericSchedule
         genericSchedule = self.generateRoundRobinSchedule()
         schedule = self.leagueSchedule(t)
+        wfile.write("t =%d, f_best=%f\n" % (t, f_best))
         while t < self.S * (self.L - 1):
-            if self.L % 2 == 1:
-                X.append(DUMMY_TEAM.copy())
+            if t % 10 == 0:
+                wfile.write("t =%d, f_best=%f\n" % (t, f_best))
 
             Y = self.get_Y()
 
             # for _ , i in enumerate(schedule):
             # print("team ",_ ,": " , i)
 
-            for l in range(L):
+            for l in range(self.L):
                 teamA, teamB, teamC, teamD = self.teamClassification(t, l)
                 # print (teamA, teamB, teamC, teamD)
                 winner1 = self.winORlose(teamA, teamB, fX, f_best)
                 winner2 = self.winORlose(teamC, teamD, fX, f_best)
-                # nextX[X.index(teamA)] = self.setTeamFormation(
-                #     X, B, Y, teamA, teamB, teamC, teamD, winner1, winner2)
+                nextX[teamA] = self.setTeamFormation(
+                    X, B, Y, teamA, teamB, teamC, teamD, winner1, winner2)
+
+            X = nextX.copy()
+
+            fX = self.fitness(X)
+
+            for l in range(self.L):
+                if fX[l] < fB[l]:
+                    B[l] = X[l]
+                    fB[l] = fX[l]
+            f_best = min(fB)
+            f_bList.append(f_best)
 
             if t % (self.L - 1) == 0:
                 # self.addOnModule() #add-onを追加できる
@@ -91,10 +103,10 @@ class LeagueChampionshipAlgorithm(object):
             schedule = genericSchedule.copy()
 
         else:
-            teams = list(range(L))
+            teams = list(range(self.L))
             shuffledTeams = teams.copy()
             random.shuffle(shuffledTeams)
-            reversedShuffledTeams = list(range(L))
+            reversedShuffledTeams = list(range(self.L))
             for i in range(self.L):
                 reversedShuffledTeams[shuffledTeams[i]] = i
 
@@ -146,7 +158,6 @@ class LeagueChampionshipAlgorithm(object):
             (fX[team2] + fX[team1] - 2.0 * f_best)
 
         random_point = random.uniform(0.0, 1.0)
-        print(fX[team1], fX[team2], winPoint)
         if winPoint == 0.0:
             winner = team2
         elif winPoint == 1.0:
@@ -166,7 +177,7 @@ class LeagueChampionshipAlgorithm(object):
         q0 = 1
         Y = list()
         y_sample = [i for i in range(self.n)]
-        for i in range(L):
+        for i in range(self.L):
             y = [0] * self.n
             a = random.uniform(0.0, 1.0)
             flagNum = (math.log(1 - (1 - (1 - p_c)**(self.n - q0 + 1)) * a) //
@@ -211,7 +222,6 @@ class LeagueChampionshipAlgorithm(object):
         return nextA
 
 
-LCA = LeagueChampionshipAlgorithm()
-Y = LCA.get_Y()
-for i in Y:
-    print(i)
+if __name__ == "__main__":
+    LCA = LeagueChampionshipAlgorithm()
+    LCA.league()
