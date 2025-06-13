@@ -69,8 +69,6 @@ class LeagueChampionshipAlgorithm(object):
                 # nextX[X.index(teamA)] = self.setTeamFormation(
                 #     X, B, Y, teamA, teamB, teamC, teamD, winner1, winner2)
 
-
-
             if t % (self.L - 1) == 0:
                 #self.addOnModule() #add-onを追加できる
                 schedule = self.leagueSchedule(t)
@@ -143,8 +141,7 @@ class LeagueChampionshipAlgorithm(object):
 
 
     def winORlose(self, team1, team2, fX, f_best):
-        winPoint = (fX[team2] - f_best) / (
-            fX[team2] + fX[team1] - 2.0 * f_best)
+        winPoint = (fX[team2] - f_best) / (fX[team2] + fX[team1] - 2.0 * f_best)
 
         random_point = random.uniform(0.0, 1.0)
         print(fX[team1], fX[team2],winPoint)
@@ -159,8 +156,7 @@ class LeagueChampionshipAlgorithm(object):
                 winner = team2
         return winner
     
-    
-    def fitness(self,X):
+    def fitness(self, X):
         random_list = random.sample(range(1, 1000 + 1), len(X))
         return random_list
     
@@ -181,9 +177,36 @@ class LeagueChampionshipAlgorithm(object):
             Y.append(y)
         return Y
 
+    def getRandom_rid(self):
+        r1_id = [random.uniform(0.0, 1.0) for _ in range(n)]
+        r2_id = [random.uniform(0.0, 1.0) for _ in range(n)]
+        return r1_id, r2_id
+    
+    def setTeamFormation(self, X, B, Y, teamA, teamB, teamC, teamD, winner1, winner2):
+        nextA = B[teamA].copy()
+        r1_id, r2_id = self.getRandom_rid()
 
-    
-    
+        if winner1 == teamA and winner2 == teamC:  #S/T
+            for i in range(self.n):
+                nextA[i] = B[teamA][i] + Y[teamA][i] * (
+                    PSI1 * r1_id[i] * (X[teamA][i] - X[teamD][i]) +
+                      PSI1 * r2_id[i] * (X[teamA][i] - X[teamB][i]))
+        elif winner1 == teamA and winner2 == teamD:  #S/O
+            for i in range(self.n):
+                nextA[i] = B[teamA][i] + Y[teamA][i] * (
+                    PSI2 * r1_id[i] * ( X[teamD][i]-X[teamA][i]) +
+                      PSI1 * r2_id[i] * (X[teamA][i] - X[teamB][i]))
+        elif winner1 == teamB and winner2 == teamC:  #W/T
+            for i in range(self.n):
+                nextA[i] = B[teamA][i] + Y[teamA][i] * (
+                    PSI1 * r1_id[i] * (X[teamA][i] - X[teamD][i]) +
+                      PSI2 * r2_id[i] * (X[teamB][i] - X[teamA][i]))
+        elif winner1 == teamB and winner2 == teamD:  #W/O
+            for i in range(self.n):
+                nextA[i] = B[teamA][i] + Y[teamA][i] * (
+                    PSI2 * r1_id[i] * (X[teamD][i] - X[teamA][i]) +
+                      PSI2 * r2_id[i] * (X[teamB][i] - X[teamA][i]))
+        return nextA
 
 
 
