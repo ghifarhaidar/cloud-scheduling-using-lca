@@ -2,7 +2,7 @@ import numpy as np
 import random
 import math
 
-L = 101
+L = 50
 L_half = L // 2
 S = 10
 n = 10
@@ -14,7 +14,7 @@ schedule = list()
 
 
 class LeagueChampionshipAlgorithm(object):
-    def __init__(self, L=L, S=S, n=n, p_c=p_c, PSI1=PSI1, PSI2=PSI2):
+    def __init__(self, L=L, S=S, n=n, p_c=p_c, PSI1=PSI1, PSI2=PSI2,min_xi=0,max_xi=0,path_w="lca/LCA.txt"):
         self.L = L
         self.L_half = L // 2
         self.S = S
@@ -22,15 +22,17 @@ class LeagueChampionshipAlgorithm(object):
         self.p_c = p_c
         self.PSI1 = PSI1
         self.PSI2 = PSI2
+        self.min_xi = min_xi
+        self.max_xi = max_xi
+        self.path_w = path_w
         return
 
     def league(self):
-        path_w = "lca/LCA.txt"
-        wfile = open(path_w, mode='w')
+        wfile = open(self.path_w, mode='w')
 
-        X = self.getRandomTeams(self.L)
+        X = self.getRandomTeams(self.min_xi, self.max_xi)
 
-        DUMMY_TEAM = self.getRandomTeam()
+        DUMMY_TEAM = self.getRandomTeam(self.min_xi, self.max_xi)
 
         if self.L % 2 == 1:
             X.append(DUMMY_TEAM)
@@ -55,6 +57,7 @@ class LeagueChampionshipAlgorithm(object):
         schedule = self.leagueSchedule(t)
         wfile.write("t =%d, f_best=%f\n" % (t, f_best))
         while t < self.S * (self.L - 1):
+            print(t)
             if t % 10 == 0:
                 wfile.write("t =%d, f_best=%f\n" % (t, f_best))
 
@@ -89,12 +92,15 @@ class LeagueChampionshipAlgorithm(object):
 
         return f_bList
 
-    def getRandomTeam(self):
-        team = [round(random.uniform(0, 10.0), 6) for i in range(self.n)]
+    def getRandomTeam(self, min, max):
+        if min > max:
+            min, max = max, min  # Swap if reversed
+
+        team = [random.randint(min, max) for _ in range(self.n)]
         return team
 
-    def getRandomTeams(self, L):
-        X = [self.getRandomTeam() for i in range(L)]
+    def getRandomTeams(self, min, max):
+        X = [self.getRandomTeam(min, max) for _ in range(self.L)]
         return X
 
     def leagueSchedule(self, t):
@@ -219,9 +225,11 @@ class LeagueChampionshipAlgorithm(object):
                 nextA[i] = B[teamA][i] + Y[teamA][i] * (
                     PSI2 * r1_id[i] * (X[teamD][i] - X[teamA][i]) +
                     PSI2 * r2_id[i] * (X[teamB][i] - X[teamA][i]))
+
+        for i in range(self.n):
+            if nextA[i] > self.max_xi:
+                nextA[i] = self.max_xi
+            elif nextA[i] < self.min_xi:
+                nextA[i] = self.min_xi
+
         return nextA
-
-
-if __name__ == "__main__":
-    LCA = LeagueChampionshipAlgorithm()
-    LCA.league()
