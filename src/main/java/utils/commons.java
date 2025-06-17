@@ -75,10 +75,10 @@ public class commons {
 
         for (int i = 0; i < vmArray.length(); i++) {
             JSONObject vmConf = vmArray.getJSONObject(i);
-            Vm vm = new VmSimple(vmConf.getInt("mips"), vmConf.getInt("pes"));
-            vm.setRam(vmConf.getInt("ram"))
-                    .setBw(vmConf.getInt("bw"))
-                    .setSize(vmConf.getInt("size"))
+            Vm vm = new VmSimple(vmConf.getInt("vm_mips"), vmConf.getInt("vm_pes"));
+            vm.setRam(vmConf.getInt("vm_ram"))
+                    .setBw(vmConf.getInt("vm_bw"))
+                    .setSize(vmConf.getInt("vm_size"))
                     .setCloudletScheduler(new CloudletSchedulerSpaceShared());
             vmList.add(vm);
         }
@@ -92,11 +92,10 @@ public class commons {
     public static List<Cloudlet> createCloudlets() {
         JSONArray clArray = config.getJSONArray("cloudlets");
         List<Cloudlet> clList = new ArrayList<>();
-        var utilization = new UtilizationModelFull();
 
         for (int i = 0; i < clArray.length(); i++) {
             JSONObject clConf = clArray.getJSONObject(i);
-            Cloudlet cloudlet = new CloudletSimple(clConf.getInt("length"), clConf.getInt("pes"),utilization);
+            Cloudlet cloudlet = new CloudletSimple(clConf.getInt("length"), clConf.getInt("pes"));
             cloudlet.setSizes(clConf.getInt("fileSize"));
 
             clList.add(cloudlet);
