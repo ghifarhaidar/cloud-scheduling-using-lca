@@ -4,6 +4,24 @@ import random
 
 
 param_ranges = {
+    0: {
+        'cloudlet': {
+            'count': (4, 4),
+            'length': (20000, 40000),
+            'pes': (1, 1),
+            'fileSize': (300, 300),
+            'outputSize': (300, 300)
+        },
+        'VM': {
+            'count': (4, 4),
+            'pes': (1, 1),  # Fixed at 16
+            'ram': (512, 512),
+            'bw': (512, 512),
+            'size': (1024, 1024)
+        },
+        'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
+        'num_hosts': (1, 1)  # Fixed at 1
+    },
     1: {
         'cloudlet': {
             'count': (100, 1000),
@@ -166,7 +184,6 @@ param_ranges = {
         'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
         'num_hosts': (1, 1)  # Fixed at 1
     }
-
 }
 
 
@@ -254,7 +271,7 @@ class CloudSimConfigGenerator:
 
 
 # Save config
-generator = CloudSimConfigGenerator(1)
+generator = CloudSimConfigGenerator(0)
 current_dir = os.path.dirname(os.path.abspath(__file__))
 with open(f"{current_dir}/../sim_config.json", "w") as f:
     json.dump(generator.generate_config(), f, indent=4)

@@ -1,4 +1,5 @@
 from dev import LeagueChampionshipAlgorithm
+import os
 import json
 import random
 import numpy as np
@@ -29,6 +30,8 @@ def get_config():
 
     n = len(cloudlets)
 
+# this needs to be updated so it suport multi pes for each vm and cloudlet if needed
+
 
 class makespan_LCA(LeagueChampionshipAlgorithm):
 
@@ -45,7 +48,7 @@ class makespan_LCA(LeagueChampionshipAlgorithm):
         for x in X:
             for cloudlet_idx, vm_idx in enumerate(x):
                 execution_time = cloudlets[cloudlet_idx]['length'] / \
-                    vms[int(vm_idx)]['mips']
+                    vms[int(vm_idx)]['vm_mips']
                 vm_workload[int(vm_idx)] += execution_time
 
             makespan = np.max(vm_workload)
@@ -56,5 +59,9 @@ class makespan_LCA(LeagueChampionshipAlgorithm):
 
 if __name__ == "__main__":
     get_config()
-    lca = makespan_LCA(n=n,max_xi=len(vms)-1,path_w="lca/Makespan_LCA.txt")
-    lca.league()
+    lca = makespan_LCA(n=n, max_xi=len(vms)-1, path_w="lca/Makespan_LCA.txt")
+    best = lca.league()
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    with open(f"{current_dir}/../makespan_LCA_schedule.json", "w") as f:
+        result = {"schedule": best[0]}
+        json.dump(result, f, indent=4)

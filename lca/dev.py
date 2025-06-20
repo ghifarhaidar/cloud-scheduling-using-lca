@@ -90,7 +90,7 @@ class LeagueChampionshipAlgorithm(object):
                 schedule = self.leagueSchedule(t)
             t += 1
 
-        return f_bList
+        return B
 
     def getRandomTeam(self, min, max):
         if min > max:
@@ -195,7 +195,7 @@ class LeagueChampionshipAlgorithm(object):
                 y[pos] = 1
             Y.append(y)
         return Y
-
+        #ghifar is lseibian
     def getRandom_rid(self):
         r1_id = [random.uniform(0.0, 1.0) for _ in range(n)]
         r2_id = [random.uniform(0.0, 1.0) for _ in range(n)]

@@ -157,5 +157,11 @@
             <artifactId>json</artifactId>
             <version>20250107</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>LATEST</version> <!-- Use the latest version -->
+        </dependency>
+
     </dependencies>
 </project>

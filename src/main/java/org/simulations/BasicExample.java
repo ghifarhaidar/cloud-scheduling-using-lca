@@ -1,5 +1,6 @@
 package org.simulations;
 
+import brokers.MOLCA;
 import org.cloudsimplus.brokers.DatacenterBroker;
 import org.cloudsimplus.brokers.DatacenterBrokerSimple;
 import org.cloudsimplus.builders.tables.CloudletsTableBuilder;
@@ -36,17 +37,20 @@ public class BasicExample {
         commons.initConfig();
 
         datacenter0 = commons.createDatacenter(simulation);
-        broker0 = new DatacenterBrokerSimple(simulation);
+        broker0 = new MOLCA(simulation);
 
         vmList = commons.createVms();
         cloudletList = commons.createCloudlets();
 
         broker0.submitVmList(vmList);
         broker0.submitCloudletList(cloudletList);
+        ((MOLCA) broker0).loadSchedule("makespan_LCA_schedule.json");
+
         simulation.start();
 
         final var cloudletFinishedList = broker0.getCloudletFinishedList();
         new CloudletsTableBuilder(cloudletFinishedList).build();
+        commons.printTotalVmsCost(datacenter0,broker0);
     }
 
 

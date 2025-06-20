@@ -1,9 +1,11 @@
 package utils;
 
+import org.cloudsimplus.brokers.DatacenterBroker;
 import org.cloudsimplus.cloudlets.Cloudlet;
 import org.cloudsimplus.cloudlets.CloudletSimple;
 import org.cloudsimplus.core.CloudSimPlus;
 import org.cloudsimplus.datacenters.Datacenter;
+import org.cloudsimplus.datacenters.DatacenterCharacteristicsSimple;
 import org.cloudsimplus.datacenters.DatacenterSimple;
 import org.cloudsimplus.hosts.Host;
 import org.cloudsimplus.hosts.HostSimple;
@@ -12,6 +14,7 @@ import org.cloudsimplus.resources.PeSimple;
 import org.cloudsimplus.schedulers.cloudlet.CloudletSchedulerSpaceShared;
 import org.cloudsimplus.utilizationmodels.UtilizationModelFull;
 import org.cloudsimplus.vms.Vm;
+import org.cloudsimplus.vms.VmCost;
 import org.cloudsimplus.vms.VmSimple;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,16 +30,15 @@ public class commons {
      */
 
     private static JSONObject config;
+    private static JSONObject costConfig;
     public static void initConfig() {
-        initConfig("sim_config.json");
-    }
-
-    public static void initConfig(String file) {
-        config = commons.loadConfig(file);
+        config = commons.loadConfig("sim_config.json");
+        costConfig = commons.loadConfig("sim_cost_config.json");
     }
 
     public static Datacenter createDatacenter(CloudSimPlus simulation) {
         JSONArray hostsConfig = config.getJSONArray("hosts");
+
         List<Host> hostList = new ArrayList<>();
 
         for (int i = 0; i < hostsConfig.length(); i++) {
@@ -44,8 +46,8 @@ public class commons {
             Host host = createHost(hostConf);
             hostList.add(host);
         }
-
-        return new DatacenterSimple(simulation, hostList);
+        DatacenterCharacteristicsSimple dcs =  new DatacenterCharacteristicsSimple(costConfig.getInt("CostPerSecond"), costConfig.getInt("CostPerMem"), costConfig.getInt("CostPerStorage"), costConfig.getInt("CostPerBw"));
+        return new DatacenterSimple(simulation, hostList).setCharacteristics(dcs);
     }
 
     public static Host createHost(JSONObject hostConf) {
@@ -105,12 +107,40 @@ public class commons {
     }
 
 
-    private static JSONObject loadConfig(String file) {
+    public static JSONObject loadConfig(String file) {
         try {
             String content = Files.readString(Paths.get(file));
             return new JSONObject(content);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load sim_config.json", e);
+            throw new RuntimeException("Failed to load " + file, e);
         }
     }
+
+    /**
+     * Computes and print the cost ($) of resources (processing, bw, memory, storage)
+     * for each VM inside the datacenter.
+     */
+    public static void printTotalVmsCost(Datacenter datacenter0, DatacenterBroker broker0) {
+        System.out.println();
+        double totalCost = 0.0;
+        int totalNonIdleVms = 0;
+        double processingTotalCost = 0, memoryTotaCost = 0, storageTotalCost = 0, bwTotalCost = 0;
+        for (final Vm vm : broker0.getVmCreatedList()) {
+            final var cost = new VmCost(vm);
+            processingTotalCost += cost.getProcessingCost();
+            memoryTotaCost += cost.getMemoryCost();
+            storageTotalCost += cost.getStorageCost();
+            bwTotalCost += cost.getBwCost();
+
+            totalCost += cost.getTotalCost();
+            totalNonIdleVms += vm.getTotalExecutionTime() > 0 ? 1 : 0;
+            System.out.println(cost);
+        }
+
+        System.out.printf(
+                "Total cost ($) for %3d created VMs from %3d in DC %d: %8.2f$ %13.2f$ %17.2f$ %12.2f$ %15.2f$%n",
+                totalNonIdleVms, broker0.getVmsNumber(), datacenter0.getId(),
+                processingTotalCost, memoryTotaCost, storageTotalCost, bwTotalCost, totalCost);
+    }
+
 }
