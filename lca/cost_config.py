@@ -1,16 +1,16 @@
 import os
 import json
 
-
+# Predefined configuration templates for different cost models
 configs = {
     0: {
-        'CostPerSecond': 1,
+        'CostPerSecond': 2,
         'CostPerMem': 1,
         'CostPerStorage': 1,
         'CostPerBw': 1
     },
     1: {
-        'CostPerSecond': 1,
+        'CostPerSecond': 2,
         'CostPerMem': 0,
         'CostPerStorage': 0,
         'CostPerBw': 0
@@ -19,6 +19,13 @@ configs = {
 
 
 class CloudSimCostConfigGenerator:
+    """
+    Generates cost configuration files for cloud simulation scenarios.
+    
+    Attributes:
+        config (dict): The selected cost configuration template
+    """
+    
     def __init__(self, config_type: int):
         self.config = configs[config_type]
 

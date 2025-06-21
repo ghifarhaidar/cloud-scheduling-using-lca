@@ -2,12 +2,12 @@ import numpy as np
 import random
 import math
 
-L = 50
-L_half = L // 2
-S = 10
-n = 10
-p_c = 0.3
-PSI1 = 0.2
+L = 50 # league size
+L_half = L // 2  # half the league size
+S = 10 # Number of seasons
+n = 10 # number of cloudlets, must be changed according to the problem
+p_c = 0.3 # control parameter
+PSI1 = 0.2 
 PSI2 = 1.0
 genericSchedule = list()
 schedule = list()
@@ -28,6 +28,12 @@ class LeagueChampionshipAlgorithm(object):
         return
 
     def league(self):
+        """
+        Executes the main League Championship Algorithm optimization process.
+
+        Returns:
+            list: The best found solutions (teams) after all seasons
+        """
         wfile = open(self.path_w, mode='w')
 
         X = self.getRandomTeams(self.min_xi, self.max_xi)
@@ -93,6 +99,16 @@ class LeagueChampionshipAlgorithm(object):
         return B
 
     def getRandomTeam(self, min, max):
+        """
+        Generates a single random team within specified bounds.
+
+        Args:
+            min (int): Minimum possible value for team parameters
+            max (int): Maximum possible value for team parameters
+
+        Returns:
+            list: A team represented as a list of n random integers in [min, max]
+        """
         if min > max:
             min, max = max, min  # Swap if reversed
 
@@ -100,10 +116,29 @@ class LeagueChampionshipAlgorithm(object):
         return team
 
     def getRandomTeams(self, min, max):
+        """
+        Initializes the entire league with random teams.
+
+        Args:
+            min (int): Minimum bound for team values
+            max (int): Maximum bound for team values
+
+        Returns:
+            list: List of L teams, each being a list of n random values
+        """
         X = [self.getRandomTeam(min, max) for _ in range(self.L)]
         return X
 
     def leagueSchedule(self, t):
+        """
+        Generates or updates the league schedule based on current round.
+
+        Args:
+            t (int): Current iteration
+
+        Returns:
+            list: schedule where each element is a team's ordered list of opponents
+        """
         global schedule, genericSchedule
         if t == 1:
             schedule = genericSchedule.copy()
@@ -125,9 +160,6 @@ class LeagueChampionshipAlgorithm(object):
     def generateRoundRobinSchedule(self):
         """
         Generates a round-robin schedule using circular rotation method.
-
-        Args:
-            num_teams: Integer number of teams
 
         Returns:
             A list where each element is a team's schedule (list of opponent indices in order)
@@ -151,6 +183,16 @@ class LeagueChampionshipAlgorithm(object):
         return schedule
 
     def teamClassification(self, t, l):
+        """
+        Identifies the four interacting teams for a given match.
+
+        Args:
+            t (int): Current iteration
+            l (int): Current team index
+
+        Returns:
+            tuple: (teamA, teamB, teamC, teamD) indices for current interaction
+        """
         tmp_t = t % (self.L - 1)
         teamA = l
         teamB = schedule[l][tmp_t-2]
@@ -160,6 +202,18 @@ class LeagueChampionshipAlgorithm(object):
         return teamA, teamB, teamC, teamD
 
     def winORlose(self, team1, team2, fX, f_best):
+        """
+        Probabilistically determines the winner between two teams.
+
+        Args:
+            team1 (int): Index of first team
+            team2 (int): Index of second team
+            fX (list): Current fitness values for all teams
+            f_best (float): Best fitness value found so far
+
+        Returns:
+            int: Index of winning team
+        """
         winPoint = (fX[team2] - f_best) / \
             (fX[team2] + fX[team1] - 2.0 * f_best)
 
@@ -176,10 +230,25 @@ class LeagueChampionshipAlgorithm(object):
         return winner
 
     def fitness(self, X):
+        """
+        Evaluates team performance (CURRENTLY RETURNS RANDOM VALUES - IMPLEMENT PROBLEM-SPECIFIC LOGIC).
+
+        Args:
+            X (list): List of teams to evaluate
+
+        Returns:
+            list: Fitness values for each team (lower is better)
+        """
         random_list = random.sample(range(1, 1000 + 1), len(X))
         return random_list
 
     def get_Y(self):
+        """
+        Generates binary modification vectors for team updates.
+
+        Returns:
+            list: List of binary vectors (1=update parameter, 0=keep current)
+        """
         q0 = 1
         Y = list()
         y_sample = [i for i in range(self.n)]
@@ -195,13 +264,37 @@ class LeagueChampionshipAlgorithm(object):
                 y[pos] = 1
             Y.append(y)
         return Y
-        #ghifar is lseibian
+    
+
     def getRandom_rid(self):
+        """
+        Generates random influence factors for team updates.
+
+        Returns:
+            tuple: (r1_id, r2_id) where each is a list of n random floats in [0,1]
+        """
         r1_id = [random.uniform(0.0, 1.0) for _ in range(n)]
         r2_id = [random.uniform(0.0, 1.0) for _ in range(n)]
         return r1_id, r2_id
 
     def setTeamFormation(self, X, B, Y, teamA, teamB, teamC, teamD, winner1, winner2):
+        """
+        Updates a team's strategy based on match outcomes.
+
+        Args:
+            X (list): Current population of teams
+            B (list): Best teams formation 
+            Y (list): Binary modification vectors
+            teamA (int): Current team index to update
+            teamB (int): teamA opponent index in previous iteration 
+            teamC (int): teamA opponent opponent index in current iteration
+            teamD (int): teamC opponent index in previous iteration
+            winner1 (int): Winner of teamA vs teamB
+            winner2 (int): Winner of teamC vs teamD
+
+        Returns:
+            list: Updated teamA strategy
+        """
         nextA = B[teamA].copy()
         r1_id, r2_id = self.getRandom_rid()
 

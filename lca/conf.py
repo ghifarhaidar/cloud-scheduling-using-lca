@@ -2,7 +2,7 @@ import os
 import json
 import random
 
-
+# Predefined configuration templates for different cloud simulation models
 param_ranges = {
     0: {
         'cloudlet': {
@@ -14,13 +14,13 @@ param_ranges = {
         },
         'VM': {
             'count': (4, 4),
-            'pes': (1, 1),  # Fixed at 16
+            'pes': (1, 1),
             'ram': (512, 512),
             'bw': (512, 512),
             'size': (1024, 1024)
         },
-        'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
-        'num_hosts': (1, 1)  # Fixed at 1
+        'pe_mips_options': [1000, 2000],
+        'num_hosts': (1, 1)
     },
     1: {
         'cloudlet': {
@@ -32,13 +32,13 @@ param_ranges = {
         },
         'VM': {
             'count': (10, 20),
-            'pes': (16, 16),  # Fixed at 16
+            'pes': (16, 16),
             'ram': (512, 512),
             'bw': (512, 512),
             'size': (1024, 1024)
         },
-        'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
-        'num_hosts': (1, 1)  # Fixed at 1
+        'pe_mips_options': [1000, 2000],
+        'num_hosts': (1, 1)
     },
     2: {
         'cloudlet': {
@@ -50,13 +50,13 @@ param_ranges = {
         },
         'VM': {
             'count': (10, 20),
-            'pes': (16, 16),  # Fixed at 16
+            'pes': (16, 16),
             'ram': (512, 512),
             'bw': (512, 512),
             'size': (1024, 1024)
         },
-        'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
-        'num_hosts': (1, 1)  # Fixed at 1
+        'pe_mips_options': [1000, 2000],
+        'num_hosts': (1, 1)
     },
     3: {
         'cloudlet': {
@@ -68,13 +68,13 @@ param_ranges = {
         },
         'VM': {
             'count': (20, 40),
-            'pes': (16, 16),  # Fixed at 16
+            'pes': (16, 16),
             'ram': (512, 512),
             'bw': (512, 512),
             'size': (1024, 1024)
         },
-        'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
-        'num_hosts': (1, 1)  # Fixed at 1
+        'pe_mips_options': [1000, 2000],
+        'num_hosts': (1, 1)
     },
     4: {
         'cloudlet': {
@@ -86,13 +86,13 @@ param_ranges = {
         },
         'VM': {
             'count': (40, 60),
-            'pes': (16, 16),  # Fixed at 16
+            'pes': (16, 16),
             'ram': (512, 512),
             'bw': (512, 512),
             'size': (1024, 1024)
         },
-        'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
-        'num_hosts': (1, 1)  # Fixed at 1
+        'pe_mips_options': [1000, 2000],
+        'num_hosts': (1, 1)
     },
     5: {
         'cloudlet': {
@@ -104,13 +104,13 @@ param_ranges = {
         },
         'VM': {
             'count': (40, 60),
-            'pes': (16, 16),  # Fixed at 16
+            'pes': (16, 16),
             'ram': (512, 512),
             'bw': (512, 512),
             'size': (1024, 1024)
         },
-        'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
-        'num_hosts': (1, 1)  # Fixed at 1
+        'pe_mips_options': [1000, 2000],
+        'num_hosts': (1, 1)
     },
     6: {
         'cloudlet': {
@@ -122,13 +122,13 @@ param_ranges = {
         },
         'VM': {
             'count': (60, 100),
-            'pes': (16, 16),  # Fixed at 16
+            'pes': (16, 16),
             'ram': (512, 512),
             'bw': (512, 512),
             'size': (1024, 1024)
         },
-        'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
-        'num_hosts': (1, 1)  # Fixed at 1
+        'pe_mips_options': [1000, 2000],
+        'num_hosts': (1, 1)
     },
     7: {
         'cloudlet': {
@@ -140,13 +140,13 @@ param_ranges = {
         },
         'VM': {
             'count': (40, 60),
-            'pes': (16, 16),  # Fixed at 16
+            'pes': (16, 16),
             'ram': (512, 512),
             'bw': (512, 512),
             'size': (1024, 1024)
         },
-        'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
-        'num_hosts': (1, 1)  # Fixed at 1
+        'pe_mips_options': [1000, 2000],
+        'num_hosts': (1, 1)
     },
     8: {
         'cloudlet': {
@@ -158,13 +158,13 @@ param_ranges = {
         },
         'VM': {
             'count': (40, 60),
-            'pes': (16, 16),  # Fixed at 16
+            'pes': (16, 16),
             'ram': (512, 512),
             'bw': (512, 512),
             'size': (1024, 1024)
         },
-        'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
-        'num_hosts': (1, 1)  # Fixed at 1
+        'pe_mips_options': [1000, 2000],
+        'num_hosts': (1, 1)
     },
     9: {
         'cloudlet': {
@@ -176,23 +176,48 @@ param_ranges = {
         },
         'VM': {
             'count': (60, 100),
-            'pes': (16, 16),  # Fixed at 16
+            'pes': (16, 16),
             'ram': (512, 512),
             'bw': (512, 512),
             'size': (1024, 1024)
         },
-        'pe_mips_options': [1000, 2000],  # Either 1000 or 2000
-        'num_hosts': (1, 1)  # Fixed at 1
+        'pe_mips_options': [1000, 2000],
+        'num_hosts': (1, 1)
     }
 }
 
 
 class CloudSimConfigGenerator:
+    """
+    Generates randomized cloud simulation configurations based on parameter ranges.
+
+    This class creates complete cloud simulation environments including:
+    - Virtual Machines (VMs) with randomized specifications
+    - Host machines with resources scaled to accommodate VMs
+    - Cloudlet workloads with varied characteristics
+
+    Attributes:
+        param_ranges (dict): Configuration template defining parameter ranges
+    """
+
     def __init__(self, config_type: int):
+        """
+        Initialize the generator with a specific configuration template.
+
+        Args:
+            config_type (int): Index of the configuration template to use
+        """
         self.param_ranges = param_ranges[config_type]
 
     def generate_value(self, range_def):
-        """Generate a random value within a range or from options"""
+        """Generate a random value within a range or from options
+
+        Args:
+            range_def: Range definition (tuple, list, or single value)
+
+        Returns:
+            int: Generated value
+        """
         if isinstance(range_def, tuple):
             return random.randint(range_def[0], range_def[1])
         elif isinstance(range_def, list):
@@ -200,6 +225,12 @@ class CloudSimConfigGenerator:
         return range_def
 
     def generate_vm(self):
+        """
+        Generate a single Virtual Machine configuration.
+
+        Returns:
+            dict: VM configuration with: (vm_mips, vm_pes, vm_ram, vm_bw, vm_size)
+        """
         params = self.param_ranges
         return {
             "vm_mips": self.generate_value(params['pe_mips_options']),
@@ -210,6 +241,14 @@ class CloudSimConfigGenerator:
         }
 
     def generate_host(self):
+        """
+        Generate host configuration capable of running generated VMs.
+
+        Returns:
+            tuple: (hosts_config, vms_config) where:
+                hosts_config: List of host configurations
+                vms_config: List of generated VM configurations
+        """
         params = self.param_ranges
         num_vm = self.generate_value(params['VM']['count'])
 
@@ -240,6 +279,12 @@ class CloudSimConfigGenerator:
         return hosts, vms
 
     def generate_cloudlet(self):
+        """
+        Generate a single cloudlet workload definition.
+
+        Returns:
+            dict: Cloudlet configuration with: (pes, length, fileSize, outputSize)
+        """
         params = self.param_ranges
         return {
             "pes": self.generate_value(params['cloudlet']['pes']),
@@ -249,6 +294,12 @@ class CloudSimConfigGenerator:
         }
 
     def generate_cloudlets(self):
+        """
+        Generate multiple cloudlet workloads.
+
+        Returns:
+            list: Collection of cloudlet configurations
+        """
         params = self.param_ranges
         num_cloudlet = self.generate_value(params['cloudlet']['count'])
         cloud_lets = []
@@ -258,6 +309,15 @@ class CloudSimConfigGenerator:
         return cloud_lets
 
     def generate_config(self):
+        """
+        Generate complete simulation configuration.
+
+        Returns:
+            dict: Simulation environment with:
+                - hosts: host configurations
+                - vms: Virtual machine configurations
+                - cloudlets: Tasks workload configurations
+        """
         params = self.param_ranges
         num_hosts = self.generate_value(params['num_hosts'])
 
