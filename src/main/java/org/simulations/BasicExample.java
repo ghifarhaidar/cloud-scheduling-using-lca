@@ -1,8 +1,7 @@
 package org.simulations;
 
-import brokers.MOLCA;
+import brokers.MyDatacenterBroker;
 import org.cloudsimplus.brokers.DatacenterBroker;
-import org.cloudsimplus.brokers.DatacenterBrokerSimple;
 import org.cloudsimplus.builders.tables.CloudletsTableBuilder;
 import org.cloudsimplus.cloudlets.Cloudlet;
 import org.cloudsimplus.core.CloudSimPlus;
@@ -33,18 +32,19 @@ public class BasicExample {
           Make sure to import org.cloudsimplus.util.Log;*/
 //        Log.setLevel(Level.TRACE);
 
+        String name = "makespan_LCA";
         simulation = new CloudSimPlus();
         commons.initConfig();
 
         datacenter0 = commons.createDatacenter(simulation);
-        broker0 = new MOLCA(simulation);
+        broker0 = new MyDatacenterBroker(simulation,name);
+        ((MyDatacenterBroker) broker0).loadSchedule(name + "_schedule.json");
 
         vmList = commons.createVms();
         cloudletList = commons.createCloudlets();
 
         broker0.submitVmList(vmList);
         broker0.submitCloudletList(cloudletList);
-        ((MOLCA) broker0).loadSchedule("makespan_LCA_schedule.json");
 
         simulation.start();
 
