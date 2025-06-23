@@ -39,3 +39,4 @@ build/
 lca/schedule_sample.txt
 lca/LCA.txt
 lca/__pycache__/dev.cpython-311.pyc
+calc.py
