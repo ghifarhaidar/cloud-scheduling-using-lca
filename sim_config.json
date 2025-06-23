@@ -1,7 +1,7 @@
 {
     "hosts": [
         {
-            "pes": 4,
+            "pes": 38,
             "mips": 3000,
             "ram": 2662,
             "bw": 2662,
@@ -10,29 +10,8 @@
     ],
     "vms": [
         {
-            "vm_mips": 2000,
-            "vm_pes": 1,
-            "vm_ram": 512,
-            "vm_bw": 512,
-            "vm_size": 1024
-        },
-        {
-            "vm_mips": 2000,
-            "vm_pes": 1,
-            "vm_ram": 512,
-            "vm_bw": 512,
-            "vm_size": 1024
-        },
-        {
-            "vm_mips": 2000,
-            "vm_pes": 1,
-            "vm_ram": 512,
-            "vm_bw": 512,
-            "vm_size": 1024
-        },
-        {
-            "vm_mips": 2000,
-            "vm_pes": 1,
+            "vm_mips": 1000,
+            "vm_pes": 2,
             "vm_ram": 512,
             "vm_bw": 512,
             "vm_size": 1024
@@ -41,25 +20,25 @@
     "cloudlets": [
         {
             "pes": 1,
-            "length": 28545,
+            "length": 50000,
             "fileSize": 300,
             "outputSize": 300
         },
         {
             "pes": 1,
-            "length": 39487,
+            "length": 30000,
             "fileSize": 300,
             "outputSize": 300
         },
         {
             "pes": 1,
-            "length": 26596,
+            "length": 70000,
             "fileSize": 300,
             "outputSize": 300
         },
         {
             "pes": 1,
-            "length": 29318,
+            "length": 10000,
             "fileSize": 300,
             "outputSize": 300
         }

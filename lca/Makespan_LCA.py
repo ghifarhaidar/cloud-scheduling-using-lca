@@ -30,13 +30,11 @@ def get_config():
 
     n = len(cloudlets)
 
-# this needs to be updated so it support multi pes for each vm and cloudlet if needed
-
 
 class makespan_LCA(LeagueChampionshipAlgorithm):
     """
     League Championship Algorithm variant for makespan optimization.
-        
+
     Extends the base LCA to optimize cloudlet-to-VM assignments for minimal makespan
     (total completion time).
     """
@@ -54,15 +52,20 @@ class makespan_LCA(LeagueChampionshipAlgorithm):
         """
 
         # Initialize VM workload tracking
-        vm_workload = np.zeros(len(vms))
+        vm_workload_og = [np.zeros(vms[int(vm_idx)]['vm_pes'], np.uint64)
+                          for vm_idx in range(len(vms))]
 
         fitness = list()
-        # Calculate completion time for each VM
         for x in X:
+            vm_workload = vm_workload_og.copy()
             for cloudlet_idx, vm_idx in enumerate(x):
-                execution_time = cloudlets[cloudlet_idx]['length'] / \
-                    vms[int(vm_idx)]['vm_mips']
-                vm_workload[int(vm_idx)] += execution_time
+                min_index = np.argmin(vm_workload[int(vm_idx)])
+
+                vm_workload[int(
+                    vm_idx)][min_index] += cloudlets[cloudlet_idx]['length']
+
+            for vm_idx in range(len(vms)):
+                vm_workload[vm_idx] //= vms[vm_idx]['vm_mips']
 
             makespan = np.max(vm_workload)
             fitness.append(makespan)
