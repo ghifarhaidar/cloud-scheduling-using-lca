@@ -55,10 +55,18 @@ class makespan_LCA(LeagueChampionshipAlgorithm):
         vm_workload_og = [np.zeros(vms[int(vm_idx)]['vm_pes'], np.uint64)
                           for vm_idx in range(len(vms))]
 
+        vm_workload_og = [np.zeros(vms[int(vm_idx)]['vm_pes'], np.uint64)
+                   for vm_idx in range(len(vms))]
+        
         fitness = list()
         for x in X:
             vm_workload = vm_workload_og.copy()
             for cloudlet_idx, vm_idx in enumerate(x):
+                min_index = np.argmin(vm_workload[int(vm_idx)])
+
+                vm_workload[int(
+                    vm_idx)][min_index] += cloudlets[cloudlet_idx]['length']
+
                 min_index = np.argmin(vm_workload[int(vm_idx)])
 
                 vm_workload[int(
