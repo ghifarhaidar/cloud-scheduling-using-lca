@@ -41,25 +41,25 @@
     "cloudlets": [
         {
             "pes": 1,
-            "length": 20886,
+            "length": 22602,
             "fileSize": 300,
             "outputSize": 300
         },
         {
             "pes": 1,
-            "length": 32406,
+            "length": 27123,
             "fileSize": 300,
             "outputSize": 300
         },
         {
             "pes": 1,
-            "length": 37534,
+            "length": 39082,
             "fileSize": 300,
             "outputSize": 300
         },
         {
             "pes": 1,
-            "length": 28907,
+            "length": 31943,
             "fileSize": 300,
             "outputSize": 300
         }

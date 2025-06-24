@@ -3,7 +3,7 @@ import os
 import json
 import random
 import numpy as np
-from util import get_config, get_cost_config
+from util import get_config, get_cost_config, sort_vms
 
 L = 100
 L_half = L // 2
@@ -41,7 +41,7 @@ class MO_LCA(LeagueChampionshipAlgorithm):
         fitness = list()
         for x in X:
             fitness.append(random.randint(100, 10000))
-            
+
         return fitness
 
     def makespan_fitness(self, X):
@@ -101,11 +101,14 @@ def run():
     global n, vms, cloudlets
     n, vms, cloudlets = get_config()
     cost_config = get_cost_config()
+    vms, original_indices = sort_vms(vms)
     lca = MO_LCA(n=n, max_xi=len(vms)-1, path_w="lca/MO_LCA.txt")
-    best = lca.league()
+    best = lca.league()[0]
+    best = np.round(best).astype(int)
+    selected_vms = [original_indices[i] for i in best]
     current_dir = os.path.dirname(os.path.abspath(__file__))
     with open(f"{current_dir}/../MO_LCA_schedule.json", "w") as f:
-        result = {"schedule": best[0]}
+        result = {"schedule": selected_vms}
         json.dump(result, f, indent=4)
 
 
