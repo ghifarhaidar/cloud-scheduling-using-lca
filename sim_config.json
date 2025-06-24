@@ -10,8 +10,29 @@
     ],
     "vms": [
         {
+            "vm_mips": 2000,
+            "vm_pes": 8,
+            "vm_ram": 512,
+            "vm_bw": 512,
+            "vm_size": 1024
+        },
+        {
+            "vm_mips": 2000,
+            "vm_pes": 8,
+            "vm_ram": 512,
+            "vm_bw": 512,
+            "vm_size": 1024
+        },
+        {
             "vm_mips": 1000,
-            "vm_pes": 2,
+            "vm_pes": 8,
+            "vm_ram": 512,
+            "vm_bw": 512,
+            "vm_size": 1024
+        },
+        {
+            "vm_mips": 1000,
+            "vm_pes": 8,
             "vm_ram": 512,
             "vm_bw": 512,
             "vm_size": 1024
@@ -20,25 +41,25 @@
     "cloudlets": [
         {
             "pes": 1,
-            "length": 50000,
+            "length": 20886,
             "fileSize": 300,
             "outputSize": 300
         },
         {
             "pes": 1,
-            "length": 30000,
+            "length": 32406,
             "fileSize": 300,
             "outputSize": 300
         },
         {
             "pes": 1,
-            "length": 70000,
+            "length": 37534,
             "fileSize": 300,
             "outputSize": 300
         },
         {
             "pes": 1,
-            "length": 10000,
+            "length": 28907,
             "fileSize": 300,
             "outputSize": 300
         }
