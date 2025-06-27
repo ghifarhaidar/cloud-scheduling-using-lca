@@ -272,8 +272,8 @@ class LeagueChampionshipAlgorithm(object):
         Returns:
             tuple: (r1_id, r2_id) where each is a list of n random floats in [0,1]
         """
-        r1_id = [random.uniform(0.0, 1.0) for _ in range(n)]
-        r2_id = [random.uniform(0.0, 1.0) for _ in range(n)]
+        r1_id = [random.uniform(0.0, 1.0) for _ in range(self.n)]
+        r2_id = [random.uniform(0.0, 1.0) for _ in range(self.n)]
         return r1_id, r2_id
 
     def setTeamFormation(self, X, B, Y, teamA, teamB, teamC, teamD, winner1, winner2):
