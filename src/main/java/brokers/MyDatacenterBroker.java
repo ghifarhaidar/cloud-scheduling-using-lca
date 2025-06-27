@@ -3,6 +3,8 @@ package brokers;
 import org.cloudsimplus.brokers.DatacenterBrokerSimple;
 import org.cloudsimplus.cloudlets.Cloudlet;
 import org.cloudsimplus.core.CloudSimPlus;
+import org.cloudsimplus.listeners.DatacenterBrokerEventInfo;
+import org.cloudsimplus.listeners.EventListener;
 import org.cloudsimplus.vms.Vm;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,7 +18,6 @@ public class MyDatacenterBroker extends DatacenterBrokerSimple {
 
     public MyDatacenterBroker(CloudSimPlus simulation,String name) {
         super(simulation,name);
-
     }
     
     private static JSONArray schedule;
@@ -42,7 +43,6 @@ public class MyDatacenterBroker extends DatacenterBrokerSimple {
         if (cloudlet.isBoundToVm()) {
             return cloudlet.getVm();
         } else {
-            System.out.println(cloudlet.getId());
             return this.getVmFromCreatedList(schedule.getInt((int) cloudlet.getId())) ;
         }
     }

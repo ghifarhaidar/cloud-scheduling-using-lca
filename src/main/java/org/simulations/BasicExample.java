@@ -27,12 +27,13 @@ public class BasicExample {
         new BasicExample();
     }
 
+    public static String name = "makespan_LCA";
+
     private BasicExample() {
         /*Enables just some level of log messages.
           Make sure to import org.cloudsimplus.util.Log;*/
-//        Log.setLevel(Level.TRACE);
+//        Log.setLevel(Level.TRACE)
 
-        String name = "makespan_LCA";
         simulation = new CloudSimPlus();
         commons.initConfig();
 

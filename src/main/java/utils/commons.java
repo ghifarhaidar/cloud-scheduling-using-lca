@@ -19,6 +19,7 @@ import org.cloudsimplus.vms.VmCost;
 import org.cloudsimplus.vms.VmSimple;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import vms.MyVmCost;
 
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -127,7 +128,7 @@ public class commons {
         int totalNonIdleVms = 0;
         double processingTotalCost = 0, memoryTotaCost = 0, storageTotalCost = 0, bwTotalCost = 0;
         for (final Vm vm : broker0.getVmCreatedList()) {
-            final var cost = new VmCost(vm);
+            final var cost = new MyVmCost(vm);
             processingTotalCost += cost.getProcessingCost();
             memoryTotaCost += cost.getMemoryCost();
             storageTotalCost += cost.getStorageCost();
