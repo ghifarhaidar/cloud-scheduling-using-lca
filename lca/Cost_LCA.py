@@ -33,11 +33,11 @@ class cost_LCA(LeagueChampionshipAlgorithm):
         Calculate cost (vms running cost) for cloudlet-to-VM scheduling.
 
         Args:
-            x : one team (solutions), where it is a list
+            x : one team (solution), where it is a list
                      of VM indices assigned to each cloudlet
 
         Returns:
-            list: Cost values for the solution x
+            int : Cost value for the solution x
         """
 
         vm_workload = [np.zeros(vms[int(vm_idx)]['vm_pes'], np.uint64)
@@ -91,14 +91,13 @@ def run():
     vms, original_indices = sort_vms(vms)
     lca = cost_LCA(n=n, max_xi=len(vms)-1, path_w="lca/Cost_LCA.txt")
     best = lca.league()
-    min_subarray = min(best, key=lca.cost)
-    best = np.floor(min_subarray).astype(int)
+    best = min(best, key=lca.cost)
+    best = np.floor(best).astype(int)
     selected_vms = [original_indices[i] for i in best]
     current_dir = os.path.dirname(os.path.abspath(__file__))
     with open(f"{current_dir}/../cost_LCA_schedule.json", "w") as f:
         result = {"schedule": selected_vms}
         json.dump(result, f, indent=4)
-
 
 if __name__ == "__main__":
     run()

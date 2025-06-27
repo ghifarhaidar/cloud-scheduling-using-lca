@@ -27,7 +27,7 @@ public class BasicExample {
         new BasicExample();
     }
 
-    public static String name = "cost_LCA";
+    public static String name = "makespan_LCA";
 
     private BasicExample() {
         /*Enables just some level of log messages.

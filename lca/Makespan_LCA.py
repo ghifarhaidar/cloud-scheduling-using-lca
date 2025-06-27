@@ -26,6 +26,32 @@ class makespan_LCA(LeagueChampionshipAlgorithm):
     (total completion time).
     """
 
+    def makespan(self, x):
+        """
+        Calculate makespan (total completion time) for cloudlet-to-VM scheduling.
+
+        Args:
+            x : one team (solution), where it is a list
+                     of VM indices assigned to each cloudlet
+
+        Returns:
+            int : Makespan value for the solution x
+        """
+
+        vm_workload = [np.zeros(vms[int(vm_idx)]['vm_pes'], np.uint64)
+                       for vm_idx in range(len(vms))]
+        for cloudlet_idx, vm_idx in enumerate(x):
+            min_index = np.argmin(vm_workload[int(vm_idx)])
+
+            vm_workload[int(
+                vm_idx)][min_index] += cloudlets[cloudlet_idx]['length']
+
+        for vm_idx in range(len(vms)):
+            vm_workload[vm_idx] //= vms[vm_idx]['vm_mips']
+
+        makespan = np.max(vm_workload)
+        return makespan
+        
     def fitness(self, X):
         """
         Calculate makespan (total completion time) for cloudlet-to-VM scheduling.
@@ -39,22 +65,10 @@ class makespan_LCA(LeagueChampionshipAlgorithm):
         """
 
         # Initialize VM workload tracking
-        vm_workload_og = [np.zeros(vms[int(vm_idx)]['vm_pes'], np.uint64)
-                          for vm_idx in range(len(vms))]
 
         fitness = list()
         for x in X:
-            vm_workload = vm_workload_og.copy()
-            for cloudlet_idx, vm_idx in enumerate(x):
-                min_index = np.argmin(vm_workload[int(vm_idx)])
-
-                vm_workload[int(
-                    vm_idx)][min_index] += cloudlets[cloudlet_idx]['length']
-
-            for vm_idx in range(len(vms)):
-                vm_workload[vm_idx] //= vms[vm_idx]['vm_mips']
-
-            makespan = np.max(vm_workload)
+            makespan = self.makespan(x)
             fitness.append(makespan)
 
         return fitness
@@ -65,8 +79,9 @@ def run():
     n, vms, cloudlets = get_config()
     vms, original_indices = sort_vms(vms)
     lca = makespan_LCA(n=n, max_xi=len(vms)-1, path_w="lca/Makespan_LCA.txt")
-    best = lca.league()[0]
-    best = np.round(best).astype(int)
+    best = lca.league()
+    best = min(best, key=lca.makespan)
+    best = np.floor(best).astype(int)
     selected_vms = [original_indices[i] for i in best]
     current_dir = os.path.dirname(os.path.abspath(__file__))
     with open(f"{current_dir}/../makespan_LCA_schedule.json", "w") as f:
