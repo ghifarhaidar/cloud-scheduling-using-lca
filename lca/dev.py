@@ -63,7 +63,6 @@ class LeagueChampionshipAlgorithm(object):
         schedule = self.leagueSchedule(t)
         wfile.write("t =%d, f_best=%f\n" % (t, f_best))
         while t < self.S * (self.L - 1):
-            print(t)
             if t % 10 == 0:
                 wfile.write("t =%d, f_best=%f\n" % (t, f_best))
 

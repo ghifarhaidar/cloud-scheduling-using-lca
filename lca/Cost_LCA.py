@@ -17,6 +17,7 @@ schedule = list()
 
 vms = list()
 cloudlets = list()
+cost_config = {}
 
 
 class cost_LCA(LeagueChampionshipAlgorithm):
@@ -26,6 +27,42 @@ class cost_LCA(LeagueChampionshipAlgorithm):
     Extends the base LCA to optimize cloudlet-to-VM assignments for minimal cost
     (vms running cost).
     """
+
+    def cost(self, x):
+        """
+        Calculate cost (vms running cost) for cloudlet-to-VM scheduling.
+
+        Args:
+            x : one team (solutions), where it is a list
+                     of VM indices assigned to each cloudlet
+
+        Returns:
+            list: Cost values for the solution x
+        """
+
+        vm_workload = [np.zeros(vms[int(vm_idx)]['vm_pes'], np.uint64)
+                       for vm_idx in range(len(vms))]
+
+        for cloudlet_idx, vm_idx in enumerate(x):
+            min_index = np.argmin(vm_workload[int(vm_idx)])
+
+            vm_workload[int(
+                vm_idx)][min_index] += cloudlets[cloudlet_idx]['length']
+
+        vm_time = [np.zeros(vms[int(vm_idx)]['vm_pes'])
+                   for vm_idx in range(len(vms))]
+
+        for vm_idx in range(len(vms)):
+            vm_time[vm_idx] = vm_workload[vm_idx] / vms[vm_idx]['vm_mips']
+
+        max_values = [np.max(arr) for arr in vm_time]
+
+        cost = 0
+        for vm_idx in range(len(vms)):
+            cost += max_values[vm_idx] * vms[vm_idx]['vm_mips'] * \
+                vms[vm_idx]['vm_pes'] * \
+                cost_config["CostPerSecond"] / 1000000
+        return cost
 
     def fitness(self, X):
         """
@@ -41,18 +78,21 @@ class cost_LCA(LeagueChampionshipAlgorithm):
 
         fitness = list()
         for x in X:
-            fitness.append(random.randint(100,10000))
+            cost = self.cost(x)
+            fitness.append(cost)
+
         return fitness
 
 
 def run():
-    global n, vms, cloudlets
+    global n, vms, cloudlets, cost_config
     n, vms, cloudlets = get_config()
     cost_config = get_cost_config()
     vms, original_indices = sort_vms(vms)
     lca = cost_LCA(n=n, max_xi=len(vms)-1, path_w="lca/Cost_LCA.txt")
-    best = lca.league()[0]
-    best = np.round(best).astype(int)
+    best = lca.league()
+    min_subarray = min(best, key=lca.cost)
+    best = np.floor(min_subarray).astype(int)
     selected_vms = [original_indices[i] for i in best]
     current_dir = os.path.dirname(os.path.abspath(__file__))
     with open(f"{current_dir}/../cost_LCA_schedule.json", "w") as f:
