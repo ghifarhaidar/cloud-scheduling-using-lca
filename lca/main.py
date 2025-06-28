@@ -2,6 +2,7 @@
 import Makespan_LCA
 import Cost_LCA
 import MO_LCA
+import time
 
 def run_configurations():
     """Execute the config scripts to generate JSON files"""
@@ -29,8 +30,14 @@ def run_algorithm(choice):
 
 
 def main():
-    # Generate configuration files first
-    run_configurations()
+    # Ask user if they want to generate new configurations
+    generate_new = input("Do you want to generate new configuration files? (y/n): ").strip().lower()
+    
+    if generate_new == 'y':
+        print("Generating new configuration files...")
+        run_configurations()
+    else:
+        print("Using existing configuration files...")
 
     # Simple menu interface
     print("\nAvailable Algorithms:")
@@ -41,8 +48,10 @@ def main():
     # Get user input
     choice = input("Select algorithm to run (1-3): ")
 
+
     # Run selected algorithm
     run_algorithm(choice)
+
 
 
 if __name__ == "__main__":

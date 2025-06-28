@@ -9,7 +9,8 @@ def get_config():
     vms = data['vms']
     cloudlets = data['cloudlets']
     n = len(cloudlets)
-
+    print("number of vms:", len(vms))
+    print("number of cloudlets:", n)
     return n, vms, cloudlets
 
 
@@ -28,7 +29,6 @@ def sort_vms(vms):
 
     sorted_vms = [vm for (index, vm) in sorted_indexed_vms]
     original_indices = [index for (index, vm) in sorted_indexed_vms]
-
 
     return sorted_vms, original_indices
 

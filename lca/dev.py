@@ -4,7 +4,7 @@ import math
 
 L = 50 # league size
 L_half = L // 2  # half the league size
-S = 10 # Number of seasons
+S = 50 # Number of seasons
 n = 10 # number of cloudlets, must be changed according to the problem
 p_c = 0.3 # control parameter
 PSI1 = 0.2 

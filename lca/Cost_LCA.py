@@ -5,16 +5,6 @@ import random
 import numpy as np
 from util import get_config, get_cost_config, sort_vms
 
-L = 100
-L_half = L // 2
-S = 100
-n = 100
-p_c = 0.3
-PSI1 = 0.2
-PSI2 = 1.0
-genericSchedule = list()
-schedule = list()
-
 vms = list()
 cloudlets = list()
 cost_config = {}

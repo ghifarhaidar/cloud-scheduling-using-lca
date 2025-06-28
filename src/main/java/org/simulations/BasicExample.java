@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 
 
 import java.util.List;
+import java.util.Scanner;
+
 import utils.commons;
 
 public class BasicExample {
@@ -24,15 +26,36 @@ public class BasicExample {
     private final Datacenter datacenter0;
 
     public static void main(String[] args) {
-        new BasicExample();
+        // Get user input for scheduling algorithm
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Available scheduling algorithms:");
+        System.out.println("1. Cost LCA");
+        System.out.println("2. Makespan LCA");
+        System.out.println("3. Multi-Objective LCA");
+        System.out.print("Select algorithm to run (1-3): ");
+        int choice = scanner.nextInt();
+        String algorithm = switch (choice) {
+            case 1 -> "cost_LCA";
+            case 2 -> "makespan_LCA";
+            case 3 -> "MO_LCA";
+            default -> {
+                System.out.println("Invalid choice. Defaulting to cost_LCA.");
+                yield "cost_LCA";
+            }
+        };
+
+        new BasicExample(algorithm);
     }
 
-    public static String name = "makespan_LCA";
+    public static String name;
 
-    private BasicExample() {
+    private BasicExample(String algorithm) {
         /*Enables just some level of log messages.
           Make sure to import org.cloudsimplus.util.Log;*/
 //        Log.setLevel(Level.TRACE)
+
+        name = algorithm;
+        log.info("Running simulation with {} algorithm", name);
 
         simulation = new CloudSimPlus();
         commons.initConfig();

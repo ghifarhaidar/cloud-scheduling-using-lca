@@ -1,22 +1,14 @@
+import time
 from dev import LeagueChampionshipAlgorithm
 import os
 import json
 import random
 import numpy as np
-from util import get_config, sort_vms
-
-L = 100
-L_half = L // 2
-S = 100
-n = 100
-p_c = 0.3
-PSI1 = 0.2
-PSI2 = 1.0
-genericSchedule = list()
-schedule = list()
+from util import get_config, get_cost_config, sort_vms
 
 vms = list()
 cloudlets = list()
+cost_config = {}
 
 class makespan_LCA(LeagueChampionshipAlgorithm):
     """
@@ -77,9 +69,12 @@ class makespan_LCA(LeagueChampionshipAlgorithm):
 def run():
     global n, vms, cloudlets
     n, vms, cloudlets = get_config()
+    cost_config = get_cost_config()
     vms, original_indices = sort_vms(vms)
+    start_time = time.time()
     lca = makespan_LCA(n=n, max_xi=len(vms)-1, path_w="lca/Makespan_LCA.txt")
     best = lca.league()
+    print(f"Time taken: {time.time() - start_time:.4f} sec")
     best = min(best, key=lca.makespan)
     best = np.floor(best).astype(int)
     selected_vms = [original_indices[i] for i in best]
