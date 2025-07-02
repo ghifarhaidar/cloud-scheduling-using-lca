@@ -11,8 +11,10 @@ import org.cloudsimplus.hosts.Host;
 import org.cloudsimplus.hosts.HostSimple;
 import org.cloudsimplus.resources.Pe;
 import org.cloudsimplus.resources.PeSimple;
+import org.cloudsimplus.schedulers.cloudlet.CloudletScheduler;
 import org.cloudsimplus.schedulers.cloudlet.CloudletSchedulerCompletelyFair;
 import org.cloudsimplus.schedulers.cloudlet.CloudletSchedulerSpaceShared;
+import org.cloudsimplus.schedulers.cloudlet.CloudletSchedulerTimeShared;
 import org.cloudsimplus.utilizationmodels.UtilizationModelFull;
 import org.cloudsimplus.vms.Vm;
 import org.cloudsimplus.vms.VmCost;
@@ -76,14 +78,20 @@ public class commons {
     public static List<Vm> createVms() {
         JSONArray vmArray = config.getJSONArray("vms");
         List<Vm> vmList = new ArrayList<>();
+        String CloudletScheduler = config.getString("mode");
 
         for (int i = 0; i < vmArray.length(); i++) {
             JSONObject vmConf = vmArray.getJSONObject(i);
+            CloudletScheduler cloudletScheduler = new CloudletSchedulerTimeShared();
+            if(CloudletScheduler.equals("space")){
+                cloudletScheduler = new CloudletSchedulerSpaceShared();
+            }
             Vm vm = new VmSimple(vmConf.getInt("vm_mips"), vmConf.getInt("vm_pes"));
             vm.setRam(vmConf.getInt("vm_ram"))
                     .setBw(vmConf.getInt("vm_bw"))
                     .setSize(vmConf.getInt("vm_size"))
-                    .setCloudletScheduler(new CloudletSchedulerSpaceShared());
+                    .setCloudletScheduler(cloudletScheduler);
+
             vmList.add(vm);
         }
 

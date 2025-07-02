@@ -2,9 +2,9 @@ import numpy as np
 import random
 import math
 
-L = 50 # league size
+L = 20 # league size
 L_half = L // 2  # half the league size
-S = 50 # Number of seasons
+S = 20 # Number of seasons
 n = 10 # number of cloudlets, must be changed according to the problem
 p_c = 0.3 # control parameter
 PSI1 = 0.2 
@@ -14,7 +14,7 @@ schedule = list()
 
 
 class LeagueChampionshipAlgorithm(object):
-    def __init__(self, L=L, S=S, n=n, p_c=p_c, PSI1=PSI1, PSI2=PSI2,min_xi=0,max_xi=0,path_w="lca/LCA.txt"):
+    def __init__(self, L=L, S=S, n=n, p_c=p_c, PSI1=PSI1, PSI2=PSI2,min_xi=0,max_xi=0,path_w="lca/LCA.txt",mode="time"):
         self.L = L
         self.L_half = L // 2
         self.S = S
@@ -25,8 +25,13 @@ class LeagueChampionshipAlgorithm(object):
         self.min_xi = min_xi
         self.max_xi = max_xi
         self.path_w = path_w
+        self.mode=mode
+        self.configure_mode()
         return
 
+    def configure_mode(self):
+        pass
+    
     def league(self):
         """
         Executes the main League Championship Algorithm optimization process.

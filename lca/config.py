@@ -200,7 +200,7 @@ class CloudSimConfigGenerator:
         param_ranges (dict): Configuration template defining parameter ranges
     """
 
-    def __init__(self, config_type: int):
+    def __init__(self, config_type: int, mode):
         """
         Initialize the generator with a specific configuration template.
 
@@ -208,6 +208,7 @@ class CloudSimConfigGenerator:
             config_type (int): Index of the configuration template to use
         """
         self.param_ranges = param_ranges[config_type]
+        self.mode = mode
 
     def generate_value(self, range_def):
         """Generate a random value within a range or from options
@@ -324,6 +325,7 @@ class CloudSimConfigGenerator:
         host, vms = self.generate_host()
         cloudlets = self.generate_cloudlets()
         return {
+            'mode': self.mode,
             'hosts': host,
             'vms': vms,
             'cloudlets': cloudlets
@@ -331,7 +333,7 @@ class CloudSimConfigGenerator:
 
 
 # Save config
-generator = CloudSimConfigGenerator(1)
+generator = CloudSimConfigGenerator(1,"time")
 current_dir = os.path.dirname(os.path.abspath(__file__))
 with open(f"{current_dir}/../sim_config.json", "w") as f:
     json.dump(generator.generate_config(), f, indent=4)

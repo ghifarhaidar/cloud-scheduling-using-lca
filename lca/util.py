@@ -5,13 +5,13 @@ import numpy as np
 def get_config():
     with open('sim_config.json', 'r') as file:
         data = json.load(file)
-
+    mode = data['mode']
     vms = data['vms']
     cloudlets = data['cloudlets']
     n = len(cloudlets)
     print("number of vms:", len(vms))
     print("number of cloudlets:", n)
-    return n, vms, cloudlets
+    return n, vms, cloudlets, mode
 
 
 def get_cost_config():
@@ -32,3 +32,9 @@ def sort_vms(vms):
 
     return sorted_vms, original_indices
 
+
+def get_solution(name):
+    name = name + "_schedule.json"
+    with open(name, 'r') as file:
+        data = json.load(file)
+    return data["schedule"]
