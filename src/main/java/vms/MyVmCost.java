@@ -52,10 +52,22 @@ public class MyVmCost extends VmCost {
      * considering the VM's PEs number and total execution time.
      */
     public double getProcessingCost() {
-//        final double hostMips = getVm().getHost().getMips();
-//        final double costPerMI = hostMips == 0 ? 0.0 : getDcCharacteristics().getCostPerSecond() / hostMips;
-        final double costPerMI = getDcCharacteristics().getCostPerSecond() / 1000000;
-        return getVm().getLastBusyTime() < 0 ? 0.0 : costPerMI * getVm().getTotalMipsCapacity() * getVm().getLastBusyTime();
+        return getActiveProcessingCost() + getIdleProcessingCost();
+    }
+    public double getActiveProcessingCost() {
+        if(getVm().getLastBusyTime() < 0){
+            return 0;
+        }
+        final double costPerMI = getDcCharacteristics().getCostPerSecond();
+        return costPerMI * getVm().getTotalMipsCapacity() * getVm().getLastBusyTime();
+    }
+    public double getIdleProcessingCost() {
+        if(getVm().getLastBusyTime() < 0){
+            return 0;
+        }
+        final double costPerMI = getDcCharacteristics().getCostPerSecond();
+        final double idleTme = getVm().getTotalExecutionTime() - getVm().getTotalExecutionTime();
+        return costPerMI * getVm().getTotalMipsCapacity() * idleTme ;
     }
 
     /**
@@ -76,7 +88,7 @@ public class MyVmCost extends VmCost {
     @Override
     public String toString() {
         return
-                "%s costs ($) for %8.2f execution seconds - CPU: %8.2f$ RAM: %8.2f$ Storage: %8.2f$ BW: %8.2f$ Total: %8.2f$"
-                        .formatted(getVm(), getVm().getTotalExecutionTime(), getProcessingCost(), getMemoryCost(), getStorageCost(), getBwCost(), getTotalCost());
+                "%s costs ($) for %8.2f active seconds - CPU: %8.2f$ %8.2f idle seconds - CPU: %8.2f$ RAM: %8.2f$ Storage: %8.2f$ BW: %8.2f$ Total: %8.2f$"
+                        .formatted(getVm(), getVm().getLastBusyTime(), getActiveProcessingCost(),getVm().getTotalExecutionTime() - getVm().getLastBusyTime(), getIdleProcessingCost(), getMemoryCost(), getStorageCost(), getBwCost(), getTotalCost());
     }
 }

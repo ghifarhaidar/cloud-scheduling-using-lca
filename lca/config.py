@@ -333,7 +333,7 @@ class CloudSimConfigGenerator:
 
 
 # Save config
-generator = CloudSimConfigGenerator(1,"time")
+generator = CloudSimConfigGenerator(1,"space")
 current_dir = os.path.dirname(os.path.abspath(__file__))
 with open(f"{current_dir}/../sim_config.json", "w") as f:
     json.dump(generator.generate_config(), f, indent=4)
