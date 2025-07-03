@@ -40,12 +40,12 @@ def get_solution(name):
         data = json.load(file)
     return data["schedule"]
 
-def revert_vms_order(vms,original_indices):
+
+def revert_vms_order(vms, original_indices):
     reverted_vms = [0] * len(vms)
     for i in range(len(vms)):
         reverted_vms[original_indices[i]] = vms[i]
     return reverted_vms
-     
 
 
 def export_results(name, best, fitness, original_indices):
@@ -54,12 +54,24 @@ def export_results(name, best, fitness, original_indices):
     best = np.floor(best).astype(int)
     selected_vms = [original_indices[i] for i in best]
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    with open(f"{current_dir}/../{name}_schedule.json", "w") as f:
+    with open(f"{current_dir}/../{name}_schedule.json", "w") as file:
         result = {"schedule": selected_vms}
-        json.dump(result, f, indent=4)
-    with open(f"{current_dir}/../{name}_result.json", "w") as f:
+        json.dump(result, file, indent=4)
+    with open(f"{current_dir}/../{name}_result.json", "w") as file:
         result = {
             "name": name,
             "fitness": fbest
-            }
-        json.dump(result, f, indent=4)
+        }
+        json.dump(result, file, indent=4)
+
+
+def change_in_vm_scheduling_method(name):
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    with open(f"{current_dir}/../sim_config.json", 'r') as file:
+        data = json.load(file)
+
+    data['mode'] = name
+
+    with open(f"{current_dir}/../sim_config.json", 'w') as file:
+        json.dump(data, file, indent=4)
+    print(f"method changed to {name} shared")

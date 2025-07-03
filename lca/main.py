@@ -3,7 +3,7 @@ import Makespan_LCA
 import Cost_LCA
 import MO_LCA
 import time
-
+from util import change_in_vm_scheduling_method
 def run_configurations():
     """Execute the config scripts to generate JSON files"""
     print("Generating configuration files...")
@@ -38,6 +38,19 @@ def main():
         run_configurations()
     else:
         print("Using existing configuration files...")
+
+    change_vm_scheduling = input(
+        "Do you want to change in-vm scheduling method? (y/n): ").strip().lower()
+    
+    if change_vm_scheduling == 'y':
+        print("\nAvailable Methods:")
+        print("1. Time shared")
+        print("2. Space shared")
+        method = input("Choose method (1-2): ")
+        if method == '1':
+            change_in_vm_scheduling_method("time")
+        elif method == '2':
+            change_in_vm_scheduling_method("space")
 
     # Simple menu interface
     print("\nAvailable Algorithms:")
