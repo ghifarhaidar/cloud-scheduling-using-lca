@@ -6,7 +6,7 @@ import random
 import numpy as np
 import heapq
 from collections import defaultdict
-from util import get_config, get_cost_config, sort_vms, get_solution
+from util import get_config, get_cost_config, sort_vms, get_solution, export_results
 
 vms = list()
 cloudlets = list()
@@ -59,7 +59,7 @@ class makespan_LCA(LeagueChampionshipAlgorithm):
         # Find the latest finish time across all CPUs in all VMs
         vm_finish_times = [
             max(cpu_times) if cpu_times else 0.0 for cpu_times in vm_cpu_queues.values()]
-        return max(vm_finish_times) if vm_finish_times else 0.0
+        return max(vm_finish_times)
 
     def makespan_time_shared(self, x, context_switch_overhead=0.0):
         """
@@ -119,13 +119,7 @@ def run():
         vms)-1, path_w="lca/Makespan_LCA.txt", mode=mode)
     best = lca.league()
     print(f"Time taken: {time.time() - start_time:.4f} sec")
-    best = min(best, key=lca.makespan)
-    best = np.floor(best).astype(int)
-    selected_vms = [original_indices[i] for i in best]
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    with open(f"{current_dir}/../makespan_LCA_schedule.json", "w") as f:
-        result = {"schedule": selected_vms}
-        json.dump(result, f, indent=4)
+    export_results("makespan_LCA", best, lca.makespan, original_indices)
 
 
 if __name__ == "__main__":

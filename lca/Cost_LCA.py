@@ -6,7 +6,7 @@ import random
 import numpy as np
 import heapq
 from collections import defaultdict
-from util import get_config, get_cost_config, sort_vms, get_solution
+from util import get_config, get_cost_config, sort_vms, get_solution, export_results
 
 vms = list()
 cloudlets = list()
@@ -57,7 +57,7 @@ class cost_LCA(LeagueChampionshipAlgorithm):
                 heapq.heappush(vm_cpu_queues[vm_index], finish_time)
 
         # Find the latest finish time across all CPUs in all VMs
-        vm_finish_times = []
+        vm_finish_times = [0] * len(vms)
         for vm_index, cpu_times in vm_cpu_queues.items():
             vm_finish_times[vm_index] = max(cpu_times) if cpu_times else 0.0
 
@@ -147,13 +147,7 @@ def run():
                    path_w="lca/Cost_LCA.txt", mode=mode)
     best = lca.league()
     print(f"Time taken: {time.time() - start_time:.4f} sec")
-    best = min(best, key=lca.cost)
-    best = np.floor(best).astype(int)
-    selected_vms = [original_indices[i] for i in best]
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    with open(f"{current_dir}/../cost_LCA_schedule.json", "w") as f:
-        result = {"schedule": selected_vms}
-        json.dump(result, f, indent=4)
+    export_results("cost_LCA", best, lca.cost, original_indices)
 
 
 if __name__ == "__main__":
