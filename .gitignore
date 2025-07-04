@@ -13,6 +13,7 @@ target/
 *.iws
 *.iml
 *.ipr
+*.log
 
 ### Eclipse ###
 .apt_generated
@@ -41,4 +42,5 @@ build/
 lca/schedule_sample.txt
 lca/LCA.txt
 lca/__pycache__/
+__pycache__/
 calc.py

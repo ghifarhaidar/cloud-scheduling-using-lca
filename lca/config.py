@@ -1,6 +1,9 @@
 import os
+import sys
 import json
 import random
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+from run import CONFIGURATION_CHOICE, MODE
 
 # Predefined configuration templates for different cloud simulation models
 param_ranges = {
@@ -333,7 +336,7 @@ class CloudSimConfigGenerator:
 
 
 # Save config
-generator = CloudSimConfigGenerator(1,"space")
+generator = CloudSimConfigGenerator(CONFIGURATION_CHOICE, MODE)
 current_dir = os.path.dirname(os.path.abspath(__file__))
 with open(f"{current_dir}/../sim_config.json", "w") as f:
     json.dump(generator.generate_config(), f, indent=4)
