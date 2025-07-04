@@ -1,20 +1,24 @@
+import os
 import numpy as np
 import random
 import math
 
-L = 20 # league size
+L = 20  # league size
 L_half = L // 2  # half the league size
-S = 20 # Number of seasons
-n = 10 # number of cloudlets, must be changed according to the problem
-p_c = 0.3 # control parameter
-PSI1 = 0.2 
+S = 20  # Number of seasons
+n = 10  # number of cloudlets, must be changed according to the problem
+p_c = 0.3  # control parameter
+PSI1 = 0.2
 PSI2 = 1.0
 genericSchedule = list()
 schedule = list()
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
+
 
 class LeagueChampionshipAlgorithm(object):
-    def __init__(self, L=L, S=S, n=n, p_c=p_c, PSI1=PSI1, PSI2=PSI2,min_xi=0,max_xi=0,path_w="lca/LCA.txt",mode="time"):
+    def __init__(self, L=L, S=S, n=n, p_c=p_c, PSI1=PSI1, PSI2=PSI2, min_xi=0, max_xi=0, path_w="LCA.txt", mode="time"):
         self.L = L
         self.L_half = L // 2
         self.S = S
@@ -24,14 +28,14 @@ class LeagueChampionshipAlgorithm(object):
         self.PSI2 = PSI2
         self.min_xi = min_xi
         self.max_xi = max_xi
-        self.path_w = path_w
-        self.mode=mode
+        self.path_w = os.path.join(BASE_DIR, f"lca/{path_w}")
+        self.mode = mode
         self.configure_mode()
         return
 
     def configure_mode(self):
         pass
-    
+
     def league(self):
         """
         Executes the main League Championship Algorithm optimization process.
@@ -268,7 +272,6 @@ class LeagueChampionshipAlgorithm(object):
                 y[pos] = 1
             Y.append(y)
         return Y
-    
 
     def getRandom_rid(self):
         """

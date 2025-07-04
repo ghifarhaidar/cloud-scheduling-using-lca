@@ -8,13 +8,28 @@
 </head>
 
 <body>
-    <nav>
+    <nav class="topnav">
         <a href="/">Home</a>
         <a href="/set-config">Set Config</a>
         <a href="/edit-config">Edit Config</a>
-        <a href="/run">Run</a>
+        <a class="active" href="/run">Run</a>
     </nav>
-    <h1>Welcome to the Run Page</h1>
+    <div class="main">
+        <h1>Welcome to the Run Page</h1>
+        <div id="params-container">
+            <h3>Parameters:</h3>
+            <pre id="params">Loading...</pre>
+        </div>
+
+        <button id="runBtn">Run Python Script</button>
+
+        <div id="output-container">
+            <h3>Output:</h3>
+            <pre id="output">Ready.</pre>
+        </div>
+    </div>
+
+    <script src="/run.js"></script>
 </body>
 
 </html>

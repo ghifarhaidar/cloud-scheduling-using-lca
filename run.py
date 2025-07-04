@@ -1,3 +1,4 @@
+import os
 import subprocess
 
 CONFIGURATION_CHOICE = 1
@@ -14,9 +15,13 @@ ALGORITHM_NAMES = {
     "3": "MO_LCA"
 }
 
+# Get absolute path to this script's directory
+SCRIPT_DIR = ""
+
 
 def build_java_project(algorithm_name):
-    build_log_file = f"logs/build_{algorithm_name}.log"
+    build_log_file = os.path.join(
+        SCRIPT_DIR, "logs", f"build_{algorithm_name}.log")
     print(f"🔨 Building Java project... (log: {build_log_file})")
     # for clean build
     # build = subprocess.run(["mvn", "clean", "package"], text=True)
@@ -33,7 +38,8 @@ def build_java_project(algorithm_name):
 
 
 def run_java_program(input, algorithm_name):
-    run_log_file = f"logs/run_{algorithm_name}.log"
+    run_log_file = os.path.join(
+        SCRIPT_DIR, "logs", f"run_{algorithm_name}.log")
     print(f"\n🚀 Running Java program... (log: {run_log_file})")
     with open(run_log_file, "w") as run_log:
         result = subprocess.run([
@@ -51,8 +57,9 @@ def run_java_program(input, algorithm_name):
 
 
 def run_python_script(inputs):
-    print("\n🐍 Running Python script lca/main.py.")
-    result = subprocess.run(["python3", "lca/main.py"],
+    python_file = os.path.join(SCRIPT_DIR, "lca", "main.py")
+    print(f"\n🐍 Running Python script {python_file}.")
+    result = subprocess.run(["python3", python_file],
                             input=inputs,
                             text=True)
     if result.returncode != 0:

@@ -116,7 +116,7 @@ def run():
     vms, original_indices = sort_vms(vms)
     start_time = time.time()
     lca = makespan_LCA(n=n, max_xi=len(
-        vms)-1, path_w="lca/Makespan_LCA.txt", mode=mode)
+        vms)-1, path_w="Makespan_LCA.txt", mode=mode)
     best = lca.league()
     print(f"Time taken: {time.time() - start_time:.4f} sec")
     export_results("makespan_LCA", best, lca.makespan, original_indices)

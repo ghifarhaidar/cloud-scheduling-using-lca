@@ -144,7 +144,7 @@ def run():
     vms, original_indices = sort_vms(vms)
     start_time = time.time()
     lca = cost_LCA(n=n, max_xi=len(vms)-1,
-                   path_w="lca/Cost_LCA.txt", mode=mode)
+                   path_w="Cost_LCA.txt", mode=mode)
     best = lca.league()
     print(f"Time taken: {time.time() - start_time:.4f} sec")
     export_results("cost_LCA", best, lca.cost, original_indices)

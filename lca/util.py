@@ -2,9 +2,13 @@ import json
 import os
 import numpy as np
 
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
+
 
 def get_config():
-    with open('sim_config.json', 'r') as file:
+    sim_config_path = os.path.join(BASE_DIR, "sim_config.json")
+    with open(sim_config_path, 'r') as file:
         data = json.load(file)
     mode = data['mode']
     vms = data['vms']
@@ -16,7 +20,8 @@ def get_config():
 
 
 def get_cost_config():
-    with open('sim_cost_config.json', 'r') as file:
+    sim_cost_config_path = os.path.join(BASE_DIR, "sim_cost_config.json")
+    with open(sim_cost_config_path, 'r') as file:
         data = json.load(file)
 
     return data
@@ -35,8 +40,8 @@ def sort_vms(vms):
 
 
 def get_solution(name):
-    name = name + "_schedule.json"
-    with open(name, 'r') as file:
+    solution_file = os.path.join(BASE_DIR, f"{name}_schedule.json")
+    with open(solution_file, 'r') as file:
         data = json.load(file)
     return data["schedule"]
 
@@ -53,11 +58,14 @@ def export_results(name, best, fitness, original_indices):
     fbest = fitness(best)
     best = np.floor(best).astype(int)
     selected_vms = [original_indices[i] for i in best]
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    with open(f"{current_dir}/../{name}_schedule.json", "w") as file:
+
+    schedule_file = os.path.join(BASE_DIR, f"{name}_schedule.json")
+    result_file = os.path.join(BASE_DIR, f"{name}_result.json")
+
+    with open(schedule_file, "w") as file:
         result = {"schedule": selected_vms}
         json.dump(result, file, indent=4)
-    with open(f"{current_dir}/../{name}_result.json", "w") as file:
+    with open(result_file, "w") as file:
         result = {
             "name": name,
             "fitness": fbest
@@ -66,12 +74,13 @@ def export_results(name, best, fitness, original_indices):
 
 
 def change_in_vm_scheduling_method(name):
+    config_file = os.path.join(BASE_DIR, "sim_config.json")
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    with open(f"{current_dir}/../sim_config.json", 'r') as file:
+    with open(config_file, 'r') as file:
         data = json.load(file)
 
     data['mode'] = name
 
-    with open(f"{current_dir}/../sim_config.json", 'w') as file:
+    with open(config_file, 'w') as file:
         json.dump(data, file, indent=4)
     print(f"method changed to {name} shared")
