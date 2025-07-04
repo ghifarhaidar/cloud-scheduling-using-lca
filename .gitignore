@@ -44,3 +44,7 @@ lca/LCA.txt
 lca/__pycache__/
 __pycache__/
 calc.py
+
+### Node js ###
+!*web-app/*.json
+web-app/node_modules
