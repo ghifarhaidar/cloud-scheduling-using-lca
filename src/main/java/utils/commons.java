@@ -1,5 +1,7 @@
 package utils;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.cloudsimplus.brokers.DatacenterBroker;
 import org.cloudsimplus.cloudlets.Cloudlet;
 import org.cloudsimplus.cloudlets.CloudletSimple;
@@ -21,12 +23,18 @@ import org.cloudsimplus.vms.VmCost;
 import org.cloudsimplus.vms.VmSimple;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.simulations.BasicExample;
 import vms.MyVmCost;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class commons {
     /**
@@ -151,6 +159,45 @@ public class commons {
                 "Total cost ($) for %3d created VMs from %3d in DC %d: %8.2f$ %13.2f$ %17.2f$ %12.2f$ %15.2f$%n",
                 totalNonIdleVms, broker0.getVmsNumber(), datacenter0.getId(),
                 processingTotalCost, memoryTotaCost, storageTotalCost, bwTotalCost, totalCost);
+    }
+
+    /**
+     * Computes and print the cost ($) of resources (processing, bw, memory, storage)
+     * for each VM inside the datacenter.
+     */
+    public static void exportResult(Datacenter datacenter0, DatacenterBroker broker0) {
+        double totalCost = 0.0;
+        double processingTotalCost = 0, memoryTotaCost = 0, storageTotalCost = 0, bwTotalCost = 0;
+        for (final Vm vm : broker0.getVmCreatedList()) {
+            final var cost = new MyVmCost(vm);
+            processingTotalCost += cost.getProcessingCost();
+            memoryTotaCost += cost.getMemoryCost();
+            storageTotalCost += cost.getStorageCost();
+            bwTotalCost += cost.getBwCost();
+
+            totalCost += cost.getTotalCost();
+        }
+        System.out.println();
+
+        Map<String, Object> jsonMap = new HashMap<>();
+        jsonMap.put("vmCount", broker0.getVmsNumber());
+        jsonMap.put("datacenterId", datacenter0.getId());
+        jsonMap.put("processingCost", BigDecimal.valueOf(processingTotalCost));
+        jsonMap.put("memoryCost", BigDecimal.valueOf(memoryTotaCost));
+        jsonMap.put("storageCost", BigDecimal.valueOf(storageTotalCost));
+        jsonMap.put("bandwidthCost", BigDecimal.valueOf(bwTotalCost));
+        jsonMap.put("totalCost", BigDecimal.valueOf(totalCost));
+        jsonMap.put("makespan", broker0.getShutdownTime());
+
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        String jsonOutput = gson.toJson(jsonMap);
+
+        try (FileWriter fileWriter = new FileWriter(BasicExample.name + "_sim_results.json")) {
+            fileWriter.write(jsonOutput);
+            System.out.println("JSON data successfully written to " + BasicExample.name + "_sim_results.json");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
