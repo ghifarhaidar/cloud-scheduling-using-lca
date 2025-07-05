@@ -6,6 +6,16 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
 
 
+def read_lca_parameters():
+    """
+    Reads LCA parameters from the given JSON file and returns them as a dictionary.
+    """
+    LCA_parameters_path = os.path.join(BASE_DIR, "LCA_parameters.json")
+    with open(LCA_parameters_path, 'r') as file:
+        params = json.load(file)
+
+    return params
+
 def get_config():
     sim_config_path = os.path.join(BASE_DIR, "sim_config.json")
     with open(sim_config_path, 'r') as file:
@@ -60,7 +70,7 @@ def export_results(name, best, fitness, original_indices):
     selected_vms = [original_indices[i] for i in best]
 
     schedule_file = os.path.join(BASE_DIR, f"{name}_schedule.json")
-    result_file = os.path.join(BASE_DIR, f"{name}_result.json")
+    result_file = os.path.join(BASE_DIR, f"results/{name}_result.json")
 
     with open(schedule_file, "w") as file:
         result = {"schedule": selected_vms}

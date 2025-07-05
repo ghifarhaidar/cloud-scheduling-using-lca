@@ -2,14 +2,17 @@ import os
 import numpy as np
 import random
 import math
+from util import read_lca_parameters
+params = read_lca_parameters()
 
-L = 20  # league size
-L_half = L // 2  # half the league size
-S = 20  # Number of seasons
-n = 10  # number of cloudlets, must be changed according to the problem
-p_c = 0.3  # control parameter
-PSI1 = 0.2
-PSI2 = 1.0
+L = params['L']
+L_half = L // 2
+S = params['S']
+n = params['n']  # must be changed
+p_c = params['p_c']
+PSI1 = params['PSI1']
+PSI2 = params['PSI2']
+
 genericSchedule = list()
 schedule = list()
 

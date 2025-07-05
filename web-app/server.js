@@ -9,6 +9,7 @@ const PORT = 3000;
 // Define paths
 const WEB_DIR = __dirname;  // Current web app directory
 const MAIN_DIR = path.resolve(__dirname, '..');  // Parent directory (where configs/run.py live)
+const RESULTS_DIR = path.join(MAIN_DIR, 'results')
 
 // Serve static files (CSS, JS) from /public
 app.use(express.static(path.join(WEB_DIR, 'public')));
@@ -53,6 +54,41 @@ app.get('/run-python', (req, res) => {
 			}
 			res.json({ output: stdout });
 		});
+});
+
+
+app.get('/get-results', (req, res) => {
+	try {
+		const fileTypes = ['result', 'sim_results'];
+		const results = {};
+
+		// Auto-discover algorithms
+		const files = fs.readdirSync(RESULTS_DIR);
+		const algorithms = new Set();
+
+		files.forEach(file => {
+			const match = file.match(/^(.*?)_(result|sim_results)\.json$/);
+			if (match) {
+				algorithms.add(match[1]);
+			}
+		});
+
+		// Build results object
+		fileTypes.forEach(type => {
+			results[type === 'result' ? 'result' : 'simResult'] = {};
+			algorithms.forEach(algo => {
+				const fileName = `${algo}_${type}.json`;
+				results[type === 'result' ? 'result' : 'simResult'][`${algo}_${type}`] = JSON.parse(
+					fs.readFileSync(path.join(RESULTS_DIR, fileName), 'utf8')
+				);
+			});
+		});
+
+		console.log(`✅ Loaded results for: ${[...algorithms].join(', ')}`);
+		res.json(results);
+	} catch (err) {
+		res.status(500).json({ error: `Failed to read configs: ${err.message}` });
+	}
 });
 
 // Start server
