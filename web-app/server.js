@@ -5,6 +5,7 @@ const { exec } = require('child_process');
 
 const app = express();
 const PORT = 3000;
+app.use(express.json());
 
 // Define paths
 const WEB_DIR = __dirname;  // Current web app directory
@@ -90,6 +91,25 @@ app.get('/get-results', (req, res) => {
 		res.status(500).json({ error: `Failed to read configs: ${err.message}` });
 	}
 });
+
+
+app.post('/save-config', (req, res) => {
+	const configData = req.body;
+
+	// Validate data here if you want to be safe
+	// (or trust frontend validation for now)
+
+	const filePath = path.join(MAIN_DIR, "run_config.json");
+
+	fs.writeFile(filePath, JSON.stringify(configData, null, 2), (err) => {
+		if (err) {
+			console.error('Error saving config:', err);
+			return res.status(500).json({ error: 'Failed to save config' });
+		}
+		res.json({ message: 'Config saved successfully' });
+	});
+});
+
 
 // Start server
 app.listen(PORT, () => {
