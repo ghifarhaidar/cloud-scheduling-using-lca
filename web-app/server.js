@@ -5,6 +5,7 @@ const config = require("./utils/config");
 const { getConfigs, saveConfig } = require("./utils/fileHandlers");
 const { runPythonScript } = require("./utils/pythonRunner");
 const { getResults } = require("./utils/resultProcessor");
+const { runExperiments } = require('./utils/runExperiments');
 
 const app = express();
 const PORT = config.PORT;
@@ -68,6 +69,16 @@ app.post("/save-config", (req, res) => {
 		const result = saveConfig(configData);
 		res.json(result);
 	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
+
+app.post('/run-experiments', async (req, res) => {
+	try {
+		await runExperiments(); // Call your experiments function
+		res.json({ message: "Experiments completed" });
+	} catch (err) {
+		console.error("❌ Error during experiments:", err.message);
 		res.status(500).json({ error: err.message });
 	}
 });

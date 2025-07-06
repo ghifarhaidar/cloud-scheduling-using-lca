@@ -25,6 +25,7 @@ function parseRangeOrSingle(type, value) {
 }
 
 async function runExperiments() {
+    const timeStart = performance.now();
     const initialConfig = readJsonFile(RUN_CONFIG_PATH);
 
     const L_values = parseRangeOrSingle(initialConfig.L_type, initialConfig.L);
@@ -40,7 +41,7 @@ async function runExperiments() {
         ? Array.from({ length: 9 }, (_, i) => i + 1)
         : [initialConfig.config_type];
 
-    console.log(configTypes);
+    console.log("config type values", configTypes);
     for (const configType of configTypes) {
         console.log(`\n🔁 Using config_type = ${configType}`);
 
@@ -100,6 +101,10 @@ async function runExperiments() {
     // Save allExperimentResults to a file
     writeJsonFile(path.join(config.MAIN_DIR, "all_experiment_results.json"), allExperimentResults);
     console.log("All experiment results saved to all_experiment_results.json");
+    const timeEnd = performance.now();
+    console.log(`⏱️ Time taken to run all experiments: ${(timeEnd - timeStart).toFixed(2)} ms`);
 }
 
-runExperiments();
+module.exports = {
+    runExperiments,
+};

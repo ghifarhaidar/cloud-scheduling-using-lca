@@ -25,29 +25,22 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     runBtn.addEventListener('click', async () => {
-        outputEl.textContent = "Running...";
-
-        // 📝 Define the args you want to send
-        const args = {
-            job: 0, // default job
-            'config-type': 1, // or dynamically get from user input
-            'cost-config-type': 1,
-            'vm-scheduling-mode': "space"
-        };
-
+        outputEl.textContent = "Running experiments...";
         try {
-            const res = await fetch('/run-python', {
-                method: 'POST', // POST because we're sending data
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(args)
+            const res = await fetch('/run-experiments', {
+                method: 'POST'
             });
             const data = await res.json();
 
-            outputEl.textContent = data.output || "✅ Python script ran successfully";
+            if (res.ok) {
+                outputEl.textContent = "✅ Experiments completed successfully!";
+                console.log("Experiment results:", data);
+            } else {
+                throw new Error(data.error || "Unknown error");
+            }
         } catch (err) {
-            outputEl.textContent = `❌ Error: ${err.message}`;
+            outputEl.textContent = `❌ Error running experiments: ${err.message}`;
+            console.error(err);
         }
     });
 
