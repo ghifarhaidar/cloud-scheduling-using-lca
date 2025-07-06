@@ -225,8 +225,11 @@ class LeagueChampionshipAlgorithm(object):
         Returns:
             int: Index of winning team
         """
-        winPoint = (fX[team2] - f_best) / \
-            (fX[team2] + fX[team1] - 2.0 * f_best)
+        if fX[team2] + fX[team1] == 2.0 * f_best:
+            winPoint = 0.5
+        else:
+            winPoint = (fX[team2] - f_best) / \
+                (fX[team2] + fX[team1] - 2.0 * f_best)
 
         random_point = random.uniform(0.0, 1.0)
         if winPoint == 0.0:
