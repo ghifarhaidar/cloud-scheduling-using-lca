@@ -101,29 +101,46 @@ def edit_config(inputs):
 def main():
 
     parser = argparse.ArgumentParser(
-        description='A simple Python script to init or edit the configuration and running the algorithm and the simulations')
+        description="Run the LCA algorithm and simulations, or configure parameters."
+    )
 
-    parser.add_argument('--job', type=int,
-                        help='job type: 0->run algorithm and simulations, 1->job1, 2->job2')
-    parser.add_argument('--config-type', type=int,
-                        help='Required for job1: config_type parameter')
-    parser.add_argument('--cost-config-type', type=int,
-                        help='Required for job1 and job2: cost_config_type parameter')
-    parser.add_argument('--vm-scheduling-mode', type=str,
-                        help='Required for job1 and job2: vm_scheduling_mode (time_shared or space_shared)')
+    parser.add_argument(
+        '--job', type=int, choices=[0, 1, 2], default=0,
+        help=(
+            "Job type: "
+            "0 = run algorithm and simulations (default), "
+            "1 = generate config, "
+            "2 = edit config"
+        )
+    )
+    parser.add_argument(
+        '--config-type', type=int, choices=range(1, 10),
+        help="(Job 1 only) Configuration type: integer between 1 and 9."
+    )
+    parser.add_argument(
+        '--cost-config-type', type=int, choices=[0, 1],
+        help="(Job 1 and 2) Cost configuration type: 0 or 1."
+    )
+    parser.add_argument(
+        '--vm-scheduling-mode', type=str, choices=["time", "space"],
+        help="(Job 1 and 2) VM scheduling mode: 'time shared' or 'space shared'."
+    )
 
     args = parser.parse_args()
     print(args)
 
-    # Validate arguments based on job type
+    # ✅ Validate arguments for specific jobs
     if args.job == 1:
         if args.config_type is None or args.cost_config_type is None or args.vm_scheduling_mode is None:
-            raise ValueError(
-                "Job 1 requires config_type, cost_config_type, and vm_scheduling_mode")
+            parser.error(
+                "Job 1 requires --config-type, --cost-config-type, and --vm-scheduling-mode."
+            )
     elif args.job == 2:
         if args.cost_config_type is None and args.vm_scheduling_mode is None:
-            raise ValueError(
-                "Job 2 requires cost_config_type or vm_scheduling_mode")
+            parser.error(
+                "Job 2 requires --cost-config-type or --vm-scheduling-mode."
+            )
+
     if args.job == 0:
         for i in range(1, 4):
             algorithm_choice = str(i)
