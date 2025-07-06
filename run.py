@@ -114,7 +114,7 @@ def main():
         )
     )
     parser.add_argument(
-        '--config-type', type=int, choices=range(1, 10),
+        '--config-type', type=int, choices=range(0, 10),
         help="(Job 1 only) Configuration type: integer between 1 and 9."
     )
     parser.add_argument(

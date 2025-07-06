@@ -26,6 +26,10 @@ app.get("/edit-config", (req, res) => {
 	res.sendFile(path.join(config.WEB_DIR, "views", "edit-config.html"));
 });
 
+app.get("/test", (req, res) => {
+	res.sendFile(path.join(config.WEB_DIR, "views", "test.html"));
+});
+
 app.get("/run", (req, res) => {
 	res.sendFile(path.join(config.WEB_DIR, "views", "run.html"));
 });
@@ -39,9 +43,10 @@ app.get("/get-configs", (req, res) => {
 	}
 });
 
-app.get("/run-python", async (req, res) => {
+app.post("/run-python", async (req, res) => {
 	try {
-		const result = await runPythonScript();
+		const args = req.body; // 📝 Read JSON body
+		const result = await runPythonScript(args);
 		res.json(result);
 	} catch (err) {
 		res.status(500).json({ output: err.message });
