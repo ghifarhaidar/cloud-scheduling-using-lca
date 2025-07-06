@@ -1,13 +1,14 @@
 import os
 import subprocess
+import argparse
+from lca.util import change_in_vm_scheduling_method
+import lca.config
+import lca.cost_config
 
 CONFIGURATION_CHOICE = 1
+COST_CONFIGURATION_CHOICE = 1
 MODE = "time"
 
-generate_new_config = True
-
-change_mode = False
-mode = "time"
 
 ALGORITHM_NAMES = {
     "1": "makespan_LCA",
@@ -68,36 +69,77 @@ def run_python_script(inputs):
     print("✅ Python script finished successfully!")
 
 
+def generate_config(inputs):
+    print("\n🐍 Generating configuration files...")
+
+    if inputs.config_type is not None:
+        CONFIGURATION_CHOICE = inputs.config_type
+    if inputs.cost_config_type is not None:
+        COST_CONFIGURATION_CHOICE = inputs.cost_config_type
+    if inputs.vm_scheduling_mode is not None:
+        MODE = inputs.vm_scheduling_mode
+
+    lca.config.generate_config(CONFIGURATION_CHOICE, MODE)
+    lca.cost_config.generate_cost_config(COST_CONFIGURATION_CHOICE)
+
+    print("✅ Configuration files generated successfully")
+
+
+def edit_config(inputs):
+    print("\n🐍 Editing configuration files...")
+
+    if inputs.cost_config_type is not None:
+        COST_CONFIGURATION_CHOICE = inputs.cost_config_type
+        lca.cost_config.generate_cost_config(COST_CONFIGURATION_CHOICE)
+    if inputs.vm_scheduling_mode is not None:
+        MODE = inputs.vm_scheduling_mode
+        change_in_vm_scheduling_method(MODE)
+
+    print("✅ Configuration files edited successfully")
+
+
+def main():
+
+    parser = argparse.ArgumentParser(
+        description='A simple Python script to init or edit the configuration and running the algorithm and the simulations')
+
+    parser.add_argument('--job', type=int,
+                        help='job type: 0->run algorithm and simulations, 1->job1, 2->job2')
+    parser.add_argument('--config-type', type=int,
+                        help='Required for job1: config_type parameter')
+    parser.add_argument('--cost-config-type', type=int,
+                        help='Required for job1 and job2: cost_config_type parameter')
+    parser.add_argument('--vm-scheduling-mode', type=str,
+                        help='Required for job1 and job2: vm_scheduling_mode (time_shared or space_shared)')
+
+    args = parser.parse_args()
+    print(args)
+
+    # Validate arguments based on job type
+    if args.job == 1:
+        if args.config_type is None or args.cost_config_type is None or args.vm_scheduling_mode is None:
+            raise ValueError(
+                "Job 1 requires config_type, cost_config_type, and vm_scheduling_mode")
+    elif args.job == 2:
+        if args.cost_config_type is None and args.vm_scheduling_mode is None:
+            raise ValueError(
+                "Job 2 requires cost_config_type or vm_scheduling_mode")
+    if args.job == 0:
+        for i in range(1, 4):
+            algorithm_choice = str(i)
+            algorithm_name = ALGORITHM_NAMES[algorithm_choice]
+            print(f"\n=== Running algorithm: {algorithm_name} ===")
+
+            run_python_script((
+                algorithm_choice + "\n"
+            ))
+            build_java_project(algorithm_name)
+            run_java_program((algorithm_choice + "\n"), algorithm_name)
+    if args.job == 1:
+        generate_config(args)
+    if args.job == 2:
+        edit_config(args)
+
+
 if __name__ == "__main__":
-    if generate_new_config:
-        mode_input = "1\n"
-        run_python_script((
-            "y\n" +
-            "n\n" +
-            "\n"
-        ))
-
-    elif change_mode:
-        mode_input = "1\n"
-        if mode == "time":
-            mode_input = "1\n"
-        elif mode == "space":
-            mode_input = "2\n"
-        run_python_script((
-            "n\n" +
-            "y\n" +
-            mode_input +
-            "\n"
-        ))
-    for i in range(1, 4):
-        algorithm_choice = str(i)
-        algorithm_name = ALGORITHM_NAMES[algorithm_choice]
-        print(f"\n=== Running algorithm: {algorithm_name} ===")
-
-        run_python_script((
-            "n\n" +
-            "n\n" +
-            algorithm_choice + "\n"
-        ))
-        build_java_project(algorithm_name)
-        run_java_program((algorithm_choice + "\n"), algorithm_name)
+    main()

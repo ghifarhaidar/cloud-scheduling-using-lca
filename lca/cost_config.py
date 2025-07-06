@@ -21,11 +21,11 @@ configs = {
 class CloudSimCostConfigGenerator:
     """
     Generates cost configuration files for cloud simulation scenarios.
-    
+
     Attributes:
         config (dict): The selected cost configuration template
     """
-    
+
     def __init__(self, config_type: int):
         self.config = configs[config_type]
 
@@ -34,7 +34,8 @@ class CloudSimCostConfigGenerator:
 
 
 # Save config
-generator = CloudSimCostConfigGenerator(1)
-current_dir = os.path.dirname(os.path.abspath(__file__))
-with open(f"{current_dir}/../sim_cost_config.json", "w") as f:
-    json.dump(generator.generate_config(), f, indent=4)
+def generate_cost_config(COST_CONFIGURATION_CHOICE=1):
+    generator = CloudSimCostConfigGenerator(COST_CONFIGURATION_CHOICE)
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    with open(f"{current_dir}/../sim_cost_config.json", "w") as f:
+        json.dump(generator.generate_config(), f, indent=4)
