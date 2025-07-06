@@ -20,9 +20,9 @@ ALGORITHM_NAMES = {
 SCRIPT_DIR = ""
 
 
-def build_java_project(algorithm_name):
+def build_java_project():
     build_log_file = os.path.join(
-        SCRIPT_DIR, "logs", f"build_{algorithm_name}.log")
+        SCRIPT_DIR, "logs", f"build.log")
     print(f"🔨 Building Java project... (log: {build_log_file})")
     # for clean build
     # build = subprocess.run(["mvn", "clean", "package"], text=True)
@@ -105,12 +105,13 @@ def main():
     )
 
     parser.add_argument(
-        '--job', type=int, choices=[0, 1, 2], default=0,
+        '--job', type=int, choices=[0, 1, 2, 3], default=0,
         help=(
             "Job type: "
             "0 = run algorithm and simulations (default), "
             "1 = generate config, "
             "2 = edit config"
+            "3 = build java"
         )
     )
     parser.add_argument(
@@ -150,12 +151,17 @@ def main():
             run_python_script((
                 algorithm_choice + "\n"
             ))
-            build_java_project(algorithm_name)
+            # build_java_project(algorithm_name)
             run_java_program((algorithm_choice + "\n"), algorithm_name)
+
     if args.job == 1:
         generate_config(args)
+
     if args.job == 2:
         edit_config(args)
+
+    if args.job == 3:
+        build_java_project()
 
 
 if __name__ == "__main__":

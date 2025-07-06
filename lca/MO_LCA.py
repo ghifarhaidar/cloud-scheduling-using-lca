@@ -104,10 +104,11 @@ class MO_LCA(LeagueChampionshipAlgorithm):
 
         enecon_vm = []
         makespan, vm_makespans = self.makespan(x)
-        p_active = 1
+        p_active = cost_config["CostPerSecond"]
         p_idle = 0
         for j, vm_makespan in enumerate(vm_makespans):
             energy = p_active * vm_makespan + p_idle * (makespan - vm_makespan)
+            energy = energy * vms[j]["vm_mips"] * vms[j]["vm_pes"] / 1000000
             enecon_vm.append(energy)
 
         act = (max(enecon_vm) - min(enecon_vm)) * \
@@ -134,7 +135,7 @@ class MO_LCA(LeagueChampionshipAlgorithm):
 
         z = 0.5 * cost + 0.5 * makespan
         return z
-    
+
     def fitness(self, X):
         """
         Calculate fitness for cloudlet-to-VM scheduling.
@@ -156,7 +157,7 @@ class MO_LCA(LeagueChampionshipAlgorithm):
 
 
 def run():
-    global n, vms, cloudlets
+    global n, vms, cloudlets, cost_config
     n, vms, cloudlets, mode = get_config()
     cost_config = get_cost_config()
     vms, original_indices = sort_vms(vms)
