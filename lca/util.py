@@ -16,6 +16,7 @@ def read_lca_parameters():
 
     return params
 
+
 def get_config():
     sim_config_path = os.path.join(BASE_DIR, "sim_config.json")
     with open(sim_config_path, 'r') as file:
@@ -63,7 +64,7 @@ def revert_vms_order(vms, original_indices):
     return reverted_vms
 
 
-def export_results(name, best, fitness, original_indices):
+def export_results(name, best, fitness, original_indices, running_tme):
     best = min(best, key=fitness)
     fbest = fitness(best)
     best = np.floor(best).astype(int)
@@ -78,7 +79,8 @@ def export_results(name, best, fitness, original_indices):
     with open(result_file, "w") as file:
         result = {
             "name": name,
-            "fitness": fbest
+            "fitness": fbest,
+            "run_time": running_tme
         }
         json.dump(result, file, indent=4)
 

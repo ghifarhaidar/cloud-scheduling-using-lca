@@ -147,8 +147,9 @@ def run():
     lca = cost_LCA(n=n, max_xi=len(vms)-1,
                    path_w="Cost_LCA.txt", mode=mode)
     best = lca.league()
-    print(f"Time taken: {time.time() - start_time:.4f} sec")
-    export_results("cost_LCA", best, lca.cost, original_indices)
+    running_tme = time.time() - start_time
+    print(f"Time taken: {running_tme:.4f} sec")
+    export_results("cost_LCA", best, lca.cost, original_indices, running_tme)
 
 
 if __name__ == "__main__":
