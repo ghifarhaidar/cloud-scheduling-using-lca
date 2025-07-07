@@ -33,7 +33,7 @@ class LeagueChampionshipAlgorithm(object):
         self.max_xi = max_xi
         self.path_w = os.path.join(BASE_DIR, f"lca/{path_w}")
         self.mode = mode
-        self.configure_mode()
+        self.configure()
         return
 
     def configure_mode(self):
@@ -253,8 +253,13 @@ class LeagueChampionshipAlgorithm(object):
         Returns:
             list: Fitness values for each team (lower is better)
         """
-        random_list = random.sample(range(1, 1000 + 1), len(X))
-        return random_list
+
+        fitness = list()
+        for x in X:
+            f = self.calc_fitness(x)
+            fitness.append(f)
+
+        return fitness
 
     def get_Y(self):
         """

@@ -21,10 +21,12 @@ class makespan_LCA(LeagueChampionshipAlgorithm):
     (total completion time).
     """
 
-    def configure_mode(self):
+    def configure(self):
         self.makespan = self.makespan_time_shared
         if self.mode == "space":
             self.makespan = self.makespan_space_shared
+
+        self.calc_fitness = self.makespan
 
     def makespan_space_shared(self, x):
         """
@@ -89,25 +91,6 @@ class makespan_LCA(LeagueChampionshipAlgorithm):
 
         return max(vm_makespans)
 
-    def fitness(self, X):
-        """
-        Calculate makespan (total completion time) for cloudlet-to-VM scheduling.
-
-        Args:
-            X (list): List of teams (solutions), where each solution is a list
-                     of VM indices assigned to each cloudlet
-
-        Returns:
-            list: Makespan values for each solution in X
-        """
-
-        fitness = list()
-        for x in X:
-            makespan = self.makespan(x)
-            fitness.append(makespan)
-
-        return fitness
-
 
 def run():
     global n, vms, cloudlets
@@ -120,7 +103,7 @@ def run():
     best = lca.league()
     running_tme = time.time() - start_time
     print(f"Time taken: {running_tme:.4f} sec")
-    export_results("makespan_LCA", best, lca.makespan,
+    export_results("makespan_LCA", best, lca.calc_fitness,
                    original_indices, running_tme)
 
 

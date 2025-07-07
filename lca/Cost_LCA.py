@@ -21,10 +21,12 @@ class cost_LCA(LeagueChampionshipAlgorithm):
     (vms running cost).
     """
 
-    def configure_mode(self):
+    def configure(self):
         self.makespan = self.makespan_time_shared
         if self.mode == "space":
             self.makespan = self.makespan_space_shared
+
+        self.calc_fitness = self.cost
 
     def makespan_space_shared(self, x):
         """
@@ -118,25 +120,6 @@ class cost_LCA(LeagueChampionshipAlgorithm):
         total_cost = sum(enecon_vm) + act
         return total_cost
 
-    def fitness(self, X):
-        """
-        Calculate cost (vms running cost) for cloudlet-to-VM scheduling.
-
-        Args:
-            X (list): List of teams (solutions), where each solution is a list
-                     of VM indices assigned to each cloudlet
-
-        Returns:
-            list: Cost values for each solution in X
-        """
-
-        fitness = list()
-        for x in X:
-            cost = self.cost(x)
-            fitness.append(cost)
-
-        return fitness
-
 
 def run():
     global n, vms, cloudlets, cost_config
@@ -149,7 +132,8 @@ def run():
     best = lca.league()
     running_tme = time.time() - start_time
     print(f"Time taken: {running_tme:.4f} sec")
-    export_results("cost_LCA", best, lca.cost, original_indices, running_tme)
+    export_results("cost_LCA", best, lca.calc_fitness,
+                   original_indices, running_tme)
 
 
 if __name__ == "__main__":

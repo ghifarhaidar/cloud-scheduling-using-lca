@@ -20,10 +20,12 @@ class MO_LCA(LeagueChampionshipAlgorithm):
     Extends the base LCA to optimize cloudlet-to-VM assignments for minimal cost and minimal makespan.
     """
 
-    def configure_mode(self):
+    def configure(self):
         self.makespan = self.makespan_time_shared
         if self.mode == "space":
             self.makespan = self.makespan_space_shared
+
+        self.calc_fitness = self.Z
 
     def makespan_space_shared(self, x):
         """
@@ -136,25 +138,6 @@ class MO_LCA(LeagueChampionshipAlgorithm):
         z = 0.5 * cost + 0.5 * makespan
         return z
 
-    def fitness(self, X):
-        """
-        Calculate fitness for cloudlet-to-VM scheduling.
-
-        Args:
-            X (list): List of teams (solutions), where each solution is a list
-                     of VM indices assigned to each cloudlet
-
-        Returns:
-            list: Fitness values for each solution in X
-        """
-
-        fitness = list()
-        for x in X:
-            Z = self.Z(x)
-            fitness.append(Z)
-
-        return fitness
-
 
 def run():
     global n, vms, cloudlets, cost_config
@@ -167,7 +150,8 @@ def run():
     best = lca.league()
     running_tme = time.time() - start_time
     print(f"Time taken: {running_tme:.4f} sec")
-    export_results("MO_LCA", best, lca.Z, original_indices, running_tme)
+    export_results("MO_LCA", best, lca.calc_fitness,
+                   original_indices, running_tme)
 
 
 if __name__ == "__main__":
