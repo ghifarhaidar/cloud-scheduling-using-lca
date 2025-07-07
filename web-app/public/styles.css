@@ -47,3 +47,12 @@ h1 {
 .main {
     margin: 20px;
 }
+
+
+canvas {
+    max-width: 800px;
+    /* smaller width */
+    max-height: 500px;
+    /* smaller height */
+    margin: 20px;
+}

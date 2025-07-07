@@ -36,7 +36,7 @@ class LeagueChampionshipAlgorithm(object):
         self.configure()
         return
 
-    def configure_mode(self):
+    def configure(self):
         pass
 
     def league(self):

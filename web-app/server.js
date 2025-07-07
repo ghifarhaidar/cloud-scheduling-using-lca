@@ -1,4 +1,5 @@
 const express = require("express");
+const fs = require('fs');
 const path = require("path");
 
 const config = require("./utils/config");
@@ -33,6 +34,10 @@ app.get("/test", (req, res) => {
 
 app.get("/run", (req, res) => {
 	res.sendFile(path.join(config.WEB_DIR, "views", "run.html"));
+});
+
+app.get('/fitness', (req, res) => {
+	res.sendFile(path.join(config.WEB_DIR, "views", "fitness.html"));
 });
 
 app.get("/get-configs", (req, res) => {
@@ -82,6 +87,29 @@ app.post('/run-experiments', async (req, res) => {
 		res.status(500).json({ error: err.message });
 	}
 });
+
+app.get('/fitness/all', (req, res) => {
+	const algos = ['Cost_LCA', 'Makespan_LCA', 'MO_LCA'];
+	const data = {};
+
+	try {
+		for (const algo of algos) {
+			const filePath = path.join(config.MAIN_DIR, 'lca', `${algo}.txt`);
+			const fileContent = fs.readFileSync(filePath, 'utf8');
+
+			data[algo] = fileContent.trim().split('\n').map(line => {
+				const [, t, f] = line.match(/t\s*=(\d+),\s*f_best=(\d+\.?\d*)/);
+				return { t: Number(t), fitness: Number(f) };
+			});
+		}
+
+		res.json(data);
+	} catch (err) {
+		console.error(err);
+		res.status(500).json({ error: 'Error loading fitness data' });
+	}
+});
+
 
 // Start server
 app.listen(PORT, () => {
