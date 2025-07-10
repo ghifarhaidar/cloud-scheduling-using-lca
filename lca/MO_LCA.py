@@ -112,7 +112,7 @@ class MO_LCA(LeagueChampionshipAlgorithm):
         p_u = 1000
         for j, vm_makespan in enumerate(vm_makespans):
             energy = p_active * vm_makespan + p_idle * (makespan - vm_makespan)
-            energy = energy * (vms[j]["vm_mips"] ** p_u) *vms[j]["vm_pes"] / (1000 * (1000 ** p_u ))
+            energy = energy * (vms[j]["vm_mips"] ** x) *vms[j]["vm_pes"] / (1000 * (p_u ** x ))
             enecon_vm.append(energy)
 
         act = (max(enecon_vm) - min(enecon_vm)) * \
