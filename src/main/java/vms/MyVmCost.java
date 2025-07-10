@@ -61,7 +61,7 @@ public class MyVmCost extends VmCost {
             return 0;
         }
         final double costPerMI = getDcCharacteristics().getCostPerSecond() / 1000;
-        return costPerMI * Math.pow(getVm().getTotalMipsCapacity() , x)* getVm().getLastBusyTime() / Math.pow(p_u, x);
+        return costPerMI * Math.pow(getVm().getMips() , x)  * getVm().getPesNumber()* getVm().getLastBusyTime() / Math.pow(p_u, x);
     }
     public double getIdleProcessingCost() {
         if(getVm().getLastBusyTime() < 0){
