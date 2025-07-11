@@ -83,11 +83,20 @@ class MO_LCA(LeagueChampionshipAlgorithm):
         vm_makespans = [0] * len(vms)
         for vm_index, task_indices in vm_tasks.items():
             vm = vms[vm_index]
-            total_length = sum(cloudlets[i]["length"] for i in task_indices)
-            total_exec = total_length / vm["vm_mips"]
-            # adjust 0.99 to relate to the number of cloudlets
-            degree = vm["vm_pes"] * 0.99
-            vm_makespan = (total_exec/vm["vm_pes"]) + context_switch_overhead
+            vm_pes = vm["vm_pes"]
+            vm_mips = vm["vm_mips"]
+
+            if len(task_indices) <= vm_pes:
+                vm_makespan = max(cloudlets[i]["length"]
+                                  for i in task_indices) / vm_mips
+            else:
+                total_length = sum(cloudlets[i]["length"]
+                                   for i in task_indices)
+                total_exec = total_length / vm_mips
+                # adjust 0.99 to relate to the number of cloudlets
+                degree = vm_pes * (0.985 ** vm_pes)
+                vm_makespan = (
+                    total_exec/degree) + context_switch_overhead
             vm_makespans[vm_index] = vm_makespan
 
         return max(vm_makespans), vm_makespans
