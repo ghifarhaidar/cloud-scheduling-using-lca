@@ -118,7 +118,7 @@ class cost_LCA(LeagueChampionshipAlgorithm):
         makespan, vm_makespans = self.makespan(x)
         p_active = cost_config["p_active"]
         p_idle = cost_config["p_idle"]
-        x = cost_config["x"]
+        x = 1 + cost_config["x"]
         p_u = cost_config["p_u"]
         for j, vm_makespan in enumerate(vm_makespans):
             energy = p_active * vm_makespan + p_idle * (makespan - vm_makespan)
