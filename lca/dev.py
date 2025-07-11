@@ -34,10 +34,15 @@ class LeagueChampionshipAlgorithm(object):
         self.path_w = os.path.join(BASE_DIR, f"lca/{path_w}")
         self.mode = mode
         self.configure()
+        self.fitness_scale = self.calc_fitness(self.round_robin())
         return
 
     def configure(self):
         pass
+
+    def round_robin(self):
+        """Returns a round robin team"""
+        return [i % (self.max_xi+1) for i in range(self.n)]
 
     def league(self):
         """
@@ -256,7 +261,7 @@ class LeagueChampionshipAlgorithm(object):
 
         fitness = list()
         for x in X:
-            f = self.calc_fitness(x)
+            f = 100 * self.calc_fitness(x) / self.fitness_scale
             fitness.append(f)
 
         return fitness

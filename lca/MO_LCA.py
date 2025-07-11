@@ -144,10 +144,10 @@ class MO_LCA(LeagueChampionshipAlgorithm):
             s combining the two values of cost and makespan
         """
 
-        cost = self.cost(x)
-        makespan, _ = self.makespan(x)
+        cost = self.cost(x) / self.fitness_scale
+        makespan, _ = self.makespan(x) / self.fitness_scale
 
-        z = 0.5 * cost + 0.5 * makespan
+        z = (0.5 * cost + 0.5 * makespan) * self.fitness_scale
         return z
 
 
