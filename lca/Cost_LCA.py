@@ -107,13 +107,13 @@ class cost_LCA(LeagueChampionshipAlgorithm):
 
         enecon_vm = []
         makespan, vm_makespans = self.makespan(x)
-        p_active = cost_config["CostPerSecond"]
-        p_idle = 0
-        x = 2
-        p_u = 1000
+        p_active = cost_config["p_active"] 
+        p_idle = cost_config["p_idle"] 
+        x = cost_config["x"] 
+        p_u = cost_config["p_u"] 
         for j, vm_makespan in enumerate(vm_makespans):
-            energy = p_active * vm_makespan + p_idle * (makespan - vm_makespan)
-            energy = energy * (vms[j]["vm_mips"] ** x) *vms[j]["vm_pes"] / (1000 * (p_u ** x ))
+            energy = p_active  * vm_makespan + p_idle * (makespan - vm_makespan)
+            energy = energy * cost_config["CostPerSecond"] * (vms[j]["vm_mips"] ** x) *vms[j]["vm_pes"] / (1000 * (p_u ** x ))
             enecon_vm.append(energy)
 
         act = (max(enecon_vm) - min(enecon_vm)) * \

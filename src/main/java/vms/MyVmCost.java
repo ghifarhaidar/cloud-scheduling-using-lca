@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.cloudsimplus.datacenters.DatacenterCharacteristics;
 import org.cloudsimplus.vms.Vm;
 import org.cloudsimplus.vms.VmCost;
+import utils.commons;
 
 import java.util.Objects;
 
@@ -55,21 +56,21 @@ public class MyVmCost extends VmCost {
         return getActiveProcessingCost() + getIdleProcessingCost();
     }
     public double getActiveProcessingCost() {
-        double x = 2;
-        double p_u = 1000;
         if(getVm().getLastBusyTime() < 0){
             return 0;
         }
+        double x = commons.costConfig.getDouble("x");
+        double p_u = commons.costConfig.getDouble("p_u");
+        double p_active = commons.costConfig.getDouble("p_active");
         final double costPerMI = getDcCharacteristics().getCostPerSecond() / 1000;
-        return costPerMI * Math.pow(getVm().getMips() , x)  * getVm().getPesNumber()* getVm().getLastBusyTime() / Math.pow(p_u, x);
+        return p_active * costPerMI * Math.pow(getVm().getMips() , x)  * getVm().getPesNumber()* getVm().getLastBusyTime() / Math.pow(p_u, x);
     }
     public double getIdleProcessingCost() {
-        if(getVm().getLastBusyTime() < 0){
-            return 0;
-        }
+
+        double p_idle = commons.costConfig.getDouble("p_idle");
         final double costPerMI = getDcCharacteristics().getCostPerSecond();
-        final double idleTme = getVm().getTotalExecutionTime() - getVm().getTotalExecutionTime();
-        return 0;
+        final double idleTme = getVm().getTotalExecutionTime() - getVm().getLastBusyTime();
+        return p_idle * costPerMI * getVm().getTotalMipsCapacity() * idleTme;
 //        return costPerMI * getVm().getTotalMipsCapacity() * idleTme ;
     }
 

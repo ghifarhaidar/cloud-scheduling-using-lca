@@ -41,8 +41,8 @@ public class commons {
      * Creates a Datacenter and its Hosts.
      */
 
-    private static JSONObject config;
-    private static JSONObject costConfig;
+    public static JSONObject config;
+    public static JSONObject costConfig;
     public static void initConfig() {
         config = commons.loadConfig("sim_config.json");
         costConfig = commons.loadConfig("sim_cost_config.json");
