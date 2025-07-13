@@ -1,6 +1,6 @@
 const { exec } = require("child_process");
 const path = require("path");
-const { MAIN_DIR } = require("./config");
+const { MAIN_DIR } = require("../config/config");
 
 const runPythonScript = (args = {}) => {
     return new Promise((resolve, reject) => {

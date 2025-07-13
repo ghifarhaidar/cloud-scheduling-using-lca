@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { RESULTS_DIR } = require("./config");
+const { RESULTS_DIR } = require("../config/config");
 const { readJsonFile } = require("./fileHandlers");
 
 const getResults = () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useRef} from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -17,11 +17,14 @@ ChartJS.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend,
 export default function FitnessPage() {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const loaded = useRef(false);
+
 
   useEffect(() => {
     const fetchFitnessData = async () => {
       try {
-        const data = await getAllFitness(); // 👈 call API helper
+        const {data} = await getAllFitness(); // 👈 call API helper
+        console.log("data loaded: ", data);
         const colors = ["red", "green", "blue", "orange", "purple"];
         const datasets = Object.entries(data).map(([algo, points], index) => ({
           label: algo,
@@ -39,8 +42,10 @@ export default function FitnessPage() {
         setLoading(false);
       }
     };
-
-    fetchFitnessData();
+    if (!loaded.current){
+      loaded.current = true;
+      fetchFitnessData();
+    }
   }, []);
 
   if (loading) {

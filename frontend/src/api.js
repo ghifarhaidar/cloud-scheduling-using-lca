@@ -2,14 +2,14 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 // Get all configs
 export async function getConfigs() {
-    const res = await fetch(`${API_BASE_URL}/get-configs`);
+    const res = await fetch(`${API_BASE_URL}/api/configs`);
     if (!res.ok) throw new Error("Failed to fetch configs");
     return await res.json();
 }
 
 // Save a config
 export async function saveConfig(configData) {
-    const res = await fetch(`${API_BASE_URL}/save-config`, {
+    const res = await fetch(`${API_BASE_URL}/api/configs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(configData),
@@ -23,7 +23,7 @@ export async function saveConfig(configData) {
 
 // Run experiments
 export async function runExperiments() {
-    const res = await fetch(`${API_BASE_URL}/run-experiments`, {
+    const res = await fetch(`${API_BASE_URL}/api/experiments`, {
         method: "POST",
     });
     if (!res.ok) throw new Error("Failed to run experiments");
@@ -32,14 +32,14 @@ export async function runExperiments() {
 
 // Get experiment results
 export async function getResults() {
-    const res = await fetch(`${API_BASE_URL}/get-results`);
+    const res = await fetch(`${API_BASE_URL}/api/results`);
     if (!res.ok) throw new Error("Failed to fetch results");
     return await res.json();
 }
 
 // Run Python script
 export async function runPython(args) {
-    const res = await fetch(`${API_BASE_URL}/run-python`, {
+    const res = await fetch(`${API_BASE_URL}/api/run-python`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(args),
@@ -53,7 +53,7 @@ export async function runPython(args) {
 
 // Get all fitness data
 export async function getAllFitness() {
-    const res = await fetch(`${API_BASE_URL}/fitness/all`);
+    const res = await fetch(`${API_BASE_URL}/api/fitness/all`);
     if (!res.ok) throw new Error("Failed to fetch fitness data");
     return await res.json();
 }
