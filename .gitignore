@@ -46,5 +46,6 @@ __pycache__/
 calc.py
 
 ### Node js ###
-!*web-app/*.json
+!*/package.json
+!*/package-lock.json
 */node_modules
