@@ -34,6 +34,7 @@ class LeagueChampionshipAlgorithm(object):
         self.path_w = os.path.join(BASE_DIR, f"lca/{path_w}")
         self.mode = mode
         self.configure()
+        self.fitness_scale = 1
         self.fitness_scale = self.calc_fitness(self.round_robin())
         return
 

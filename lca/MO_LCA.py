@@ -145,7 +145,8 @@ class MO_LCA(LeagueChampionshipAlgorithm):
         """
 
         cost = self.cost(x) / self.fitness_scale
-        makespan, _ = self.makespan(x) / self.fitness_scale
+        makespan, _ = self.makespan(x)
+        makespan /= self.fitness_scale
 
         z = (0.5 * cost + 0.5 * makespan) * self.fitness_scale
         return z

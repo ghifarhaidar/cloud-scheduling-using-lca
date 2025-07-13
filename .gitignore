@@ -48,3 +48,4 @@ calc.py
 ### Node js ###
 !*web-app/*.json
 web-app/node_modules
+*node_modules*
