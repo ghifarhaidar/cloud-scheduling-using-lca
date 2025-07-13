@@ -2,43 +2,24 @@ const express = require("express");
 const fs = require('fs');
 const path = require("path");
 
+
+
+
 const config = require("./utils/config");
 const { getConfigs, saveConfig } = require("./utils/fileHandlers");
 const { runPythonScript } = require("./utils/pythonRunner");
 const { getResults } = require("./utils/resultProcessor");
 const { runExperiments } = require('./utils/runExperiments');
 
+
+
 const app = express();
 const PORT = config.PORT;
 app.use(express.json());
 
-// Serve static files (CSS, JS) from /public
-app.use(express.static(path.join(config.WEB_DIR, "public")));
+const cors = require('cors');
+app.use(cors());
 
-// Routes for HTML pages
-app.get("/", (req, res) => {
-	res.sendFile(path.join(config.WEB_DIR, "views", "home.html"));
-});
-
-app.get("/set-config", (req, res) => {
-	res.sendFile(path.join(config.WEB_DIR, "views", "set-config.html"));
-});
-
-app.get("/edit-config", (req, res) => {
-	res.sendFile(path.join(config.WEB_DIR, "views", "edit-config.html"));
-});
-
-app.get("/test", (req, res) => {
-	res.sendFile(path.join(config.WEB_DIR, "views", "test.html"));
-});
-
-app.get("/run", (req, res) => {
-	res.sendFile(path.join(config.WEB_DIR, "views", "run.html"));
-});
-
-app.get('/fitness', (req, res) => {
-	res.sendFile(path.join(config.WEB_DIR, "views", "fitness.html"));
-});
 
 app.get("/get-configs", (req, res) => {
 	try {
