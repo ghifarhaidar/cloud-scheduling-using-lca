@@ -21,8 +21,12 @@ SCRIPT_DIR = ""
 
 
 def build_java_project():
+    logs_dir = os.path.join(SCRIPT_DIR, "logs")
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+
     build_log_file = os.path.join(
-        SCRIPT_DIR, "logs", f"build.log")
+        logs_dir, f"build.log")
     print(f"🔨 Building Java project... (log: {build_log_file})")
     # for clean build
     # build = subprocess.run(["mvn", "clean", "package"], text=True)
@@ -39,8 +43,12 @@ def build_java_project():
 
 
 def run_java_program(input, algorithm_name):
+    logs_dir = os.path.join(SCRIPT_DIR, "logs")
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+
     run_log_file = os.path.join(
-        SCRIPT_DIR, "logs", f"run_{algorithm_name}.log")
+        logs_dir, f"run_{algorithm_name}.log")
     print(f"\n🚀 Running Java program... (log: {run_log_file})")
     with open(run_log_file, "w") as run_log:
         result = subprocess.run([
