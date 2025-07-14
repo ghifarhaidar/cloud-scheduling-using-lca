@@ -1,35 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { getConfigs, runExperiments } from "../api"; // adjust path if needed
+import { getRunConfigs, runExperiments } from "../api"; // adjust path if needed
 
 const RunPage = () => {
   const [params, setParams] = useState("Loading...");
-  const [output, setOutput] = useState("Ready.");
+  const [output, setOutput] = useState("Ready to run experiments.");
   const [loading, setLoading] = useState(false);
 
   // Fetch configs on page load
-//   useEffect(() => {
-//     const loadConfigs = async () => {
-//       try {
-//         setParams("Loading configs...");
-//         const data = await getConfigs();
-//         // Optional: mutate or format data if needed
-//         setParams(JSON.stringify(data, null, 2));
-//       } catch (err) {
-//         setParams(`❌ Error loading configs: ${err.message}`);
-//         console.error(err);
-//       }
-//     };
+  useEffect(() => {
+    const loadConfigs = async () => {
+      try {
+        setParams("Loading configurations...");
+        const data = await getRunConfigs();
+        // Optional: mutate or format data if needed
+        setParams(JSON.stringify(data, null, 2));
+      } catch (err) {
+        setParams(`❌ Error loading configs: ${err.message}`);
+        console.error(err);
+      }
+    };
 
-//     loadConfigs();
-//   }, []);
+    loadConfigs();
+  }, []);
 
   // Handle running experiments
   const handleRunClick = async () => {
     setLoading(true);
-    setOutput("Running experiments...");
+    setOutput("🚀 Initializing experiments...");
     try {
       const result = await runExperiments();
-      setOutput("✅ Experiments completed successfully!");
+      setOutput("✅ Experiments completed successfully! Check the Fitness Analysis page for results.");
       console.log("Experiment results:", result);
     } catch (err) {
       setOutput(`❌ Error running experiments: ${err.message}`);
@@ -40,33 +40,90 @@ const RunPage = () => {
   };
 
   return (
-    <div className="main p-4">
-      <h1 className="text-2xl font-bold mb-4">Welcome to the Run Page</h1>
+    <div>
+      <h1>Experiment Execution</h1>
 
-      <div className="mb-6">
-        <h3 className="font-semibold">Parameters:</h3>
-        <pre className="bg-gray-100 p-2 rounded text-sm overflow-auto">{params}</pre>
+      <div className="card">
+        <div className="card-header">
+          <h2 className="card-title">🔬 Run LCA Experiments</h2>
+        </div>
+        <p>
+          Execute the League Championship Algorithm experiments with your configured parameters. 
+          The system will run all three algorithm variants (Cost_LCA, Makespan_LCA, MO_LCA) 
+          and generate fitness evolution data for analysis.
+        </p>
       </div>
 
-      <button
-        onClick={handleRunClick}
-        disabled={loading}
-        className={`px-4 py-2 rounded text-white ${loading ? "bg-gray-500" : "bg-blue-600 hover:bg-blue-700"}`}
-      >
-        {loading ? "Running..." : "Run Python Script"}
-      </button>
-
-      <div className="mt-6">
-        <h3 className="font-semibold">Output:</h3>
-        <pre className="bg-gray-100 p-2 rounded text-sm overflow-auto">{output}</pre>
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">📋 Current Configuration</h3>
+        </div>
+        <div className="code-block">{params}</div>
       </div>
 
-      <button
-        className="mt-4 px-4 py-2 rounded bg-green-600 text-white hover:bg-green-700"
-        onClick={() => alert("Show results logic here")}
-      >
-        Show Results
-      </button>
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">🎯 Experiment Controls</h3>
+        </div>
+        
+        <div className="flex gap-md mb-lg">
+          <button
+            onClick={handleRunClick}
+            disabled={loading}
+            className={`btn ${loading ? 'btn-primary' : 'btn-primary'}`}
+          >
+            {loading ? (
+              <>
+                <div className="spinner"></div>
+                Running Experiments...
+              </>
+            ) : (
+              <>
+                🚀 Start Experiments
+              </>
+            )}
+          </button>
+
+          <button
+            className="btn btn-success"
+            onClick={() => window.location.href = '/fitness'}
+            disabled={loading}
+          >
+            📊 View Results
+          </button>
+        </div>
+
+        <div style={{
+          padding: 'var(--spacing-md)', 
+          backgroundColor: 'var(--light-blue)', 
+          borderRadius: 'var(--radius-md)',
+          border: '1px solid var(--border-gray)'
+        }}>
+          <h4 style={{color: 'var(--primary-blue)', marginBottom: 'var(--spacing-sm)'}}>
+            ℹ️ Experiment Information
+          </h4>
+          <ul style={{paddingLeft: 'var(--spacing-lg)', color: 'var(--secondary-gray)', margin: 0}}>
+            <li>Experiments will run all configured algorithm variants</li>
+            <li>Results are automatically saved for analysis</li>
+            <li>Execution time depends on your parameter settings</li>
+            <li>Monitor progress in the output section below</li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">📤 Execution Output</h3>
+        </div>
+        <div className="code-block" style={{
+          minHeight: '120px',
+          color: output.includes('✅') ? 'var(--success-green)' : 
+                 output.includes('❌') ? 'var(--error-red)' : 
+                 'var(--light-gray)'
+        }}>
+          {output}
+        </div>
+      </div>
     </div>
   );
 };

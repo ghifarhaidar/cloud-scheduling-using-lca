@@ -35,13 +35,42 @@ const getConfigs = () => {
     };
 };
 
-const saveConfig = (configData) => {
-    const filePath = path.join(MAIN_DIR, "run_config.json");
-    return writeJsonFile(filePath, configData);
+const getRunConfigs = () => {
+    const runConfigsPath = path.join(MAIN_DIR, "run_configs.json");
+    const runConfigs = readJsonFile(runConfigsPath);
+
+    return {
+        runConfigs
+    };
 };
+
+const saveConfig = (configData) => {
+    const filePath = path.join(MAIN_DIR, "run_configs.json");
+    let configs = [];
+
+    // Try reading existing configs
+    try {
+        configs = readJsonFile(filePath);
+        if (!Array.isArray(configs)) {
+            // If the existing data isn't an array, wrap it
+            configs = [configs];
+        }
+    } catch (error) {
+        // If file doesn't exist or is invalid, start fresh
+        configs = [];
+    }
+
+    // Add the new config
+    configs.push(configData);
+
+    // Write back the updated list
+    return writeJsonFile(filePath, configs);
+};
+
 
 module.exports = {
     getConfigs,
+    getRunConfigs,
     saveConfig,
     readJsonFile,
     writeJsonFile,

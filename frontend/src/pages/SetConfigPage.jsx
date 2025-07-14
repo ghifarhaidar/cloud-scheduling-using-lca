@@ -5,6 +5,7 @@ export default function SetConfigPage() {
   const [LType, setLType] = useState('single');
   const [SType, setSType] = useState('single');
   const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     L: 20,
     L_from: 10,
@@ -62,6 +63,7 @@ export default function SetConfigPage() {
       return; // ❌ Stop submission
     }
     setErrors({}); // ✅ Clear previous errors
+    setIsSubmitting(true);
 
     // Prepare JSON payload
     let jsonPayload = {
@@ -105,217 +107,356 @@ export default function SetConfigPage() {
       alert("✅ Config saved successfully!");
     } catch (err) {
       console.error("❌ Error saving config:", err.message);
+      alert("❌ Error saving config: " + err.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="main p-4">
-      <h1 className="text-2xl font-bold mb-4">Set Configuration</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <div>
+      <h1>Algorithm Configuration</h1>
+      
+      <div className="form-container">
+        <form onSubmit={handleSubmit}>
 
-        {/* L parameter */}
-        <fieldset>
-          <legend className="font-semibold">L (League size):</legend>
-          <div>
-            <label>
-              <input
-                type="radio"
-                name="LType"
-                value="single"
-                checked={LType === "single"}
-                onChange={() => setLType("single")}
-              />
-              Single value
-            </label>
-            <label className="ml-4">
-              <input
-                type="radio"
-                name="LType"
-                value="range"
-                checked={LType === "range"}
-                onChange={() => setLType("range")}
-              />
-              Range
-            </label>
-          </div>
-
-          {LType === "single" ? (
-            <div>
-              <input
-                type="number"
-                name="L"
-                value={formData.L}
-                onChange={handleChange}
-                min="1"
-              />
+          {/* L parameter */}
+          <div className="form-section">
+            <h3 className="form-section-title">
+              📊 League Size (L)
+            </h3>
+            <p style={{color: 'var(--secondary-gray)', marginBottom: 'var(--spacing-lg)'}}>
+              Configure the number of teams in the league championship algorithm
+            </p>
+            
+            <div className="radio-group">
+              <label className="radio-option">
+                <input
+                  type="radio"
+                  name="LType"
+                  value="single"
+                  checked={LType === "single"}
+                  onChange={() => setLType("single")}
+                />
+                Single value
+              </label>
+              <label className="radio-option">
+                <input
+                  type="radio"
+                  name="LType"
+                  value="range"
+                  checked={LType === "range"}
+                  onChange={() => setLType("range")}
+                />
+                Range of values
+              </label>
             </div>
-          ) : (
-            <div>
-              From:{" "}
-              <input type="number" name="L_from" value={formData.L_from} onChange={handleChange} min="1" />
-              To:{" "}
-              <input type="number" name="L_to" value={formData.L_to} onChange={handleChange} min="1" />
-              Step:{" "}
-              <input type="number" name="L_step" value={formData.L_step} onChange={handleChange} min="1" />
+
+            {LType === "single" ? (
+              <div className="form-group">
+                <label className="form-label">League Size</label>
+                <input
+                  type="number"
+                  name="L"
+                  value={formData.L}
+                  onChange={handleChange}
+                  min="1"
+                  className="form-input form-input-small"
+                />
+              </div>
+            ) : (
+              <div className="form-input-group">
+                <div className="form-group">
+                  <label className="form-label">From</label>
+                  <input 
+                    type="number" 
+                    name="L_from" 
+                    value={formData.L_from} 
+                    onChange={handleChange} 
+                    min="1" 
+                    className="form-input form-input-small"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">To</label>
+                  <input 
+                    type="number" 
+                    name="L_to" 
+                    value={formData.L_to} 
+                    onChange={handleChange} 
+                    min="1" 
+                    className="form-input form-input-small"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Step</label>
+                  <input 
+                    type="number" 
+                    name="L_step" 
+                    value={formData.L_step} 
+                    onChange={handleChange} 
+                    min="1" 
+                    className="form-input form-input-small"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* S parameter */}
+          <div className="form-section">
+            <h3 className="form-section-title">
+              🏆 Number of Seasons (S)
+            </h3>
+            <p style={{color: 'var(--secondary-gray)', marginBottom: 'var(--spacing-lg)'}}>
+              Define the number of seasons (iterations) for the algorithm
+            </p>
+            
+            <div className="radio-group">
+              <label className="radio-option">
+                <input
+                  type="radio"
+                  name="SType"
+                  value="single"
+                  checked={SType === "single"}
+                  onChange={() => setSType("single")}
+                />
+                Single value
+              </label>
+              <label className="radio-option">
+                <input
+                  type="radio"
+                  name="SType"
+                  value="range"
+                  checked={SType === "range"}
+                  onChange={() => setSType("range")}
+                />
+                Range of values
+              </label>
             </div>
-          )}
-        </fieldset>
 
-        {/* S parameter */}
-        <fieldset>
-          <legend className="font-semibold">S (Number of seasons):</legend>
-          <div>
-            <label>
-              <input
-                type="radio"
-                name="SType"
-                value="single"
-                checked={SType === "single"}
-                onChange={() => setSType("single")}
-              />
-              Single value
-            </label>
-            <label className="ml-4">
-              <input
-                type="radio"
-                name="SType"
-                value="range"
-                checked={SType === "range"}
-                onChange={() => setSType("range")}
-              />
-              Range
-            </label>
+            {SType === "single" ? (
+              <div className="form-group">
+                <label className="form-label">Number of Seasons</label>
+                <input
+                  type="number"
+                  name="S"
+                  value={formData.S}
+                  onChange={handleChange}
+                  min="1"
+                  className="form-input form-input-small"
+                />
+              </div>
+            ) : (
+              <div className="form-input-group">
+                <div className="form-group">
+                  <label className="form-label">From</label>
+                  <input 
+                    type="number" 
+                    name="S_from" 
+                    value={formData.S_from} 
+                    onChange={handleChange} 
+                    min="1" 
+                    className="form-input form-input-small"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">To</label>
+                  <input 
+                    type="number" 
+                    name="S_to" 
+                    value={formData.S_to} 
+                    onChange={handleChange} 
+                    min="1" 
+                    className="form-input form-input-small"
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Step</label>
+                  <input 
+                    type="number" 
+                    name="S_step" 
+                    value={formData.S_step} 
+                    onChange={handleChange} 
+                    min="1" 
+                    className="form-input form-input-small"
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
-          {SType === "single" ? (
-            <div>
-              <input
-                type="number"
-                name="S"
-                value={formData.S}
-                onChange={handleChange}
-                min="1"
-              />
+          {/* Algorithm Parameters */}
+          <div className="form-section">
+            <h3 className="form-section-title">
+              ⚙️ Algorithm Parameters
+            </h3>
+            <p style={{color: 'var(--secondary-gray)', marginBottom: 'var(--spacing-lg)'}}>
+              Fine-tune the LCA algorithm behavior
+            </p>
+            
+            <div className="form-input-group">
+              <div className="form-group">
+                <label className="form-label">
+                  Crossover Probability (p_c)
+                  <span style={{fontSize: '0.875rem', color: 'var(--secondary-gray)'}}> - Range: 0 to 1</span>
+                </label>
+                <input
+                  type="number"
+                  name="p_c"
+                  step="0.01"
+                  value={formData.p_c}
+                  onChange={handleChange}
+                  className="form-input form-input-small"
+                />
+                {errors.p_c && <div className="error-message">⚠️ {errors.p_c}</div>}
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  PSI1 Parameter
+                  <span style={{fontSize: '0.875rem', color: 'var(--secondary-gray)'}}> - Range: 0 to 1</span>
+                </label>
+                <input
+                  type="number"
+                  name="PSI1"
+                  step="0.01"
+                  value={formData.PSI1}
+                  onChange={handleChange}
+                  className="form-input form-input-small"
+                />
+                {errors.PSI1 && <div className="error-message">⚠️ {errors.PSI1}</div>}
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  PSI2 Parameter
+                  <span style={{fontSize: '0.875rem', color: 'var(--secondary-gray)'}}> - Range: 0 to 1</span>
+                </label>
+                <input
+                  type="number"
+                  name="PSI2"
+                  step="0.01"
+                  value={formData.PSI2}
+                  onChange={handleChange}
+                  className="form-input form-input-small"
+                />
+                {errors.PSI2 && <div className="error-message">⚠️ {errors.PSI2}</div>}
+              </div>
             </div>
-          ) : (
-            <div>
-              From:{" "}
-              <input type="number" name="S_from" value={formData.S_from} onChange={handleChange} min="1" />
-              To:{" "}
-              <input type="number" name="S_to" value={formData.S_to} onChange={handleChange} min="1" />
-              Step:{" "}
-              <input type="number" name="S_step" value={formData.S_step} onChange={handleChange} min="1" />
+          </div>
+
+          {/* Simulation Configuration */}
+          <div className="form-section">
+            <h3 className="form-section-title">
+              🖥️ Simulation Configuration
+            </h3>
+            <p style={{color: 'var(--secondary-gray)', marginBottom: 'var(--spacing-lg)'}}>
+              Configure the cloud simulation environment
+            </p>
+            
+            <div className="form-input-group">
+              <div className="form-group">
+                <label className="form-label">
+                  Configuration Type
+                  <span style={{fontSize: '0.875rem', color: 'var(--secondary-gray)'}}> - Values: 1-9 or -1 for range</span>
+                </label>
+                <input
+                  type="number"
+                  name="config_type"
+                  value={formData.config_type}
+                  onChange={handleChange}
+                  min="-1"
+                  max="9"
+                  className="form-input form-input-small"
+                />
+                {errors.config_type && <div className="error-message">⚠️ {errors.config_type}</div>}
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  Cost Configuration Type
+                  <span style={{fontSize: '0.875rem', color: 'var(--secondary-gray)'}}> - Values: 1 or 2</span>
+                </label>
+                <input
+                  type="number"
+                  name="cost_config_type"
+                  value={formData.cost_config_type}
+                  onChange={handleChange}
+                  min="1"
+                  max="2"
+                  className="form-input form-input-small"
+                />
+                {errors.cost_config_type && <div className="error-message">⚠️ {errors.cost_config_type}</div>}
+              </div>
             </div>
-          )}
-        </fieldset>
 
-        {/* Other parameters */}
-        <fieldset>
-          <legend className="font-semibold">Other Parameters</legend>
-          <div>
-            <label>
-              p_c:
-              <input
-                type="number"
-                name="p_c"
-                step="0.01"
-                value={formData.p_c}
-                onChange={handleChange}
-              />
-            </label>
-            {errors.p_c && <p className="text-red-600">{errors.p_c}</p>}
+            <div className="form-group">
+              <label className="form-label">VM Scheduling Mode</label>
+              <div className="radio-group">
+                <label className="radio-option">
+                  <input
+                    type="radio"
+                    name="vm_scheduling_mode"
+                    value="time"
+                    checked={formData.vm_scheduling_mode === "time"}
+                    onChange={handleChange}
+                  />
+                  Time-Shared
+                </label>
+                <label className="radio-option">
+                  <input
+                    type="radio"
+                    name="vm_scheduling_mode"
+                    value="space"
+                    checked={formData.vm_scheduling_mode === "space"}
+                    onChange={handleChange}
+                  />
+                  Space-Shared
+                </label>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label>
-              PSI1:
-              <input
-                type="number"
-                name="PSI1"
-                step="0.01"
-                value={formData.PSI1}
-                onChange={handleChange}
-              />
-            </label>
-            {errors.PSI1 && <p className="text-red-600">{errors.PSI1}</p>}
+          <div className="flex gap-md">
+            <button 
+              type="submit" 
+              className="btn btn-primary"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <div className="spinner"></div>
+                  Saving Configuration...
+                </>
+              ) : (
+                <>
+                  💾 Save Configuration
+                </>
+              )}
+            </button>
+            
+            <button 
+              type="button" 
+              className="btn btn-secondary"
+              onClick={() => {
+                setFormData({
+                  L: 20, L_from: 10, L_to: 30, L_step: 1,
+                  S: 20, S_from: 10, S_to: 30, S_step: 1,
+                  p_c: 0.3, PSI1: 0.2, PSI2: 1,
+                  config_type: 1, cost_config_type: 1,
+                  vm_scheduling_mode: 'time',
+                });
+                setLType('single');
+                setSType('single');
+                setErrors({});
+              }}
+            >
+              🔄 Reset to Defaults
+            </button>
           </div>
-
-          <div>
-            <label>
-              PSI2:
-              <input
-                type="number"
-                name="PSI2"
-                step="0.01"
-                value={formData.PSI2}
-                onChange={handleChange}
-              />
-            </label>
-            {errors.PSI2 && <p className="text-red-600">{errors.PSI2}</p>}
-          </div>
-        </fieldset>
-
-        {/* Sim Config */}
-        <fieldset>
-          <legend className="font-semibold">Sim Configs</legend>
-          <div>
-            <label>
-              config_type:
-              <input
-                type="number"
-                name="config_type"
-                value={formData.config_type}
-                onChange={handleChange}
-                min="-1"
-                max="9"
-              />
-            </label>
-            {errors.config_type && <p className="text-red-600">{errors.config_type}</p>}
-          </div>
-
-          <div>
-            <label>
-              cost_config_type:
-              <input
-                type="number"
-                name="cost_config_type"
-                value={formData.cost_config_type}
-                onChange={handleChange}
-                min="1"
-                max="2"
-              />
-            </label>
-            {errors.cost_config_type && <p className="text-red-600">{errors.cost_config_type}</p>}
-          </div>
-
-          <div>
-            <label>
-              <input
-                type="radio"
-                name="vm_scheduling_mode"
-                value="time"
-                checked={formData.vm_scheduling_mode === "time"}
-                onChange={handleChange}
-              />
-              Time-Shared
-            </label>
-            <label className="ml-4">
-              <input
-                type="radio"
-                name="vm_scheduling_mode"
-                value="space"
-                checked={formData.vm_scheduling_mode === "space"}
-                onChange={handleChange}
-              />
-              Space-Shared
-            </label>
-          </div>
-        </fieldset>
-
-        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-          Submit
-        </button>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

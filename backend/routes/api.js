@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 
-const { getConfigs, saveConfig } = require('../utils/fileHandlers');
+const { getConfigs, getRunConfigs, saveConfig } = require('../utils/fileHandlers');
 const { runPythonScript } = require('../utils/pythonRunner');
 const { getResults } = require('../utils/resultProcessor');
 const { runExperiments } = require('../utils/runExperiments');
@@ -22,8 +22,17 @@ router.get('/configs', asyncHandler(async (req, res) => {
     });
 }));
 
+// Get configurations
+router.get('/run-configs', asyncHandler(async (req, res) => {
+    const configs = getRunConfigs();
+    res.json({
+        success: true,
+        data: configs
+    });
+}));
+
 // Save configuration
-router.post('/configs', asyncHandler(async (req, res) => {
+router.post('/config', asyncHandler(async (req, res) => {
     const result = saveConfig(req.body);
     res.json({
         success: true,

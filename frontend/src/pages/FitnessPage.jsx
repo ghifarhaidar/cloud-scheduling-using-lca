@@ -1,4 +1,4 @@
-import React, { useEffect, useState , useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -17,78 +17,272 @@ ChartJS.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend,
 export default function FitnessPage() {
   const [chartData, setChartData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const loaded = useRef(false);
-
 
   useEffect(() => {
     const fetchFitnessData = async () => {
       try {
-        const {data} = await getAllFitness(); // 👈 call API helper
+        const { data } = await getAllFitness(); // 👈 call API helper
         console.log("data loaded: ", data);
-        const colors = ["red", "green", "blue", "orange", "purple"];
-        const datasets = Object.entries(data).map(([algo, points], index) => ({
-          label: algo,
+        
+        // Scientific color palette for algorithms
+        const algorithmColors = {
+          "Cost_LCA": "#1e3a8a",      // Primary blue
+          "Makespan_LCA": "#059669",   // Success green  
+          "MO_LCA": "#d97706"          // Warning orange
+        };
+        
+        const datasets = Object.entries(data).map(([algo, points]) => ({
+          label: algo.replace('_', ' '), // Make labels more readable
           data: points.map((p) => ({ x: p.t, y: p.fitness })),
-          borderColor: colors[index % colors.length],
+          borderColor: algorithmColors[algo] || "#6b7280",
+          backgroundColor: algorithmColors[algo] + "20", // Add transparency
           fill: false,
-          tension: 0.2,
+          tension: 0.3,
+          pointRadius: 2,
+          pointHoverRadius: 6,
+          borderWidth: 3,
         }));
 
         setChartData({ datasets });
         setLoading(false);
       } catch (error) {
         console.error("Error loading fitness data:", error);
-        alert("Failed to load fitness data");
+        setError("Failed to load fitness data. Please ensure experiments have been run.");
         setLoading(false);
       }
     };
-    if (!loaded.current){
+    
+    if (!loaded.current) {
       loaded.current = true;
       fetchFitnessData();
     }
   }, []);
 
+  const chartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      title: {
+        display: true,
+        text: "Algorithm Fitness Evolution Over Time",
+        font: {
+          size: 18,
+          weight: 'bold'
+        },
+        color: '#1e3a8a'
+      },
+      legend: {
+        position: "top",
+        labels: {
+          font: {
+            size: 14,
+            weight: '500'
+          },
+          color: '#374151',
+          usePointStyle: true,
+          pointStyle: 'line'
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(255, 255, 255, 0.95)',
+        titleColor: '#1e3a8a',
+        bodyColor: '#374151',
+        borderColor: '#e5e7eb',
+        borderWidth: 1,
+        cornerRadius: 8,
+        displayColors: true,
+        callbacks: {
+          title: function(context) {
+            return `Time: ${context[0].parsed.x}`;
+          },
+          label: function(context) {
+            return `${context.dataset.label}: ${context.parsed.y.toFixed(4)}`;
+          }
+        }
+      }
+    },
+    scales: {
+      x: {
+        type: "linear",
+        title: {
+          display: true,
+          text: "Time (t)",
+          font: {
+            size: 14,
+            weight: '600'
+          },
+          color: '#374151'
+        },
+        grid: {
+          color: '#f3f4f6',
+          lineWidth: 1
+        },
+        ticks: {
+          color: '#6b7280',
+          font: {
+            size: 12
+          }
+        }
+      },
+      y: {
+        title: {
+          display: true,
+          text: "Fitness Value (f_best)",
+          font: {
+            size: 14,
+            weight: '600'
+          },
+          color: '#374151'
+        },
+        grid: {
+          color: '#f3f4f6',
+          lineWidth: 1
+        },
+        ticks: {
+          color: '#6b7280',
+          font: {
+            size: 12
+          }
+        }
+      },
+    },
+    interaction: {
+      intersect: false,
+      mode: 'index'
+    }
+  };
+
   if (loading) {
-    return <div className="main"><h2>Loading fitness data...</h2></div>;
+    return (
+      <div>
+        <h1>Fitness Analysis</h1>
+        <div className="card">
+          <div className="loading">
+            <div className="spinner"></div>
+            Loading fitness data...
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  if (!chartData) {
-    return <div className="main"><h2>No data available</h2></div>;
+  if (error) {
+    return (
+      <div>
+        <h1>Fitness Analysis</h1>
+        <div className="card">
+          <div style={{
+            padding: 'var(--spacing-xl)',
+            textAlign: 'center',
+            color: 'var(--error-red)'
+          }}>
+            <h3>⚠️ {error}</h3>
+            <p style={{color: 'var(--secondary-gray)', marginTop: 'var(--spacing-md)'}}>
+              Please run experiments first using the "Run Experiments" page.
+            </p>
+            <button 
+              className="btn btn-primary mt-lg"
+              onClick={() => window.location.href = '/run'}
+            >
+              🚀 Go to Experiments
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!chartData || !chartData.datasets || chartData.datasets.length === 0) {
+    return (
+      <div>
+        <h1>Fitness Analysis</h1>
+        <div className="card">
+          <div style={{
+            padding: 'var(--spacing-xl)',
+            textAlign: 'center',
+            color: 'var(--secondary-gray)'
+          }}>
+            <h3>📊 No Data Available</h3>
+            <p>No fitness data found. Please run experiments to generate data.</p>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="main">
-      <h1>Fitness Over Time for All Algorithms</h1>
-      <Line
-        data={chartData}
-        options={{
-          responsive: true,
-          plugins: {
-            title: {
-              display: true,
-              text: "Fitness Over Time",
-            },
-            legend: {
-              position: "top",
-            },
-          },
-          scales: {
-            x: {
-              type: "linear",
-              title: {
-                display: true,
-                text: "Time (t)",
-              },
-            },
-            y: {
-              title: {
-                display: true,
-                text: "Fitness (f_best)",
-              },
-            },
-          },
-        }}
-      />
+    <div>
+      <h1>Fitness Analysis</h1>
+      
+      <div className="card">
+        <div className="card-header">
+          <h2 className="card-title">📈 Algorithm Performance Comparison</h2>
+        </div>
+        <p>
+          This chart shows the fitness evolution over time for all League Championship Algorithm variants. 
+          Lower fitness values generally indicate better performance for optimization problems.
+        </p>
+      </div>
+
+      <div className="chart-container">
+        <div style={{ height: '500px' }}>
+          <Line data={chartData} options={chartOptions} />
+        </div>
+      </div>
+
+      <div className="card">
+        <div className="card-header">
+          <h3 className="card-title">🔍 Analysis Insights</h3>
+        </div>
+        <div className="flex flex-col gap-md">
+          <div style={{
+            padding: 'var(--spacing-md)',
+            backgroundColor: 'var(--light-blue)',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid var(--border-gray)'
+          }}>
+            <h4 style={{color: 'var(--primary-blue)', marginBottom: 'var(--spacing-sm)'}}>
+              💰 Cost LCA
+            </h4>
+            <p className="mb-0" style={{fontSize: '0.9rem', color: 'var(--secondary-gray)'}}>
+              Focuses on minimizing resource costs in cloud scheduling. 
+              Ideal for budget-constrained environments.
+            </p>
+          </div>
+          
+          <div style={{
+            padding: 'var(--spacing-md)',
+            backgroundColor: '#f0fdf4',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid #bbf7d0'
+          }}>
+            <h4 style={{color: 'var(--success-green)', marginBottom: 'var(--spacing-sm)'}}>
+              ⏱️ Makespan LCA
+            </h4>
+            <p className="mb-0" style={{fontSize: '0.9rem', color: 'var(--secondary-gray)'}}>
+              Optimizes for minimum execution time (makespan). 
+              Best for time-critical applications.
+            </p>
+          </div>
+          
+          <div style={{
+            padding: 'var(--spacing-md)',
+            backgroundColor: '#fffbeb',
+            borderRadius: 'var(--radius-md)',
+            border: '1px solid #fed7aa'
+          }}>
+            <h4 style={{color: 'var(--warning-orange)', marginBottom: 'var(--spacing-sm)'}}>
+              🎯 Multi-Objective LCA
+            </h4>
+            <p className="mb-0" style={{fontSize: '0.9rem', color: 'var(--secondary-gray)'}}>
+              Balances both cost and makespan objectives. 
+              Provides trade-off solutions for complex scenarios.
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

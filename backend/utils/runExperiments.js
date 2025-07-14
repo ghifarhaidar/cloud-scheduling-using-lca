@@ -1,11 +1,11 @@
 const path = require("path");
+const fs = require("fs");
 
 const config = require("../config/config");
 const { readJsonFile, writeJsonFile } = require("./fileHandlers");
 const { runPythonScript } = require("./pythonRunner");
 const { getResults } = require("./resultProcessor");
 
-const RUN_CONFIG_PATH = path.join(config.MAIN_DIR, "run_config.json");
 const LCA_PARAMS_PATH = path.join(config.MAIN_DIR, "LCA_parameters.json");
 
 function parseRangeOrSingle(type, value) {
@@ -25,11 +25,64 @@ function parseRangeOrSingle(type, value) {
 }
 
 async function runExperiments() {
-    const timeStart = performance.now();
-    const initialConfig = readJsonFile(RUN_CONFIG_PATH);
+    const RUN_CONFIGS_PATH = path.join(config.MAIN_DIR, "run_configs.json");
+    const RESULTS_DIR = path.join(config.MAIN_DIR, "results");
+    const RESULTS_FILE = path.join(RESULTS_DIR, "results.json");
 
-    const L_values = parseRangeOrSingle(initialConfig.L_type, initialConfig.L);
-    const S_values = parseRangeOrSingle(initialConfig.S_type, initialConfig.S);
+    // Make sure the results folder exists
+    if (!fs.existsSync(RESULTS_DIR)) {
+        fs.mkdirSync(RESULTS_DIR, { recursive: true });
+    }
+
+    let allConfigs;
+    try {
+        allConfigs = readJsonFile(RUN_CONFIGS_PATH);
+        if (!Array.isArray(allConfigs)) {
+            throw new Error("run_configs.json must contain an array of configs.");
+        }
+    } catch (error) {
+        console.error(`❌ Failed to read run_configs.json: ${error.message}`);
+        return;
+    }
+
+    console.log(`📂 Found ${allConfigs.length} configs in run_configs.json`);
+
+    // 📦 Collect results for ALL configs
+    const allConfigsResults = [];
+
+    for (const [index, cfg] of allConfigs.entries()) {
+        console.log(`\n============================`);
+        console.log(`🚀 Running config #${index + 1}/${allConfigs.length}`);
+        console.log(`============================\n`);
+        try {
+            const resultsWithConfig = await runExperimentsForConfig(cfg);
+            allConfigsResults.push(resultsWithConfig);
+        } catch (err) {
+            console.error(`❌ Error running experiments for config #${index + 1}: ${err.message}`);
+        }
+    }
+
+    // ✍️ Save all results to a single file
+    try {
+        writeJsonFile(RESULTS_FILE, allConfigsResults);
+        console.log(`\n✅ All results saved to ${RESULTS_FILE}`);
+    } catch (writeError) {
+        console.error(`❌ Failed to write combined results: ${writeError.message}`);
+    }
+
+    console.log("\n✅ Finished running all configs.");
+}
+
+async function runExperimentsForConfig(currentConfig) {
+    const timeStart = performance.now();
+
+    // Save the current config to run_config.json
+    const RUN_CONFIG_PATH = path.join(config.MAIN_DIR, "run_config.json");
+    writeJsonFile(RUN_CONFIG_PATH, currentConfig);
+    console.log(`\n💾 Saved current config to run_config.json:`, currentConfig);
+
+    const L_values = parseRangeOrSingle(currentConfig.L_type, currentConfig.L);
+    const S_values = parseRangeOrSingle(currentConfig.S_type, currentConfig.S);
 
     console.log("L values to iterate:", L_values);
     console.log("S values to iterate:", S_values);
@@ -37,9 +90,9 @@ async function runExperiments() {
     const allExperimentResults = [];
 
     // Handle config_type = -1 (loop from 1 to 9)
-    const configTypes = (initialConfig.config_type === -1)
+    const configTypes = (currentConfig.config_type === -1)
         ? Array.from({ length: 9 }, (_, i) => i + 1)
-        : [initialConfig.config_type];
+        : [currentConfig.config_type];
 
     console.log("config type values", configTypes);
     for (const configType of configTypes) {
@@ -50,9 +103,9 @@ async function runExperiments() {
         try {
             await runPythonScript({
                 job: 1, // job 1 = generate config
-                'config-type': initialConfig.config_type,
-                'cost-config-type': initialConfig.cost_config_type,
-                'vm-scheduling-mode': initialConfig.vm_scheduling_mode
+                'config-type': currentConfig.config_type,
+                'cost-config-type': currentConfig.cost_config_type,
+                'vm-scheduling-mode': currentConfig.vm_scheduling_mode
             });
             console.log("✅ Initial configuration generated.");
         } catch (error) {
@@ -64,22 +117,18 @@ async function runExperiments() {
             for (const s of S_values) {
                 console.log(`\n--- Running experiment for L=${l}, S=${s}, config_type=${configType} ---`);
 
-                // Update run_config.json with current L and S values
-                const currentConfig = { ...initialConfig, L: l, S: s };
+                // Update LCA_parameter.json with current L and S values
+                const lcaParameters = {
+                    L: l,
+                    S: s,
+                    p_c: currentConfig.p_c,
+                    PSI1: currentConfig.PSI1,
+                    PSI2: currentConfig.PSI2
+                };
+
                 try {
-
-                    // Write LCA_parameter.json with only required fields
-                    const lcaParameters = {
-                        L: l,
-                        S: s,
-                        p_c: initialConfig.p_c,
-                        PSI1: initialConfig.PSI1,
-                        PSI2: initialConfig.PSI2
-                    };
-
                     writeJsonFile(LCA_PARAMS_PATH, lcaParameters);
                     console.log("📄 Created LCA_parameter.json:", lcaParameters);
-
                 } catch (writeError) {
                     console.error("❌ Error writing configuration files:", writeError.message);
                     continue; // Skip this iteration if write fails
@@ -95,14 +144,18 @@ async function runExperiments() {
             }
         }
     }
-    console.log("\n--- All experiments finished --- ");
+
+    console.log("\n--- All experiments finished for this config --- ");
     console.log("Collected results:", JSON.stringify(allExperimentResults, null, 2));
 
-    // Save allExperimentResults to a file
-    writeJsonFile(path.join(config.MAIN_DIR, "all_experiment_results.json"), allExperimentResults);
-    console.log("All experiment results saved to all_experiment_results.json");
     const timeEnd = performance.now();
     console.log(`⏱️ Time taken to run all experiments: ${(timeEnd - timeStart).toFixed(2)} ms`);
+
+    // Return the config + results to be saved in one big file
+    return {
+        config: currentConfig,
+        results: allExperimentResults
+    };
 }
 
 module.exports = {

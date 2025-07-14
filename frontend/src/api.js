@@ -7,9 +7,16 @@ export async function getConfigs() {
     return await res.json();
 }
 
+// Get Run configs
+export async function getRunConfigs() {
+    const res = await fetch(`${API_BASE_URL}/api/run-configs`);
+    if (!res.ok) throw new Error("Failed to fetch run configs");
+    return await res.json();
+}
+
 // Save a config
 export async function saveConfig(configData) {
-    const res = await fetch(`${API_BASE_URL}/api/configs`, {
+    const res = await fetch(`${API_BASE_URL}/api/config`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(configData),
