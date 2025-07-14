@@ -50,3 +50,4 @@ calc.py
 !*/package-lock.json
 */node_modules
 backend/.env
+frontend/.env.local
