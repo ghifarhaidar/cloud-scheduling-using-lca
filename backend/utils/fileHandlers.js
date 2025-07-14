@@ -67,6 +67,19 @@ const saveConfig = (configData) => {
     return writeJsonFile(filePath, configs);
 };
 
+function deleteFilesInDir(dir, extension) {
+    if (!fs.existsSync(dir)) return;
+
+    const files = fs.readdirSync(dir);
+    for (const file of files) {
+        if (file.endsWith(extension)) {
+            const filePath = path.join(dir, file);
+            fs.unlinkSync(filePath);
+            console.log(`🗑️ Deleted: ${filePath}`);
+        }
+    }
+}
+
 
 module.exports = {
     getConfigs,
@@ -74,4 +87,5 @@ module.exports = {
     saveConfig,
     readJsonFile,
     writeJsonFile,
+    deleteFilesInDir,
 };

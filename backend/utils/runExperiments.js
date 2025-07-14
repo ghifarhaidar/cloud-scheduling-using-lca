@@ -2,11 +2,14 @@ const path = require("path");
 const fs = require("fs");
 
 const config = require("../config/config");
-const { readJsonFile, writeJsonFile } = require("./fileHandlers");
+const { readJsonFile, writeJsonFile, deleteFilesInDir } = require("./fileHandlers");
 const { runPythonScript } = require("./pythonRunner");
 const { getResults } = require("./resultProcessor");
 
 const LCA_PARAMS_PATH = path.join(config.MAIN_DIR, "LCA_parameters.json");
+const lcaDir = path.join(config.MAIN_DIR, "lca");
+const algorithmsDir = path.join(config.MAIN_DIR, "algorithms");
+const resultsDir = path.join(config.MAIN_DIR, "results");
 
 function parseRangeOrSingle(type, value) {
     if (type === "range") {
@@ -25,6 +28,16 @@ function parseRangeOrSingle(type, value) {
 }
 
 async function runExperiments() {
+    console.log(`\n--- Deleting old results files ---`);
+    // Delete .txt files in lca
+    deleteFilesInDir(lcaDir, ".txt");
+
+    // Delete .txt files in algorithms (if added later)
+    deleteFilesInDir(algorithmsDir, ".txt");
+
+    // Delete .json files in results
+    deleteFilesInDir(resultsDir, ".json");
+
     const RUN_CONFIGS_PATH = path.join(config.MAIN_DIR, "run_configs.json");
     const RESULTS_DIR = path.join(config.MAIN_DIR, "results");
     const RESULTS_FILE = path.join(RESULTS_DIR, "results.json");
