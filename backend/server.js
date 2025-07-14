@@ -39,13 +39,14 @@ app.get('/health', (req, res) => {
 	});
 });
 
+const hostname = process.env.HOST_NAME
 
 // Error handling middleware (must be last)
 app.use(errorHandler);
 
 // Start server
 app.listen(PORT, '0.0.0.0', () => {
-	console.log(`🚀 Server running on http://localhost:${PORT}`);
+	console.log(`🚀 Server running on http://${hostname}:${PORT}`);
 	console.log(`📊 Environment: ${process.env.NODE_ENV}`);
 	console.log(`📁 Working directory: ${process.env.WEB_DIR}`);
 });
