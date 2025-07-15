@@ -104,7 +104,7 @@ async function runExperimentsForConfig(currentConfig) {
 
     // Handle config_type = -1 (loop from 1 to 9)
     const configTypes = (currentConfig.config_type === -1)
-        ? Array.from({ length: 9 }, (_, i) => i + 1)
+        ? [1, 5, 9]
         : [currentConfig.config_type];
 
     console.log("config type values", configTypes);
@@ -116,7 +116,7 @@ async function runExperimentsForConfig(currentConfig) {
         try {
             await runPythonScript({
                 job: 1, // job 1 = generate config
-                'config-type': currentConfig.config_type,
+                'config-type': configType,
                 'cost-config-type': currentConfig.cost_config_type,
                 'vm-scheduling-mode': currentConfig.vm_scheduling_mode
             });
@@ -150,9 +150,9 @@ async function runExperimentsForConfig(currentConfig) {
                 try {
                     await runPythonScript(); // Execute the Python script
                     const results = getResults(); // Get results after Python script runs
-                    allExperimentResults.push({ L: l, S: s, results });
+                    allExperimentResults.push({ L: l, S: s, config_type: configType, results });
                 } catch (runError) {
-                    console.error(`Experiment failed for L=${l}, S=${s}: ${runError.message}`);
+                    console.error(`Experiment failed for L=${l}, S=${s}, configType=${configType}: ${runError.message}`);
                 }
             }
         }
