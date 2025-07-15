@@ -63,7 +63,7 @@ public class MyVmCost extends VmCost {
         double p_u = commons.costConfig.getDouble("p_u");
         double p_active = commons.costConfig.getDouble("p_active");
         final double costPerMI = getDcCharacteristics().getCostPerSecond() / 1000;
-        return p_active * costPerMI * Math.pow(getVm().getMips() , x)  * getVm().getPesNumber()* getVm().getLastBusyTime() / Math.pow(p_u, x);
+        return p_active * costPerMI * Math.pow(getVm().getMips() , 1 + x)  * getVm().getPesNumber()* getVm().getLastBusyTime() / Math.pow(p_u, 1 + x);
     }
     public double getIdleProcessingCost() {
 
