@@ -4,13 +4,14 @@ import SetConfigPage from "./pages/SetConfigPage";
 import EditConfigPage from "./pages/EditConfigPage";
 import RunPage from "./pages/RunPage";
 import FitnessPage from "./pages/FitnessPage";
+import ResultsPage from "./pages/ResultsPage";
 import "./App.css";
 
 function Navigation() {
     const location = useLocation();
-    
+
     const isActive = (path) => location.pathname === path;
-    
+
     return (
         <nav className="nav-container">
             <div className="nav-content">
@@ -19,43 +20,51 @@ function Navigation() {
                 </Link>
                 <ul className="nav-links">
                     <li>
-                        <Link 
-                            to="/" 
+                        <Link
+                            to="/"
                             className={`nav-link ${isActive('/') ? 'active' : ''}`}
                         >
                             Home
                         </Link>
                     </li>
                     <li>
-                        <Link 
-                            to="/set-config" 
+                        <Link
+                            to="/set-config"
                             className={`nav-link ${isActive('/set-config') ? 'active' : ''}`}
                         >
                             Set Config
                         </Link>
                     </li>
                     <li>
-                        <Link 
-                            to="/edit-config" 
+                        <Link
+                            to="/edit-config"
                             className={`nav-link ${isActive('/edit-config') ? 'active' : ''}`}
                         >
                             Edit Config
                         </Link>
                     </li>
                     <li>
-                        <Link 
-                            to="/run" 
+                        <Link
+                            to="/run"
                             className={`nav-link ${isActive('/run') ? 'active' : ''}`}
                         >
                             Run Experiments
                         </Link>
                     </li>
                     <li>
-                        <Link 
-                            to="/fitness" 
+                        <Link
+                            to="/fitness"
                             className={`nav-link ${isActive('/fitness') ? 'active' : ''}`}
                         >
                             Fitness Analysis
+                        </Link>
+                    </li>
+                    <li>
+                        <Link
+                            to="/results"
+                            className={`nav-link ${isActive('/results') ? 'active' : ''}`}
+                        >
+                            Results Analysis
                         </Link>
                     </li>
                 </ul>
@@ -76,6 +85,7 @@ export default function App() {
                         <Route path="/edit-config" element={<EditConfigPage />} />
                         <Route path="/run" element={<RunPage />} />
                         <Route path="/fitness" element={<FitnessPage />} />
+                        <Route path="/results" element={<ResultsPage />} />
                     </Routes>
                 </main>
             </div>

@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 
-const { getConfigs, getRunConfigs, saveConfig } = require('../utils/fileHandlers');
+const { getConfigs, getRunConfigs, saveConfig, getAllResults } = require('../utils/fileHandlers');
 const { runPythonScript } = require('../utils/pythonRunner');
 const { getResults } = require('../utils/resultProcessor');
 const { runExperiments } = require('../utils/runExperiments');
@@ -52,6 +52,15 @@ router.post('/run-python', asyncHandler(async (req, res) => {
 // Get results
 router.get('/results', asyncHandler(async (req, res) => {
     const results = getResults();
+    res.json({
+        success: true,
+        data: results
+    });
+}));
+
+// Get all results
+router.get('/all-results', asyncHandler(async (req, res) => {
+    const results = getAllResults();
     res.json({
         success: true,
         data: results

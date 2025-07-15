@@ -44,6 +44,14 @@ export async function getResults() {
     return await res.json();
 }
 
+
+// Get all experiment results
+export async function getAllResults() {
+    const res = await fetch(`${API_BASE_URL}/api/all-results`);
+    if (!res.ok) throw new Error("Failed to fetch results");
+    return await res.json();
+}
+
 // Run Python script
 export async function runPython(args) {
     const res = await fetch(`${API_BASE_URL}/api/run-python`, {

@@ -79,7 +79,14 @@ function deleteFilesInDir(dir, extension) {
         }
     }
 }
+const getAllResults = () => {
+    const resultsPath = path.join(RESULTS_DIR, "results.json");
+    const results = readJsonFile(resultsPath);
 
+    return {
+        results
+    };
+}
 
 module.exports = {
     getConfigs,
@@ -88,4 +95,5 @@ module.exports = {
     readJsonFile,
     writeJsonFile,
     deleteFilesInDir,
+    getAllResults,
 };
