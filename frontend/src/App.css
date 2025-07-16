@@ -593,6 +593,33 @@ p {
   color: #475569;
 }
 
+.algorithm-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.algorithm-result {
+  padding-left: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .result-cards-container {

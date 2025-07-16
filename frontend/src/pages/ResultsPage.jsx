@@ -9,22 +9,33 @@ import {
     CategoryScale,
     LinearScale,
 } from "chart.js";
-import { getGroupedResults } from "../utils/resultPreprocessing";
+import { getGroupedResults, getAlgorithmColor, getAllAlgorithmNames } from "../utils/resultPreprocessing";
 
 ChartJS.register(BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale);
 
 export default function ResultsPage() {
     const [groupedData, setGroupedData] = useState([]);
+    const [algorithmColors, setAlgorithmColors] = useState({});
+    const [allAlgorithms, setAllAlgorithms] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const loaded = useRef(false);
 
+    // In your ResultsPage component
     useEffect(() => {
         const fetchResultsData = async () => {
             try {
                 const data = await getGroupedResults();
-                console.log("Grouped results data:", data);
+                const algorithms = getAllAlgorithmNames(data).sort(); // Sort alphabetically
+                const colors = {};
+
+                algorithms.forEach((algo, index) => {
+                    colors[algo] = getAlgorithmColor(algo, index)
+                });
+
                 setGroupedData(data);
+                setAlgorithmColors(colors);
+                setAllAlgorithms(algorithms);
                 setLoading(false);
             } catch (err) {
                 console.error("Error loading results data:", err);
@@ -67,6 +78,16 @@ export default function ResultsPage() {
                 ticks: { color: "#6b7280", font: { size: 12 } },
             },
         },
+    };
+
+    const createDatasets = (metricData) => {
+        return allAlgorithms.map((algoName) => ({
+            label: algoName.replace('_', ' '),
+            data: metricData.map((d) => d[algoName] ?? 0),
+            backgroundColor: algorithmColors[algoName] + "cc",
+            borderColor: algorithmColors[algoName],
+            borderWidth: 1,
+        }));
     };
 
     if (loading) {
@@ -112,6 +133,17 @@ export default function ResultsPage() {
                 <div className="card mb-lg">
                     <div className="card-header">
                         <h2 className="card-title">📊 Algorithm Performance Comparison</h2>
+                        <div className="algorithm-legend">
+                            {allAlgorithms.map((algo, idx) => (
+                                <span key={idx} className="legend-item">
+                                    <span
+                                        className="legend-color"
+                                        style={{ backgroundColor: algorithmColors[algo] }}
+                                    ></span>
+                                    {algo.replace('_', ' ')}
+                                </span>
+                            ))}
+                        </div>
                     </div>
                     <div className="card-body">
                         <p>These charts compare algorithm performance across different configurations.</p>
@@ -120,16 +152,10 @@ export default function ResultsPage() {
 
                 {/* Group Cards */}
                 {groupedData.map((group, groupIdx) => {
-                    // Prepare chart data for this group
                     const labels = [];
                     const totalCostData = [];
                     const makespanData = [];
                     const runTimeData = [];
-                    const algorithmColors = {
-                        'MO_LCA': '#1e3a8a',
-                        'cost_LCA': '#059669',
-                        'makespan_LCA': '#d97706'
-                    };
 
                     group.runs.forEach((run, runIdx) => {
                         const label = `Run ${runIdx + 1} (L:${run.L}, S:${run.S})`;
@@ -149,16 +175,6 @@ export default function ResultsPage() {
                         makespanData.push(makespanEntry);
                         runTimeData.push(runTimeEntry);
                     });
-
-                    const createDatasets = (metricData) => {
-                        return ['MO_LCA', 'cost_LCA', 'makespan_LCA'].map((algoName) => ({
-                            label: algoName,
-                            data: metricData.map((d) => d[algoName] ?? 0),
-                            backgroundColor: algorithmColors[algoName] + "cc",
-                            borderColor: algorithmColors[algoName],
-                            borderWidth: 1,
-                        }));
-                    };
 
                     const groupChartData = {
                         labels,
@@ -185,7 +201,7 @@ export default function ResultsPage() {
                                     <div className="card-header">
                                         <h3>Total Cost Comparison</h3>
                                     </div>
-                                    <div className="bar-chart-container" >
+                                    <div className="bar-chart-container">
                                         <Bar
                                             data={{
                                                 labels: groupChartData.labels,
@@ -194,7 +210,6 @@ export default function ResultsPage() {
                                             options={chartOptions}
                                         />
                                     </div>
-
                                 </div>
 
                                 {/* Makespan Card */}
@@ -211,7 +226,6 @@ export default function ResultsPage() {
                                             options={chartOptions}
                                         />
                                     </div>
-
                                 </div>
 
                                 {/* Run Time Card */}
@@ -228,9 +242,7 @@ export default function ResultsPage() {
                                             options={chartOptions}
                                         />
                                     </div>
-
                                 </div>
-
                             </div>
 
                             {/* Detailed Runs */}
@@ -243,11 +255,15 @@ export default function ResultsPage() {
                                             <p>L: {run.L}, S: {run.S}, Type: {run.config_type}</p>
                                             <div className="algorithm-results">
                                                 {run.algorithms.map((algo, algoIdx) => (
-                                                    <div key={algoIdx} className="algorithm-result">
-                                                        <h5>{algo.name}</h5>
-                                                        <p>Cost: {algo.totalCost.toFixed(2)}</p>
-                                                        <p>Makespan: {algo.makespan.toFixed(2)}</p>
-                                                        <p>Runtime: {algo.run_time.toFixed(4)}s</p>
+                                                    <div
+                                                        key={algoIdx}
+                                                        className="algorithm-result"
+                                                        style={{ borderLeft: `4px solid ${algorithmColors[algo.name]}` }}
+                                                    >
+                                                        <h5>{algo.name.replace('_', ' ')}</h5>
+                                                        <p>Cost: {algo.totalCost?.toFixed(2) ?? 'N/A'}</p>
+                                                        <p>Makespan: {algo.makespan?.toFixed(2) ?? 'N/A'}</p>
+                                                        <p>Runtime: {algo.run_time?.toFixed(4) ?? 'N/A'}s</p>
                                                     </div>
                                                 ))}
                                             </div>
