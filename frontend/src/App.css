@@ -377,7 +377,17 @@ p {
   padding: var(--spacing-md);
   margin: var(--spacing-md) 0;
   border: 1px solid var(--border-gray);
-  height: 300px;
+  height: auto;
+}
+
+.bar-chart-container {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--spacing-md);
+  margin: var(--spacing-md) 0;
+  border: 1px solid var(--border-gray);
+  height: 275px;
 }
 
 .chart-title {
@@ -506,7 +516,7 @@ p {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width:390px;
+  width: 370px;
 }
 
 .result-card .card-header {

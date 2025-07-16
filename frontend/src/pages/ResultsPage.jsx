@@ -185,7 +185,7 @@ export default function ResultsPage() {
                                     <div className="card-header">
                                         <h3>Total Cost Comparison</h3>
                                     </div>
-                                    <div className="chart-container" >
+                                    <div className="bar-chart-container" >
                                         <Bar
                                             data={{
                                                 labels: groupChartData.labels,
@@ -202,7 +202,7 @@ export default function ResultsPage() {
                                     <div className="card-header">
                                         <h3>Makespan Comparison</h3>
                                     </div>
-                                    <div className="chart-container">
+                                    <div className="bar-chart-container">
                                         <Bar
                                             data={{
                                                 labels: groupChartData.labels,
@@ -219,7 +219,7 @@ export default function ResultsPage() {
                                     <div className="card-header">
                                         <h3>Run Time Comparison</h3>
                                     </div>
-                                    <div className="chart-container">
+                                    <div className="bar-chart-container">
                                         <Bar
                                             data={{
                                                 labels: groupChartData.labels,
