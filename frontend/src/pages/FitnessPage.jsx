@@ -25,25 +25,22 @@ export default function FitnessPage() {
       try {
         const { data } = await getAllFitness(); // 👈 call API helper
         console.log("data loaded: ", data);
-        
-        // Scientific color palette for algorithms
-        const algorithmColors = {
-          "Cost_LCA": "#1e3a8a",      // Primary blue
-          "Makespan_LCA": "#059669",   // Success green  
-          "MO_LCA": "#d97706"          // Warning orange
-        };
-        
-        const datasets = Object.entries(data).map(([algo, points]) => ({
-          label: algo.replace('_', ' '), // Make labels more readable
-          data: points.map((p) => ({ x: p.t, y: p.fitness })),
-          borderColor: algorithmColors[algo] || "#6b7280",
-          backgroundColor: algorithmColors[algo] + "20", // Add transparency
-          fill: false,
-          tension: 0.3,
-          pointRadius: 2,
-          pointHoverRadius: 6,
-          borderWidth: 3,
-        }));
+
+        const datasets = Object.entries(data).map(([algo, points]) => {
+          const baseColor = getAlgorithmColor(algo);
+
+          return {
+            label: algo.replace('_', ' '),
+            data: points.map((p) => ({ x: p.t, y: p.fitness })),
+            borderColor: baseColor,
+            backgroundColor: `${baseColor}20`,
+            fill: false,
+            tension: 0.3,
+            pointRadius: 2,
+            pointHoverRadius: 6,
+            borderWidth: 3,
+          };
+        });
 
         setChartData({ datasets });
         setLoading(false);
@@ -53,7 +50,7 @@ export default function FitnessPage() {
         setLoading(false);
       }
     };
-    
+
     if (!loaded.current) {
       loaded.current = true;
       fetchFitnessData();
@@ -94,10 +91,10 @@ export default function FitnessPage() {
         cornerRadius: 8,
         displayColors: true,
         callbacks: {
-          title: function(context) {
+          title: function (context) {
             return `Time: ${context[0].parsed.x}`;
           },
-          label: function(context) {
+          label: function (context) {
             return `${context.dataset.label}: ${context.parsed.y.toFixed(4)}`;
           }
         }
@@ -179,10 +176,10 @@ export default function FitnessPage() {
             color: 'var(--error-red)'
           }}>
             <h3>⚠️ {error}</h3>
-            <p style={{color: 'var(--secondary-gray)', marginTop: 'var(--spacing-md)'}}>
+            <p style={{ color: 'var(--secondary-gray)', marginTop: 'var(--spacing-md)' }}>
               Please run experiments first using the "Run Experiments" page.
             </p>
-            <button 
+            <button
               className="btn btn-primary mt-lg"
               onClick={() => window.location.href = '/run'}
             >
@@ -215,13 +212,13 @@ export default function FitnessPage() {
   return (
     <div>
       <h1>Fitness Analysis</h1>
-      
+
       <div className="card">
         <div className="card-header">
           <h2 className="card-title">📈 Algorithm Performance Comparison</h2>
         </div>
         <p>
-          This chart shows the fitness evolution over time for all League Championship Algorithm variants. 
+          This chart shows the fitness evolution over time for all League Championship Algorithm variants.
           Lower fitness values generally indicate better performance for optimization problems.
         </p>
       </div>
@@ -243,41 +240,41 @@ export default function FitnessPage() {
             borderRadius: 'var(--radius-md)',
             border: '1px solid var(--border-gray)'
           }}>
-            <h4 style={{color: 'var(--primary-blue)', marginBottom: 'var(--spacing-sm)'}}>
+            <h4 style={{ color: 'var(--primary-blue)', marginBottom: 'var(--spacing-sm)' }}>
               💰 Cost LCA
             </h4>
-            <p className="mb-0" style={{fontSize: '0.9rem', color: 'var(--secondary-gray)'}}>
-              Focuses on minimizing resource costs in cloud scheduling. 
+            <p className="mb-0" style={{ fontSize: '0.9rem', color: 'var(--secondary-gray)' }}>
+              Focuses on minimizing resource costs in cloud scheduling.
               Ideal for budget-constrained environments.
             </p>
           </div>
-          
+
           <div style={{
             padding: 'var(--spacing-md)',
             backgroundColor: '#f0fdf4',
             borderRadius: 'var(--radius-md)',
             border: '1px solid #bbf7d0'
           }}>
-            <h4 style={{color: 'var(--success-green)', marginBottom: 'var(--spacing-sm)'}}>
+            <h4 style={{ color: 'var(--success-green)', marginBottom: 'var(--spacing-sm)' }}>
               ⏱️ Makespan LCA
             </h4>
-            <p className="mb-0" style={{fontSize: '0.9rem', color: 'var(--secondary-gray)'}}>
-              Optimizes for minimum execution time (makespan). 
+            <p className="mb-0" style={{ fontSize: '0.9rem', color: 'var(--secondary-gray)' }}>
+              Optimizes for minimum execution time (makespan).
               Best for time-critical applications.
             </p>
           </div>
-          
+
           <div style={{
             padding: 'var(--spacing-md)',
             backgroundColor: '#fffbeb',
             borderRadius: 'var(--radius-md)',
             border: '1px solid #fed7aa'
           }}>
-            <h4 style={{color: 'var(--warning-orange)', marginBottom: 'var(--spacing-sm)'}}>
+            <h4 style={{ color: 'var(--warning-orange)', marginBottom: 'var(--spacing-sm)' }}>
               🎯 Multi-Objective LCA
             </h4>
-            <p className="mb-0" style={{fontSize: '0.9rem', color: 'var(--secondary-gray)'}}>
-              Balances both cost and makespan objectives. 
+            <p className="mb-0" style={{ fontSize: '0.9rem', color: 'var(--secondary-gray)' }}>
+              Balances both cost and makespan objectives.
               Provides trade-off solutions for complex scenarios.
             </p>
           </div>
@@ -286,3 +283,27 @@ export default function FitnessPage() {
     </div>
   );
 }
+
+
+const algorithmColorCache = {};
+
+const getAlgorithmColor = (algoName) => {
+  // Simple color palette (expand as needed)
+  const colorPalette = [
+    '#1e3a8a', '#059669', '#d97706',  // Your original colors
+    '#7c3aed', '#dc2626', '#0891b2',  // Additional colors
+    '#9d174d', '#4d7c0f', '#b45309'   // More fallback colors
+  ];
+
+  // Generate consistent color for each algorithm
+  if (!algorithmColorCache[algoName]) {
+    // Simple hash calculation for consistent color mapping
+    let hash = 0;
+    for (let i = 0; i < algoName.length; i++) {
+      hash = algoName.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    algorithmColorCache[algoName] = colorPalette[Math.abs(hash) % colorPalette.length];
+  }
+
+  return algorithmColorCache[algoName];
+};
