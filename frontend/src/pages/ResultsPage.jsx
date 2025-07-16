@@ -9,7 +9,7 @@ import {
     CategoryScale,
     LinearScale,
 } from "chart.js";
-import { getGroupedResults } from "../utils/resultPreproccessing";
+import { getGroupedResults } from "../utils/resultPreprocessing";
 
 ChartJS.register(BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale);
 
@@ -185,7 +185,7 @@ export default function ResultsPage() {
                                     <div className="card-header">
                                         <h3>Total Cost Comparison</h3>
                                     </div>
-                                    <div className="chart-container">
+                                    <div className="chart-container" >
                                         <Bar
                                             data={{
                                                 labels: groupChartData.labels,
@@ -194,9 +194,7 @@ export default function ResultsPage() {
                                             options={chartOptions}
                                         />
                                     </div>
-                                    <div className="card-footer">
-                                        <small>Lower values indicate better cost efficiency</small>
-                                    </div>
+
                                 </div>
 
                                 {/* Makespan Card */}
@@ -213,9 +211,7 @@ export default function ResultsPage() {
                                             options={chartOptions}
                                         />
                                     </div>
-                                    <div className="card-footer">
-                                        <small>Lower values indicate faster completion</small>
-                                    </div>
+
                                 </div>
 
                                 {/* Run Time Card */}
@@ -232,10 +228,9 @@ export default function ResultsPage() {
                                             options={chartOptions}
                                         />
                                     </div>
-                                    <div className="card-footer">
-                                        <small>Lower values indicate faster algorithms</small>
-                                    </div>
+
                                 </div>
+
                             </div>
 
                             {/* Detailed Runs */}

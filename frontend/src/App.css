@@ -374,9 +374,10 @@ p {
   background: var(--white);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
-  padding: var(--spacing-xl);
-  margin: var(--spacing-lg) 0;
+  padding: var(--spacing-md);
+  margin: var(--spacing-md) 0;
   border: 1px solid var(--border-gray);
+  height: 300px;
 }
 
 .chart-title {
@@ -491,10 +492,10 @@ p {
 
 /* Result Cards Container */
 .result-cards-container {
-  display: grid;
+  display: flex;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: 1.5rem;
-  padding: 1.5rem;
+  padding: 1rem;
 }
 
 .result-card {
@@ -504,26 +505,21 @@ p {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  width:390px;
 }
 
 .result-card .card-header {
-  padding: 1rem 1.5rem;
+  padding: 0.75rem 1.5rem;
   background: #f1f5f9;
   border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 5px;
 }
 
 .result-card .card-header h3 {
   margin: 0;
   font-size: 1.1rem;
   color: #334155;
-}
-
-.result-card .card-footer {
-  padding: 0.75rem 1.5rem;
-  background: #f8fafc;
-  border-top: 1px solid #e2e8f0;
-  font-size: 0.85rem;
-  color: #64748b;
 }
 
 /* Runs Details */
