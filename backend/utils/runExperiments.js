@@ -5,8 +5,9 @@ const config = require("../config/config");
 const { readJsonFile, writeJsonFile, deleteFilesInDir } = require("./fileHandlers");
 const { runPythonScript } = require("./pythonRunner");
 const { getResults } = require("./resultProcessor");
+const { log } = require("console");
 
-const LCA_PARAMS_PATH = path.join(config.MAIN_DIR, "LCA_parameters.json");
+const LCA_PARAMS_PATH = path.join(config.CONFIGS_DIR, "LCA_parameters.json");
 const lcaDir = path.join(config.MAIN_DIR, "lca");
 const algorithmsDir = path.join(config.MAIN_DIR, "algorithms");
 const resultsDir = path.join(config.MAIN_DIR, "results");
@@ -38,7 +39,7 @@ async function runExperiments() {
     // Delete .json files in results
     deleteFilesInDir(resultsDir, ".json");
 
-    const RUN_CONFIGS_PATH = path.join(config.MAIN_DIR, "run_configs.json");
+    const RUN_CONFIGS_PATH = path.join(config.CONFIGS_DIR, "run_configs.json");
     const RESULTS_DIR = path.join(config.MAIN_DIR, "results");
     const RESULTS_FILE = path.join(RESULTS_DIR, "results.json");
 
@@ -90,7 +91,7 @@ async function runExperimentsForConfig(currentConfig) {
     const timeStart = performance.now();
 
     // Save the current config to run_config.json
-    const RUN_CONFIG_PATH = path.join(config.MAIN_DIR, "run_config.json");
+    const RUN_CONFIG_PATH = path.join(config.CONFIGS_DIR, "run_config.json");
     writeJsonFile(RUN_CONFIG_PATH, currentConfig);
     console.log(`\n💾 Saved current config to run_config.json:`, currentConfig);
 

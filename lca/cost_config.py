@@ -45,5 +45,5 @@ class CloudSimCostConfigGenerator:
 def generate_cost_config(COST_CONFIGURATION_CHOICE=1):
     generator = CloudSimCostConfigGenerator(COST_CONFIGURATION_CHOICE)
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    with open(f"{current_dir}/../sim_cost_config.json", "w") as f:
+    with open(f"{current_dir}/../configs/sim_cost_config.json", "w") as f:
         json.dump(generator.generate_config(), f, indent=4)

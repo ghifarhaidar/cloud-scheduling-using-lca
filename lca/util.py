@@ -4,13 +4,13 @@ import numpy as np
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
-
+CONFIGS_DIR = os.path.abspath(os.path.join(BASE_DIR, "configs"))
 
 def read_lca_parameters():
     """
     Reads LCA parameters from the given JSON file and returns them as a dictionary.
     """
-    LCA_parameters_path = os.path.join(BASE_DIR, "LCA_parameters.json")
+    LCA_parameters_path = os.path.join(CONFIGS_DIR, "LCA_parameters.json")
     with open(LCA_parameters_path, 'r') as file:
         params = json.load(file)
 
@@ -18,7 +18,7 @@ def read_lca_parameters():
 
 
 def get_config():
-    sim_config_path = os.path.join(BASE_DIR, "sim_config.json")
+    sim_config_path = os.path.join(CONFIGS_DIR, "sim_config.json")
     with open(sim_config_path, 'r') as file:
         data = json.load(file)
     mode = data['mode']
@@ -31,7 +31,7 @@ def get_config():
 
 
 def get_cost_config():
-    sim_cost_config_path = os.path.join(BASE_DIR, "sim_cost_config.json")
+    sim_cost_config_path = os.path.join(CONFIGS_DIR, "sim_cost_config.json")
     with open(sim_cost_config_path, 'r') as file:
         data = json.load(file)
 
@@ -86,7 +86,7 @@ def export_results(name, best, fitness, original_indices, running_tme):
 
 
 def change_in_vm_scheduling_method(name):
-    config_file = os.path.join(BASE_DIR, "sim_config.json")
+    config_file = os.path.join(CONFIGS_DIR, "sim_config.json")
     current_dir = os.path.dirname(os.path.abspath(__file__))
     with open(config_file, 'r') as file:
         data = json.load(file)

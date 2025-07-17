@@ -11,25 +11,19 @@ COST_CONFIGURATION_CHOICE = 1
 MODE = "time"
 
 
-ALGORITHM_NAMES = {
-    "1": "makespan_LCA",
-    "2": "cost_LCA",
-    "3": "MO_LCA"
-}
-
 # Get absolute path to this script's directory
 SCRIPT_DIR = ""
-
+CONFIGS_DIR = os.path.join(SCRIPT_DIR, "configs")
 
 def load_algorithms():
     """Load algorithms from algorithms.json file"""
-    algorithms_path = os.path.join(SCRIPT_DIR, 'algorithms.json')
+    algorithms_path = os.path.join(CONFIGS_DIR, 'algorithms.json')
     try:
         with open(algorithms_path, 'r') as f:
             algorithms_data = json.load(f)
         return algorithms_data
     except FileNotFoundError:
-        print(f"❌ Error: algorithms.json not found in {SCRIPT_DIR}")
+        print(f"❌ Error: algorithms.json not found in {CONFIGS_DIR}")
         exit(1)
     except json.JSONDecodeError:
         print(f"❌ Error: Invalid JSON format in algorithms.json")

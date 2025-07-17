@@ -44,8 +44,8 @@ public class commons {
     public static JSONObject config;
     public static JSONObject costConfig;
     public static void initConfig() {
-        config = commons.loadConfig("sim_config.json");
-        costConfig = commons.loadConfig("sim_cost_config.json");
+        config = commons.loadConfig("sim_config.json", "configs/");
+        costConfig = commons.loadConfig("sim_cost_config.json", "configs/");
     }
 
     public static Datacenter createDatacenter(CloudSimPlus simulation) {
@@ -125,9 +125,9 @@ public class commons {
     }
 
 
-    public static JSONObject loadConfig(String file) {
+    public static JSONObject loadConfig(String file, String dir) {
         try {
-            String content = Files.readString(Paths.get(file));
+            String content = Files.readString(Paths.get(dir + file));
             return new JSONObject(content);
         } catch (Exception e) {
             throw new RuntimeException("Failed to load " + file, e);

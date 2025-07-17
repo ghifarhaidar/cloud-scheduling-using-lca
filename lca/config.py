@@ -337,5 +337,5 @@ def generate_config(CONFIGURATION_CHOICE=1, MODE="time"):
 
     generator = CloudSimConfigGenerator(CONFIGURATION_CHOICE, MODE)
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    with open(f"{current_dir}/../sim_config.json", "w") as f:
+    with open(f"{current_dir}/../configs/sim_config.json", "w") as f:
         json.dump(generator.generate_config(), f, indent=4)

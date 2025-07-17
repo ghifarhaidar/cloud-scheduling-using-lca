@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const { MAIN_DIR, RESULTS_DIR } = require("../config/config");
+const { MAIN_DIR, RESULTS_DIR, CONFIGS_DIR } = require("../config/config");
 
 const readJsonFile = (filePath) => {
     try {
@@ -23,8 +23,8 @@ const writeJsonFile = (filePath, data) => {
 };
 
 const getConfigs = () => {
-    const simConfigPath = path.join(MAIN_DIR, "sim_config.json");
-    const simCostConfigPath = path.join(MAIN_DIR, "sim_cost_config.json");
+    const simConfigPath = path.join(CONFIGS_DIR, "sim_config.json");
+    const simCostConfigPath = path.join(CONFIGS_DIR, "sim_cost_config.json");
 
     const simConfig = readJsonFile(simConfigPath);
     const simCostConfig = readJsonFile(simCostConfigPath);
@@ -36,7 +36,7 @@ const getConfigs = () => {
 };
 
 const getRunConfigs = () => {
-    const runConfigsPath = path.join(MAIN_DIR, "run_configs.json");
+    const runConfigsPath = path.join(CONFIGS_DIR, "run_configs.json");
     const runConfigs = readJsonFile(runConfigsPath);
 
     return {
@@ -45,7 +45,7 @@ const getRunConfigs = () => {
 };
 
 const saveConfig = (configData) => {
-    const filePath = path.join(MAIN_DIR, "run_configs.json");
+    const filePath = path.join(CONFIGS_DIR, "run_configs.json");
     let configs = [];
 
     // Try reading existing configs

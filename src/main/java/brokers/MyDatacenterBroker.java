@@ -28,7 +28,7 @@ public class MyDatacenterBroker extends DatacenterBrokerSimple {
      * @param file Path to the JSON configuration file containing the schedule
      */
     public void loadSchedule(String file){
-        JSONObject config = commons.loadConfig(file);
+        JSONObject config = commons.loadConfig(file, "");
         schedule = config.getJSONArray("schedule");
     }
 
