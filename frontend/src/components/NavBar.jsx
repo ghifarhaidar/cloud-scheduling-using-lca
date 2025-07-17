@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-
+import "../styles/navbar.css"
 const links = [
     {
         title: "home",
@@ -44,7 +44,7 @@ export default function NavBar() {
                 <ul className="nav-links">
                     {links.map((link, index) => (
 
-                        <li>
+                        <li key={index}> 
                             <Link
                                 to={link.path}
                                 className={`nav-link ${checkActive(link.path) ? 'active' : ''}`}

@@ -9,6 +9,9 @@ import {
     CategoryScale,
     LinearScale,
 } from "chart.js";
+import Loading from "../components/loading"
+import LoadingError from "../components/loadingError"
+
 import { getGroupedResults, getAlgorithmColor, getAllAlgorithmNames } from "../utils/resultPreprocessing";
 
 ChartJS.register(BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale);
@@ -49,7 +52,6 @@ export default function ResultsPage() {
             fetchResultsData();
         }
     }, []);
-
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
@@ -90,45 +92,12 @@ export default function ResultsPage() {
         }));
     };
 
-    if (loading) {
-        return (
-            <div className="app-container">
-                <h1>Results Analysis</h1>
-                <div className="card">
-                    <div className="loading">
-                        <div className="spinner"></div>
-                        Loading results data...
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    if (error) {
-        return (
-            <div className="app-container">
-                <h1>Results Analysis</h1>
-                <div className="card">
-                    <div className="error-message">
-                        <h3>⚠️ {error}</h3>
-                        <p>Please run experiments first using the "Run Experiments" page.</p>
-                        <button
-                            className="btn btn-primary mt-lg"
-                            onClick={() => (window.location.href = "/run")}
-                        >
-                            🚀 Go to Experiments
-                        </button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="app-container">
             <main className="main-content">
                 <h1>Results Analysis</h1>
-
+                {loading ? <LoadingError error={error} /> : error ? <Loading content="results" />:
+                <>
                 {/* Overview Card */}
                 <div className="card mb-lg">
                     <div className="card-header">
@@ -273,7 +242,7 @@ export default function ResultsPage() {
                             </div>
                         </div>
                     );
-                })}
+                })}</>}
             </main>
         </div>
     );
