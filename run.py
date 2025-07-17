@@ -1,3 +1,4 @@
+import json
 import os
 import subprocess
 import argparse
@@ -18,6 +19,21 @@ ALGORITHM_NAMES = {
 
 # Get absolute path to this script's directory
 SCRIPT_DIR = ""
+
+
+def load_algorithms():
+    """Load algorithms from algorithms.json file"""
+    algorithms_path = os.path.join(SCRIPT_DIR, 'algorithms.json')
+    try:
+        with open(algorithms_path, 'r') as f:
+            algorithms_data = json.load(f)
+        return algorithms_data
+    except FileNotFoundError:
+        print(f"❌ Error: algorithms.json not found in {SCRIPT_DIR}")
+        exit(1)
+    except json.JSONDecodeError:
+        print(f"❌ Error: Invalid JSON format in algorithms.json")
+        exit(1)
 
 
 def build_java_project():
@@ -65,14 +81,15 @@ def run_java_program(input, algorithm_name):
     print(f"✅ Java program finished! (log: {run_log_file})")
 
 
-def run_python_script(inputs):
-    python_file = os.path.join(SCRIPT_DIR, "lca", "main.py")
-    print(f"\n🐍 Running Python script {python_file}.")
+def run_python_script(directory, name):
+    python_file = os.path.join(SCRIPT_DIR, directory, "main.py")
+    print(f"\n🐍 Running Python script {python_file} with algorithm: {name}")
+
     result = subprocess.run(["python3", python_file],
-                            input=inputs,
+                            input=name,
                             text=True)
     if result.returncode != 0:
-        print("❌ Python script execution failed!")
+        print(f"❌ Python script execution failed! Error: {result.stderr}")
         exit(1)
     print("✅ Python script finished successfully!")
 
@@ -151,16 +168,14 @@ def main():
             )
 
     if args.job == 0:
-        for i in range(1, 4):
-            algorithm_choice = str(i)
-            algorithm_name = ALGORITHM_NAMES[algorithm_choice]
-            print(f"\n=== Running algorithm: {algorithm_name} ===")
+        algorithms_to_run = load_algorithms().get('algorithms', [])
+        for algorithm in algorithms_to_run:
+            print(
+                f"\n=== Running algorithm: {algorithm["directory"]}/{algorithm["name"]} ===")
 
-            run_python_script((
-                algorithm_choice + "\n"
-            ))
-            # build_java_project(algorithm_name)
-            run_java_program((algorithm_choice + "\n"), algorithm_name)
+            run_python_script(algorithm["directory"], algorithm["name"])
+
+            run_java_program((algorithm["name"] + "\n"), algorithm["name"])
 
     if args.job == 1:
         generate_config(args)

@@ -26,24 +26,8 @@ public class BasicExample {
     private final Datacenter datacenter0;
 
     public static void main(String[] args) {
-        // Get user input for scheduling algorithm
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Available scheduling algorithms:");
-        System.out.println("1. Makespan LCA");
-        System.out.println("2. Cost LCA");
-        System.out.println("3. Multi-Objective LCA");
-        System.out.print("Select algorithm to run (1-3): ");
-        int choice = scanner.nextInt();
-        String algorithm = switch (choice) {
-            case 1 -> "makespan_LCA";
-            case 2 -> "cost_LCA";
-            case 3 -> "MO_LCA";
-            default -> {
-                System.out.println("Invalid choice. Defaulting to cost_LCA.");
-                yield "cost_LCA";
-            }
-        };
-
+        String algorithm = scanner.nextLine();
         new BasicExample(algorithm);
     }
 

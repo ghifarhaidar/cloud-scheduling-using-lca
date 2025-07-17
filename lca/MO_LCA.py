@@ -1,12 +1,15 @@
-import time
-from dev import LeagueChampionshipAlgorithm
-import os
-import json
-import random
-import numpy as np
-import heapq
 from collections import defaultdict
-from util import get_config, get_cost_config, sort_vms, get_solution, export_results
+import heapq
+import time
+import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+sys.path.append(parent_dir)
+
+from lca.util import get_config, get_cost_config, sort_vms, get_solution, export_results  # nopep8
+from lca.dev import LeagueChampionshipAlgorithm  # nopep8
+
 
 vms = list()
 cloudlets = list()

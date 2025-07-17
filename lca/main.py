@@ -1,44 +1,35 @@
+import importlib
+import sys
 
-import Makespan_LCA
-import Cost_LCA
-import MO_LCA
 
-def run_algorithm(choice):
+def run_algorithm(algorithm_name):
     """Run the selected algorithm"""
-    if choice == '1':
-        print("\nRunning Makespan LCA...")
-        Makespan_LCA.run()
-    elif choice == '2':
-        print("\nRunning Cost LCA...")
-        Cost_LCA.run()
-    elif choice == '3':
-        print("\nRunning Multi-Objective LCA...")
-        MO_LCA.run()
-    elif choice == '4':
-        print("\nRunning Makespan LCA...")
-        Makespan_LCA.run()
-        print("\nRunning Cost LCA...")
-        Cost_LCA.run()
-        print("\nRunning Multi-Objective LCA...")
-        MO_LCA.run()
-    else:
-        print("Invalid selection")
+
+    try:
+        # Dynamically import and run the module
+        module = importlib.import_module(f"{algorithm_name}")
+        module.run()
+    except ImportError:
+        print(
+            f"Error: Algorithm '{algorithm_name}' not found in this directory")
+        sys.exit(1)
+    except AttributeError:
+        print(f"Error: Algorithm '{algorithm_name}' has no 'run' function")
+        sys.exit(1)
 
 
 def main():
+    # Get algorithm name from stdin (passed from parent script)
+    if not sys.stdin.isatty():  # Check if input is being piped
+        algorithm_name = sys.stdin.read().strip()
+    else:
+        algorithm_name = input("Enter algorithm name: ").strip()
 
-    # Simple menu interface
-    print("\nAvailable Algorithms:")
-    print("1. Makespan LCA")
-    print("2. Cost LCA")
-    print("3. Multi-Objective LCA")
-    print("4. Run all?")
+    if not algorithm_name:
+        print("Error: No algorithm name provided")
+        sys.exit(1)
 
-    # Get user input
-    choice = input("Select algorithm to run (1-3): ")
-
-    # Run selected algorithm
-    run_algorithm(choice)
+    run_algorithm(algorithm_name)
 
 
 if __name__ == "__main__":
