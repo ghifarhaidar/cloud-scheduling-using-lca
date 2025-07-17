@@ -1,4 +1,4 @@
-import { getAllResults } from "../api";
+import { getAllResults } from "../utils/api";
 
 // Define a color palette (expand as needed)
 const ALGORITHM_COLORS = [

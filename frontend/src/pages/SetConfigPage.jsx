@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { saveConfig } from "../api"; 
+import { saveConfig } from "../utils/api"; 
 
 export default function SetConfigPage() {
   const [LType, setLType] = useState('single');

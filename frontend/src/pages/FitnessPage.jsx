@@ -10,7 +10,7 @@ import {
   Legend,
   CategoryScale,
 } from "chart.js";
-import { getAllFitness } from "../api"; // 👈 import your API helper
+import { getAllFitness } from "../utils/api"; // 👈 import your API helper
 
 ChartJS.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend, CategoryScale);
 

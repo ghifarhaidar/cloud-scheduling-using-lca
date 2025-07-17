@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getRunConfigs, runExperiments } from "../api"; // adjust path if needed
+import { getRunConfigs, runExperiments } from "../utils/api"; // adjust path if needed
 
 const RunPage = () => {
   const [params, setParams] = useState("Loading...");
