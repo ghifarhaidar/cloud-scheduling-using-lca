@@ -11,6 +11,8 @@ import {
   CategoryScale,
 } from "chart.js";
 import { getAllFitness } from "../utils/api"; // 👈 import your API helper
+import Loading from "../components/loading"
+import LoadingError from "../components/loadingError"
 
 ChartJS.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend, CategoryScale);
 
@@ -151,63 +153,6 @@ export default function FitnessPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div>
-        <h1>Fitness Analysis</h1>
-        <div className="card">
-          <div className="loading">
-            <div className="spinner"></div>
-            Loading fitness data...
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div>
-        <h1>Fitness Analysis</h1>
-        <div className="card">
-          <div style={{
-            padding: 'var(--spacing-xl)',
-            textAlign: 'center',
-            color: 'var(--error-red)'
-          }}>
-            <h3>⚠️ {error}</h3>
-            <p style={{ color: 'var(--secondary-gray)', marginTop: 'var(--spacing-md)' }}>
-              Please run experiments first using the "Run Experiments" page.
-            </p>
-            <button
-              className="btn btn-primary mt-lg"
-              onClick={() => window.location.href = '/run'}
-            >
-              🚀 Go to Experiments
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!chartData || !chartData.datasets || chartData.datasets.length === 0) {
-    return (
-      <div>
-        <h1>Fitness Analysis</h1>
-        <div className="card">
-          <div style={{
-            padding: 'var(--spacing-xl)',
-            textAlign: 'center',
-            color: 'var(--secondary-gray)'
-          }}>
-            <h3>📊 No Data Available</h3>
-            <p>No fitness data found. Please run experiments to generate data.</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div>
@@ -222,64 +167,74 @@ export default function FitnessPage() {
           Lower fitness values generally indicate better performance for optimization problems.
         </p>
       </div>
-
-      <div className="chart-container">
-        <div style={{ height: '500px' }}>
-          <Line data={chartData} options={chartOptions} />
-        </div>
-      </div>
-
-      <div className="card">
-        <div className="card-header">
-          <h3 className="card-title">🔍 Analysis Insights</h3>
-        </div>
-        <div className="flex flex-col gap-md">
+      {loading ? <Loading content="fitness" /> : error ? <LoadingError error={error} /> :
+        !chartData || !chartData.datasets || chartData.datasets.length === 0 ? <div className="card">
           <div style={{
-            padding: 'var(--spacing-md)',
-            backgroundColor: 'var(--light-blue)',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid var(--border-gray)'
+            padding: 'var(--spacing-xl)',
+            textAlign: 'center',
+            color: 'var(--secondary-gray)'
           }}>
-            <h4 style={{ color: 'var(--primary-blue)', marginBottom: 'var(--spacing-sm)' }}>
-              💰 Cost LCA
-            </h4>
-            <p className="mb-0" style={{ fontSize: '0.9rem', color: 'var(--secondary-gray)' }}>
-              Focuses on minimizing resource costs in cloud scheduling.
-              Ideal for budget-constrained environments.
-            </p>
+            <h3>📊 No Data Available</h3>
+            <p>No fitness data found. Please run experiments to generate data.</p>
+          </div>
+        </div> : <>
+          <div className="chart-container">
+            <div style={{ height: '500px' }}>
+              <Line data={chartData} options={chartOptions} />
+            </div>
           </div>
 
-          <div style={{
-            padding: 'var(--spacing-md)',
-            backgroundColor: '#f0fdf4',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid #bbf7d0'
-          }}>
-            <h4 style={{ color: 'var(--success-green)', marginBottom: 'var(--spacing-sm)' }}>
-              ⏱️ Makespan LCA
-            </h4>
-            <p className="mb-0" style={{ fontSize: '0.9rem', color: 'var(--secondary-gray)' }}>
-              Optimizes for minimum execution time (makespan).
-              Best for time-critical applications.
-            </p>
-          </div>
+          <div className="card">
+            <div className="card-header">
+              <h3 className="card-title">🔍 Analysis Insights</h3>
+            </div>
+            <div className="flex flex-col gap-md">
+              <div style={{
+                padding: 'var(--spacing-md)',
+                backgroundColor: 'var(--light-blue)',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--border-gray)'
+              }}>
+                <h4 style={{ color: 'var(--primary-blue)', marginBottom: 'var(--spacing-sm)' }}>
+                  💰 Cost LCA
+                </h4>
+                <p className="mb-0" style={{ fontSize: '0.9rem', color: 'var(--secondary-gray)' }}>
+                  Focuses on minimizing resource costs in cloud scheduling.
+                  Ideal for budget-constrained environments.
+                </p>
+              </div>
 
-          <div style={{
-            padding: 'var(--spacing-md)',
-            backgroundColor: '#fffbeb',
-            borderRadius: 'var(--radius-md)',
-            border: '1px solid #fed7aa'
-          }}>
-            <h4 style={{ color: 'var(--warning-orange)', marginBottom: 'var(--spacing-sm)' }}>
-              🎯 Multi-Objective LCA
-            </h4>
-            <p className="mb-0" style={{ fontSize: '0.9rem', color: 'var(--secondary-gray)' }}>
-              Balances both cost and makespan objectives.
-              Provides trade-off solutions for complex scenarios.
-            </p>
-          </div>
-        </div>
-      </div>
+              <div style={{
+                padding: 'var(--spacing-md)',
+                backgroundColor: '#f0fdf4',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid #bbf7d0'
+              }}>
+                <h4 style={{ color: 'var(--success-green)', marginBottom: 'var(--spacing-sm)' }}>
+                  ⏱️ Makespan LCA
+                </h4>
+                <p className="mb-0" style={{ fontSize: '0.9rem', color: 'var(--secondary-gray)' }}>
+                  Optimizes for minimum execution time (makespan).
+                  Best for time-critical applications.
+                </p>
+              </div>
+
+              <div style={{
+                padding: 'var(--spacing-md)',
+                backgroundColor: '#fffbeb',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid #fed7aa'
+              }}>
+                <h4 style={{ color: 'var(--warning-orange)', marginBottom: 'var(--spacing-sm)' }}>
+                  🎯 Multi-Objective LCA
+                </h4>
+                <p className="mb-0" style={{ fontSize: '0.9rem', color: 'var(--secondary-gray)' }}>
+                  Balances both cost and makespan objectives.
+                  Provides trade-off solutions for complex scenarios.
+                </p>
+              </div>
+            </div>
+          </div></>}
     </div>
   );
 }
