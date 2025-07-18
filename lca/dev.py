@@ -86,16 +86,7 @@ class LeagueChampionshipAlgorithm(object):
 
             Y = self.get_Y()
 
-            # for _ , i in enumerate(schedule):
-            # print("team ",_ ,": " , i)
-
-            for l in range(self.L):
-                teamA, teamB, teamC, teamD = self.teamClassification(t, l)
-                # print (teamA, teamB, teamC, teamD)
-                winner1 = self.winORlose(teamA, teamB, fX, f_best)
-                winner2 = self.winORlose(teamC, teamD, fX, f_best)
-                nextX[teamA] = self.setTeamFormation(
-                    X, B, Y, teamA, teamB, teamC, teamD, winner1, winner2)
+            nextX = self.calc_nextX(t, fX, f_best, X, B, Y, nextX)
 
             X = nextX.copy()
 
@@ -109,11 +100,35 @@ class LeagueChampionshipAlgorithm(object):
             f_bList.append(f_best)
 
             if t % (self.L - 1) == 0:
-                # self.addOnModule() #add-onを追加できる
                 schedule = self.leagueSchedule(t)
             t += 1
 
         return B
+
+    def calc_nextX(self, t, fX, f_best, X, B, Y, nextX):
+        """
+        Updates all teams based on current matches and results.
+
+        Args:
+            t (int): Current iteration
+            L (int): Number of teams
+            fX (list): Current fitness values
+            f_best (float): Best fitness value
+            X (list): Current population
+            B (list): Best teams
+            Y (list): Binary modification vectors
+            nextX (list): Next generation population
+
+        Returns:
+            None (modifies nextX in place)
+        """
+        for l in range(self.L):
+            teamA, teamB, teamC, teamD = self.teamClassification(t, l)
+            winner1 = self.winORlose(teamA, teamB, fX, f_best)
+            winner2 = self.winORlose(teamC, teamD, fX, f_best)
+            nextX[teamA] = self.setTeamFormation(
+                X, B, Y, teamA, teamB, teamC, teamD, winner1, winner2)
+        return nextX
 
     def getRandomTeam(self, min, max):
         """
