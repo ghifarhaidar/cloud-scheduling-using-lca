@@ -13,6 +13,7 @@ import Loading from "../components/loading"
 import LoadingError from "../components/loadingError"
 
 import { getGroupedResults, getAlgorithmColor, getAllAlgorithmNames } from "../utils/resultPreprocessing";
+import "../styles/resultsPage.css"
 
 ChartJS.register(BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale);
 
