@@ -94,10 +94,10 @@ export default function ResultsPage() {
     };
 
     return (
-        <div className="app-container">
-            <main className="main-content">
-                <h1>Results Analysis</h1>
-                {loading ? <Loading content="results" /> : error ? <LoadingError error={error} /> :
+        <div>
+            <h1>Results Analysis</h1>
+            {
+                loading ? <Loading content="results" /> : error ? <LoadingError error={error} /> :
                     <>
                         {/* Overview Card */}
                         <div className="card mb-lg">
@@ -243,8 +243,7 @@ export default function ResultsPage() {
                                     </div>
                                 </div>
                             );
-                        })}</>}
-            </main>
-        </div>
+                        })}</>
+            }</div>
     );
 }
