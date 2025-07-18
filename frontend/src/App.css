@@ -266,6 +266,36 @@ p {
   transform: translateY(-1px);
 }
 
+/* Add this to your existing button styles */
+.btn-danger {
+  background: linear-gradient(135deg, var(--error-red) 0%, #b91c1c 100%);
+  color: var(--white);
+}
+
+.btn-danger:hover {
+  background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  background: var(--error-red);
+}
+
+/* Optional: Add these if you want danger variants for outline buttons */
+.btn-danger-outline {
+  background: var(--white);
+  color: var(--error-red);
+  border: 1px solid var(--error-red);
+}
+
+.btn-danger-outline:hover {
+  background: #fee2e2; /* light red background */
+}
+
 /* Loading states */
 .loading {
   display: flex;

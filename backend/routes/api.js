@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 
-const { getConfigs, getRunConfigs, saveConfig, getAllResults } = require('../utils/fileHandlers');
+const { getConfigs, getRunConfigs, saveConfig, getAllResults, resetRunConfigs } = require('../utils/fileHandlers');
 const { runPythonScript } = require('../utils/pythonRunner');
 const { getResults } = require('../utils/resultProcessor');
 const { runExperiments } = require('../utils/runExperiments');
@@ -25,6 +25,16 @@ router.get('/configs', asyncHandler(async (req, res) => {
 // Get configurations
 router.get('/run-configs', asyncHandler(async (req, res) => {
     const configs = getRunConfigs();
+    res.json({
+        success: true,
+        data: configs
+    });
+}));
+
+
+// Reset configurations
+router.post('/run-configs/reset', asyncHandler(async (req, res) => {
+    const configs = resetRunConfigs();
     res.json({
         success: true,
         data: configs

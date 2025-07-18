@@ -44,6 +44,12 @@ const getRunConfigs = () => {
     };
 };
 
+const resetRunConfigs = () => {
+    const runConfigsPath = path.join(CONFIGS_DIR, "run_configs.json");
+    const runConfigs = [];
+    return writeJsonFile(runConfigsPath, runConfigs);
+}
+
 const saveConfig = (configData) => {
     const filePath = path.join(CONFIGS_DIR, "run_configs.json");
     let configs = [];
@@ -96,4 +102,5 @@ module.exports = {
     writeJsonFile,
     deleteFilesInDir,
     getAllResults,
+    resetRunConfigs,
 };

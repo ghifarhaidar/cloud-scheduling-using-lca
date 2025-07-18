@@ -14,6 +14,17 @@ export async function getRunConfigs() {
     return await res.json();
 }
 
+export async function resetConfiguration() {
+    const res = await fetch(`${API_BASE_URL}/api/run-configs/reset`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+    if (!res.ok) throw new Error('Reset failed');
+    return res.json();
+}
+
 // Save a config
 export async function saveConfig(configData) {
     const res = await fetch(`${API_BASE_URL}/api/config`, {
