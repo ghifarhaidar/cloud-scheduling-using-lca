@@ -25,7 +25,7 @@ export default function ResultsPage() {
     const [error, setError] = useState(null);
     const loaded = useRef(false);
 
-    // In your ResultsPage component
+    
     useEffect(() => {
         const fetchResultsData = async () => {
             try {
