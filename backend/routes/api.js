@@ -3,7 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const router = express.Router();
 
-const { getConfigs, getRunConfigs, saveConfig, getAllResults, resetRunConfigs } = require('../utils/fileHandlers');
+const { getConfigs, getRunConfigs, saveConfig, getAllResults, resetRunConfigs, saveAlgorithms, getAllAlgorithms } = require('../utils/fileHandlers');
 const { runPythonScript } = require('../utils/pythonRunner');
 const { getResults } = require('../utils/resultProcessor');
 const { runExperiments } = require('../utils/runExperiments');
@@ -83,6 +83,24 @@ router.post('/experiments', asyncHandler(async (req, res) => {
     res.json({
         success: true,
         message: "Experiments completed"
+    });
+}));
+
+// Get all algorithms 
+router.get('/all-algorithms', asyncHandler(async (req, res) => {
+    const results = getAllAlgorithms();
+    res.json({
+        success: true,
+        data: results
+    });
+}));
+
+// save run algorithms
+router.post('/run-algorithms', asyncHandler(async (req, res) => {
+    await saveAlgorithms(req.body);
+    res.json({
+        success: true,
+        message: "Run algorithms saved"
     });
 }));
 

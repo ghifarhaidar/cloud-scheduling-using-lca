@@ -94,6 +94,21 @@ const getAllResults = () => {
     };
 }
 
+const getAllAlgorithms = () => {
+    const allAlgorithmsPath = path.join(CONFIGS_DIR, "all_algorithms.json");
+    const allAlgorithms = readJsonFile(allAlgorithmsPath);
+
+    return {
+        allAlgorithms
+    };
+}
+
+const saveAlgorithms = (algorithmsData) => {
+    const AlgorithmsPath = path.join(CONFIGS_DIR, "algorithms.json");
+    return writeJsonFile(AlgorithmsPath, algorithmsData);
+
+}
+
 module.exports = {
     getConfigs,
     getRunConfigs,
@@ -103,4 +118,6 @@ module.exports = {
     deleteFilesInDir,
     getAllResults,
     resetRunConfigs,
+    saveAlgorithms,
+    getAllAlgorithms,
 };

@@ -83,3 +83,25 @@ export async function getAllFitness() {
     if (!res.ok) throw new Error("Failed to fetch fitness data");
     return await res.json();
 }
+
+// Get all algorithms 
+export async function getAllAlgorithms() {
+    const res = await fetch(`${API_BASE_URL}/api/all-algorithms`);
+    if (!res.ok) throw new Error("Failed to fetch fitness data");
+    return await res.json();
+}
+
+// save run algorithms
+export async function saveAlgorithms(algorithmsData) {
+    const res = await fetch(`${API_BASE_URL}/api/run-algorithms`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(algorithmsData),
+    });
+    if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.output || "Failed to save run algorithms");
+    }
+    return await res.json();
+}
+

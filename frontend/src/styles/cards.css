@@ -1,0 +1,60 @@
+/* Base card styles (already in app.css) */
+.card {
+    /* These styles are already in your app.css */
+    height: 100%;
+}
+
+.card-body {
+    padding: var(--spacing-md);
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-blue);
+    margin-bottom: var(--spacing-sm);
+}
+
+.card-text {
+    color: var(--secondary-gray);
+    margin-bottom: var(--spacing-md);
+}
+
+/* Selectable card styles */
+.selectable-card {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border-radius: var(--radius-lg);
+}
+
+.selectable-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.selectable-card.selected {
+    border: 2px solid var(--primary-blue);
+    background-color: var(--light-blue);
+}
+
+.card-checkbox {
+    position: absolute;
+    top: var(--spacing-sm);
+    right: var(--spacing-sm);
+    z-index: 2;
+}
+
+.card-checkbox input[type="checkbox"] {
+    transform: scale(1.2);
+    cursor: pointer;
+    accent-color: var(--primary-blue);
+}
+
+/* Grid layout for cards */
+.algorithm-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md) 0;
+}
