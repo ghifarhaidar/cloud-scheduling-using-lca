@@ -7,6 +7,7 @@ import NavBar from "./components/NavBar";
 import FitnessPage from "./pages/FitnessPage";
 import ResultsPage from "./pages/ResultsPage";
 import "./App.css";
+import "./styles/buttons.css";
 
 export default function App() {
     return (
