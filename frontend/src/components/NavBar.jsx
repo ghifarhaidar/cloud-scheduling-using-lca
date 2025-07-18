@@ -3,10 +3,6 @@ import { Link, useLocation } from 'react-router-dom';
 import "../styles/navbar.css"
 const links = [
     {
-        title: "home",
-        path: "/",
-    },
-    {
         title: "Set Config",
         path: "/set-config",
     },
@@ -44,7 +40,7 @@ export default function NavBar() {
                 <ul className="nav-links">
                     {links.map((link, index) => (
 
-                        <li key={index}> 
+                        <li key={index}>
                             <Link
                                 to={link.path}
                                 className={`nav-link ${checkActive(link.path) ? 'active' : ''}`}
