@@ -13,9 +13,6 @@ p_c = params['p_c']
 PSI1 = params['PSI1']
 PSI2 = params['PSI2']
 
-genericSchedule = list()
-schedule = list()
-
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
 
@@ -76,9 +73,8 @@ class LeagueChampionshipAlgorithm(object):
 
         t = 1
 
-        global schedule, genericSchedule
-        genericSchedule = self.generateRoundRobinSchedule()
-        schedule = self.leagueSchedule(t)
+        self.genericSchedule = self.generateRoundRobinSchedule()
+        self.schedule = self.leagueSchedule(t)
         wfile.write("t =%d, f_best=%f\n" % (t, f_best))
         while t < self.S * (self.L - 1):
             if t % 10 == 0:
@@ -100,7 +96,7 @@ class LeagueChampionshipAlgorithm(object):
             f_bList.append(f_best)
 
             if t % (self.L - 1) == 0:
-                schedule = self.leagueSchedule(t)
+                self.schedule = self.leagueSchedule(t)
             t += 1
 
         return B
@@ -171,9 +167,8 @@ class LeagueChampionshipAlgorithm(object):
         Returns:
             list: schedule where each element is a team's ordered list of opponents
         """
-        global schedule, genericSchedule
         if t == 1:
-            schedule = genericSchedule.copy()
+            self.schedule = self.genericSchedule.copy()
 
         else:
             teams = list(range(self.L))
@@ -184,10 +179,10 @@ class LeagueChampionshipAlgorithm(object):
                 reversedShuffledTeams[shuffledTeams[i]] = i
 
             for i in range(self.L):
-                schedule[i] = genericSchedule[reversedShuffledTeams[i]]
-                schedule[i] = list(
-                    map(lambda x: shuffledTeams[x], schedule[i]))
-        return schedule
+                self.schedule[i] = self.genericSchedule[reversedShuffledTeams[i]]
+                self.schedule[i] = list(
+                    map(lambda x: shuffledTeams[x], self.schedule[i]))
+        return self.schedule
 
     def generateRoundRobinSchedule(self):
         """
@@ -227,9 +222,9 @@ class LeagueChampionshipAlgorithm(object):
         """
         tmp_t = t % (self.L - 1)
         teamA = l
-        teamB = schedule[l][tmp_t-2]
-        teamC = schedule[l][tmp_t-1]
-        teamD = schedule[teamC][tmp_t-2]
+        teamB = self.schedule[l][tmp_t-2]
+        teamC = self.schedule[l][tmp_t-1]
+        teamD = self.schedule[teamC][tmp_t-2]
 
         return teamA, teamB, teamC, teamD
 
