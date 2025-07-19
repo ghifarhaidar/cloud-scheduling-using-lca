@@ -3,6 +3,8 @@ import heapq
 import time
 import os
 import sys
+
+import numpy as np
 current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sys.path.append(parent_dir)
@@ -24,6 +26,10 @@ class MO_LCA(LeagueChampionshipAlgorithm):
     """
 
     def configure(self):
+        self.vms = np.array(vms)
+        self.cloudlets = np.array(cloudlets)
+        self.cost_config = cost_config
+
         self.makespan = self.makespan_time_shared
         if self.mode == "space":
             self.makespan = self.makespan_space_shared
@@ -47,8 +53,8 @@ class MO_LCA(LeagueChampionshipAlgorithm):
 
         for i, vm_index in enumerate(x):
             vm_index = int(vm_index)
-            cloudlet = cloudlets[i]
-            vm = vms[vm_index]
+            cloudlet = self.cloudlets[i]
+            vm = self.vms[vm_index]
             ext = cloudlet["length"] / vm["vm_mips"]
 
             # If VM has free CPUs, start immediately
@@ -61,7 +67,7 @@ class MO_LCA(LeagueChampionshipAlgorithm):
                 heapq.heappush(vm_cpu_queues[vm_index], finish_time)
 
         # Find the latest finish time across all CPUs in all VMs
-        vm_makespans = [0] * len(vms)
+        vm_makespans = [0] * len(self.vms)
         for vm_index, cpu_times in vm_cpu_queues.items():
             vm_makespans[vm_index] = max(cpu_times) if cpu_times else 0.0
 
@@ -83,17 +89,17 @@ class MO_LCA(LeagueChampionshipAlgorithm):
         for i, vm_index in enumerate(x):
             vm_tasks[int(vm_index)].append(i)
 
-        vm_makespans = [0] * len(vms)
+        vm_makespans = [0] * len(self.vms)
         for vm_index, task_indices in vm_tasks.items():
-            vm = vms[vm_index]
+            vm = self.vms[vm_index]
             vm_pes = vm["vm_pes"]
             vm_mips = vm["vm_mips"]
 
             if len(task_indices) <= vm_pes:
-                vm_makespan = max(cloudlets[i]["length"]
+                vm_makespan = max(self.cloudlets[i]["length"]
                                   for i in task_indices) / vm_mips
             else:
-                total_length = sum(cloudlets[i]["length"]
+                total_length = sum(self.cloudlets[i]["length"]
                                    for i in task_indices)
                 total_exec = total_length / vm_mips
                 # adjust 0.99 to relate to the number of cloudlets
@@ -118,14 +124,14 @@ class MO_LCA(LeagueChampionshipAlgorithm):
 
         enecon_vm = []
         makespan, vm_makespans = self.makespan(x)
-        p_active = cost_config["p_active"]
-        p_idle = cost_config["p_idle"]
-        x = 1 + cost_config["x"]
-        p_u = cost_config["p_u"]
+        p_active = self.cost_config["p_active"]
+        p_idle = self.cost_config["p_idle"]
+        x = 1 + self.cost_config["x"]
+        p_u = self.cost_config["p_u"]
         for j, vm_makespan in enumerate(vm_makespans):
             energy = p_active * vm_makespan + p_idle * (makespan - vm_makespan)
-            energy = energy * cost_config["CostPerSecond"] * (
-                vms[j]["vm_mips"] ** x) * vms[j]["vm_pes"] / (1000 * (p_u ** x))
+            energy = energy * self.cost_config["CostPerSecond"] * (
+                self.vms[j]["vm_mips"] ** x) * self.vms[j]["vm_pes"] / (1000 * (p_u ** x))
             enecon_vm.append(energy)
 
         act = (max(enecon_vm) - min(enecon_vm)) * \
