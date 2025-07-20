@@ -36,6 +36,7 @@ class LeagueChampionshipAlgorithm(object):
         return
 
     def configure(self):
+        """Override in subclass."""
         pass
 
     def round_robin(self):
@@ -116,7 +117,7 @@ class LeagueChampionshipAlgorithm(object):
             nextX (list): Next generation population
 
         Returns:
-            None (modifies nextX in place)
+            nextX (list): Next population
         """
         for l in range(self.L):
             teamA, teamB, teamC, teamD = self.teamClassification(t, l)

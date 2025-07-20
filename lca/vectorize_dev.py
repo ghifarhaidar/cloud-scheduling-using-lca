@@ -1,3 +1,9 @@
+"""
+this is a vectorized version of dev.py,
+check dev.py for code documentation.
+
+it uses numpy for its calculations.
+"""
 import os
 import numpy as np
 import math
@@ -36,17 +42,12 @@ class LeagueChampionshipAlgorithm:
         return
 
     def configure(self):
-        """Override in subclass."""
         pass
 
     def round_robin(self):
-        """Returns a round robin team"""
         return np.arange(self.n) % (self.max_xi + 1)
 
     def league(self):
-        """
-        Executes the main League Championship Algorithm optimization process.
-        """
         wfile = open(self.path_w, mode='w')
 
         X = self.getRandomTeams(self.min_xi, self.max_xi)
@@ -96,7 +97,6 @@ class LeagueChampionshipAlgorithm:
         return B
 
     def calc_nextX(self, t, fX, f_best, X, B, Y, nextX):
-        """Vectorized team update."""
         teamA = np.arange(self.L)
         tmp_t = t % (self.L - 1)
         teamB = np.array([self.schedule[l][tmp_t - 2] for l in teamA])

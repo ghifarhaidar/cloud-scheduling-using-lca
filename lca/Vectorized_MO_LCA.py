@@ -1,3 +1,9 @@
+"""
+this is a vectorized version of MO_LCA.py,
+check MO_LCA.py for code documentation.
+
+it uses numpy for its calculations.
+"""
 from collections import defaultdict
 import time
 import os
@@ -18,7 +24,7 @@ cloudlets = list()
 cost_config = {}
 
 
-class MO_LCA(LeagueChampionshipAlgorithm):
+class Vectorized_MO_LCA(LeagueChampionshipAlgorithm):
     """
     Vectorized Multi-Objective League Championship Algorithm for cost and makespan optimization.
     """
@@ -38,12 +44,7 @@ class MO_LCA(LeagueChampionshipAlgorithm):
 
         self.calc_fitness = self.Z
 
-
     def makespan_space_shared(self, x):
-        """
-        Fully vectorized makespan calculation using space-shared scheduling.
-        Matches exactly the behavior of the original heap-based implementation.
-        """
         vm_mips = self.vm_mips
         vm_pes = self.vm_pes
         cloudlet_lengths = self.cloudlet_lengths
@@ -79,12 +80,7 @@ class MO_LCA(LeagueChampionshipAlgorithm):
 
         return np.max(vm_makespans), vm_makespans
 
-
     def makespan_time_shared(self, x, context_switch_overhead=0.0):
-        """
-        Fully vectorized makespan calculation using time-shared scheduling.
-        Matches exactly the behavior of the original non-vectorized version.
-        """
         vm_mips = self.vm_mips
         vm_pes = self.vm_pes
         cloudlet_lengths = self.cloudlet_lengths
@@ -121,9 +117,6 @@ class MO_LCA(LeagueChampionshipAlgorithm):
         return np.max(vm_makespans), vm_makespans
 
     def cost(self, x, re_ut=0.8):
-        """
-        Vectorized cost calculation.
-        """
         makespan, vm_makespans = self.makespan(x)
         vm_mips = self.vm_mips
         vm_pes = self.vm_pes
@@ -147,9 +140,6 @@ class MO_LCA(LeagueChampionshipAlgorithm):
         return total_cost
 
     def Z(self, x):
-        """
-        Vectorized fitness function.
-        """
         cost = self.cost(x) / self.fitness_scale
         makespan, _ = self.makespan(x)
         makespan /= self.fitness_scale
@@ -158,14 +148,13 @@ class MO_LCA(LeagueChampionshipAlgorithm):
         return z
 
 
-
 def run():
     global n, vms, cloudlets, cost_config
     n, vms, cloudlets, mode = get_config()
     cost_config = get_cost_config()
     vms, original_indices = sort_vms(vms)
     start_time = time.time()
-    lca = MO_LCA(n=n, max_xi=len(vms)-1,
+    lca = Vectorized_MO_LCA(n=n, max_xi=len(vms)-1,
                  path_w="Vectorized_MO_LCA.txt", mode=mode)
     best = lca.league()
     running_time = time.time() - start_time
