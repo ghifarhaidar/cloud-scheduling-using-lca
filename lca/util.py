@@ -6,6 +6,7 @@ CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
 CONFIGS_DIR = os.path.abspath(os.path.join(BASE_DIR, "configs"))
 
+
 def read_lca_parameters():
     """
     Reads LCA parameters from the given JSON file and returns them as a dictionary.
@@ -37,6 +38,13 @@ def get_cost_config():
 
     return data
 
+
+def get_costume_config():
+    costume_config_path = os.path.join(CONFIGS_DIR, "costume_config.json")
+    with open(costume_config_path, 'r') as file:
+        data = json.load(file)
+
+    return data
 
 def sort_vms(vms):
     indexed_vms = list(enumerate(vms))

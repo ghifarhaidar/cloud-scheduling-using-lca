@@ -287,7 +287,7 @@ export default function SetConfigPage() {
               <div className="form-group">
                 <label className="form-label">
                   Configuration Type
-                  <span style={{ fontSize: '0.875rem', color: 'var(--secondary-gray)' }}> - Values: 1-9 or -1 for range</span>
+                  <span style={{ fontSize: '0.875rem', color: 'var(--secondary-gray)' }}> - Values: 1-6, 0 for costume configuration, -1 for range</span>
                 </label>
                 <input
                   type="number"
@@ -295,7 +295,7 @@ export default function SetConfigPage() {
                   value={formData.config_type}
                   onChange={handleChange}
                   min="-1"
-                  max="9"
+                  max="6"
                   className="form-input form-input-small"
                 />
                 {errors.config_type && <div className="error-message">⚠️ {errors.config_type}</div>}

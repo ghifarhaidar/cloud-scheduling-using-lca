@@ -103,9 +103,9 @@ async function runExperimentsForConfig(currentConfig) {
 
     const allExperimentResults = [];
 
-    // Handle config_type = -1 (loop from 1 to 9)
+    // Handle config_type = -1 (loop from 1 to 6)
     const configTypes = (currentConfig.config_type === -1)
-        ? [1, 5, 9]
+        ? Array.from({ length: 6 }, (_, i) => i + 1)
         : [currentConfig.config_type];
 
     console.log("config type values", configTypes);

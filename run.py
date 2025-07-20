@@ -15,6 +15,7 @@ MODE = "time"
 SCRIPT_DIR = ""
 CONFIGS_DIR = os.path.join(SCRIPT_DIR, "configs")
 
+
 def load_algorithms():
     """Load algorithms from algorithms.json file"""
     algorithms_path = os.path.join(CONFIGS_DIR, 'algorithms.json')
@@ -134,8 +135,8 @@ def main():
         )
     )
     parser.add_argument(
-        '--config-type', type=int, choices=range(0, 10),
-        help="(Job 1 only) Configuration type: integer between 1 and 9."
+        '--config-type', type=int, choices=range(0, 7),
+        help="(Job 1 only) Configuration type: integer between 0 and 6."
     )
     parser.add_argument(
         '--cost-config-type', type=int, choices=[0, 1],

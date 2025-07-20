@@ -1,10 +1,17 @@
 import os
 import json
 import random
+import os
+import sys
+current_dir = os.path.dirname(os.path.abspath(__file__))
+parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
+sys.path.append(parent_dir)
+
+from lca.util import get_costume_config  # nopep8
 
 # Predefined configuration templates for different cloud simulation models
 param_ranges = {
-    0: {
+    -1: {
         'cloudlet': {
             'count': (4, 4),
             'length': (20000, 40000),
@@ -42,8 +49,8 @@ param_ranges = {
     },
     2: {
         'cloudlet': {
-            'count': (200, 200),
-            'length': (40000, 60000),
+            'count': (300, 300),
+            'length': (30000, 60000),
             'pes': (1, 1),
             'fileSize': (300, 300),
             'outputSize': (300, 300)
@@ -60,7 +67,7 @@ param_ranges = {
     },
     3: {
         'cloudlet': {
-            'count': (200, 200),
+            'count': (400, 400),
             'length': (40000, 60000),
             'pes': (1, 1),
             'fileSize': (300, 300),
@@ -96,7 +103,7 @@ param_ranges = {
     },
     5: {
         'cloudlet': {
-            'count': (300, 300),
+            'count': (400, 400),
             'length': (30000, 60000),
             'pes': (1, 1),
             'fileSize': (300, 300),
@@ -114,7 +121,7 @@ param_ranges = {
     },
     6: {
         'cloudlet': {
-            'count': (300, 300),
+            'count': (500, 500),
             'length': (40000, 60000),
             'pes': (1, 1),
             'fileSize': (300, 300),
@@ -125,65 +132,12 @@ param_ranges = {
             'pes': (8, 16),
             'ram': (512, 512),
             'bw': (512, 512),
-            'size': (1024, 1024)
-        },
-        'pe_mips_options': [1000, 2000, 4000, 8000],
-        'num_hosts': (1, 1)
-    },
-    7: {
-        'cloudlet': {
-            'count': (400, 400),
-            'length': (20000, 40000),
-            'pes': (1, 1),
-            'fileSize': (300, 300),
-            'outputSize': (300, 300)
-        },
-        'VM': {
-            'count': (10, 10),
-            'pes': (8, 16),
-            'ram': (512, 512),
-            'bw': (512, 512),
-            'size': (1024, 1024)
-        },
-        'pe_mips_options': [1000, 2000, 4000, 8000],
-        'num_hosts': (1, 1)
-    },
-    8: {
-        'cloudlet': {
-            'count': (400, 400),
-            'length': (40000, 60000),
-            'pes': (1, 1),
-            'fileSize': (300, 300),
-            'outputSize': (300, 300)
-        },
-        'VM': {
-            'count': (20, 20),
-            'pes': (8, 16),
-            'ram': (512, 512),
-            'bw': (512, 512),
-            'size': (1024, 1024)
-        },
-        'pe_mips_options': [1000, 2000, 4000, 8000],
-        'num_hosts': (1, 1)
-    },
-    9: {
-        'cloudlet': {
-            'count': (400, 400),
-            'length': (40000, 60000),
-            'pes': (1, 1),
-            'fileSize': (300, 300),
-            'outputSize': (300, 300)
-        },
-        'VM': {
-            'count': (30, 30),
-            'pes': (8, 16),
-            'ram': (512, 512),
-            'bw': (512, 512),
-            'size': (1024, 1024)
+            'size': (3024, 1024)
         },
         'pe_mips_options': [1000, 2000, 4000, 8000],
         'num_hosts': (1, 1)
     }
+
 }
 
 
@@ -214,12 +168,15 @@ class CloudSimConfigGenerator:
         """Generate a random value within a range or from options
 
         Args:
-            range_def: Range definition (tuple, list, or single value)
+            range_def: Range definition (dict with "range" key, tuple, list, or single value)
 
         Returns:
             int: Generated value
         """
-        if isinstance(range_def, tuple):
+        if isinstance(range_def, dict) and "range" in range_def:
+            # Handle { "range": [min, max] }
+            return random.randint(range_def["range"][0], range_def["range"][1])
+        elif isinstance(range_def, tuple):
             return random.randint(range_def[0], range_def[1])
         elif isinstance(range_def, list):
             return random.choice(range_def)
@@ -332,9 +289,13 @@ class CloudSimConfigGenerator:
         }
 
 
-# Save config
-def generate_config(CONFIGURATION_CHOICE=1, MODE="time"):
+def add_costume_config():
+    param_ranges[0] = get_costume_config()
 
+
+def generate_config(CONFIGURATION_CHOICE=1, MODE="time"):
+    if (CONFIGURATION_CHOICE == 0):
+        add_costume_config()
     generator = CloudSimConfigGenerator(CONFIGURATION_CHOICE, MODE)
     current_dir = os.path.dirname(os.path.abspath(__file__))
     with open(f"{current_dir}/../configs/sim_config.json", "w") as f:

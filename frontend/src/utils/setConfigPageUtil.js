@@ -28,8 +28,8 @@ const validateForm = (formData) => {
     if (!(formData.PSI2 >= 0 && formData.PSI2 <= 1)) {
         newErrors.PSI2 = "PSI2 must be between 0 and 1";
     }
-    if (!((formData.config_type >= 1 && formData.config_type <= 9) || formData.config_type === -1)) {
-        newErrors.config_type = "config_type must be 1-9 or -1 for range";
+    if (!(formData.config_type >= -1 && formData.config_type <= 6)) {
+        newErrors.config_type = "config_type must be 1-6, 0 for costume configuration or -1 for range";
     }
     if (!(formData.cost_config_type === 1 || formData.cost_config_type === 2)) {
         newErrors.cost_config_type = "cost_config_type must be 1 or 2";
