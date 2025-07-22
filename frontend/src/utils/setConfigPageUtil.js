@@ -15,6 +15,16 @@ const defaultFormValues = {
     vm_scheduling_mode: 'time',
 }
 
+const defaultCustomConfigValues = {
+    cloudlets: {
+        count: 100,
+        length: { range: [30000, 60000] },
+    },
+    vms: {
+        count: 20,
+        pes: { range: [8, 16] },
+    },
+}
 // Validation function
 const validateForm = (formData) => {
     const newErrors = {};
@@ -29,7 +39,7 @@ const validateForm = (formData) => {
         newErrors.PSI2 = "PSI2 must be between 0 and 1";
     }
     if (!(formData.config_type >= -1 && formData.config_type <= 6)) {
-        newErrors.config_type = "config_type must be 1-6, 0 for costume configuration or -1 for range";
+        newErrors.config_type = "config_type must be 1-6, 0 for custom configuration or -1 for range";
     }
     if (!(formData.cost_config_type === 1 || formData.cost_config_type === 2)) {
         newErrors.cost_config_type = "cost_config_type must be 1 or 2";
@@ -37,6 +47,29 @@ const validateForm = (formData) => {
 
     return newErrors;
 };
+
+const validateCustomConfig = (customConfig) => {
+    const newErrors = {};
+
+    if (!(customConfig.cloudlets.count > 0)) {
+        newErrors.cloudlets_count = "Cloudlet count must be greater than 0";
+    }
+    const [clMin, clMax] = customConfig.cloudlets.length.range;
+    if (!(clMin > 0 && clMax >= clMin)) {
+        newErrors.cloudlets_length = "Cloudlet length range must be valid (min > 0 and max >= min)";
+    }
+    const vmCount = customConfig.vms.count;
+    if (!(vmCount > 0)) {
+        newErrors.vm_count = "vms count must be greater than 0";
+    }
+    const [vmPesMin, vmPesMax] = customConfig.vms.pes.range;
+    if (!(vmPesMin > 0 && vmPesMax >= vmPesMin)) {
+        newErrors.vm_pes = "vms PEs range must be valid (min > 0 and max >= min)";
+    }
+
+    return newErrors;
+};
+
 
 // Prepare JSON payload
 const PreparePayload = (formData, LType, SType) => {
@@ -77,8 +110,35 @@ const PreparePayload = (formData, LType, SType) => {
     return jsonPayload;
 }
 
+
+const PrepareCustomConfig = (formData) => {
+    return {
+        cloudlets: {
+            count: { range: [formData.cloudlets.count, formData.cloudlets.count] },
+            length: { range: [formData.cloudlets.length.range[0], formData.cloudlets.length.range[1]] },
+            pes: { range: [1, 1] },
+            fileSize: { range: [300, 300] },
+            outputSize: { range: [300, 300] },
+        },
+        vms: {
+            count: { range: [formData.vms.count, formData.vms.count] },
+            pes: { range: [formData.vms.pes.range[0], formData.vms.pes.range[1]] },
+            ram: { range: [512, 512] },
+            bw: { range: [512, 512] },
+            size: { range: [1024, 1024] },
+        },
+        pe_mips_options: [1000, 2000, 4000, 8000],
+        num_hosts: { range: [1, 1] },
+    };
+};
+
+
+
 export {
     defaultFormValues,
     validateForm,
+    validateCustomConfig,
     PreparePayload,
+    PrepareCustomConfig,
+    defaultCustomConfigValues,
 }

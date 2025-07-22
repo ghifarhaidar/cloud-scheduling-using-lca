@@ -7,7 +7,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sys.path.append(parent_dir)
 
-from lca.util import get_costume_config  # nopep8
+from lca.util import get_custom_config  # nopep8
 
 # Predefined configuration templates for different cloud simulation models
 param_ranges = {
@@ -289,13 +289,13 @@ class CloudSimConfigGenerator:
         }
 
 
-def add_costume_config():
-    param_ranges[0] = get_costume_config()
+def add_custom_config():
+    param_ranges[0] = get_custom_config()
 
 
 def generate_config(CONFIGURATION_CHOICE=1, MODE="time"):
     if (CONFIGURATION_CHOICE == 0):
-        add_costume_config()
+        add_custom_config()
     generator = CloudSimConfigGenerator(CONFIGURATION_CHOICE, MODE)
     current_dir = os.path.dirname(os.path.abspath(__file__))
     with open(f"{current_dir}/../configs/sim_config.json", "w") as f:

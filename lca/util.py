@@ -39,9 +39,9 @@ def get_cost_config():
     return data
 
 
-def get_costume_config():
-    costume_config_path = os.path.join(CONFIGS_DIR, "costume_config.json")
-    with open(costume_config_path, 'r') as file:
+def get_custom_config():
+    custom_config_path = os.path.join(CONFIGS_DIR, "custom_config.json")
+    with open(custom_config_path, 'r') as file:
         data = json.load(file)
 
     return data

@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
 import { saveConfig } from "../utils/api";
-import { defaultFormValues, validateForm, PreparePayload } from "../utils/setConfigPageUtil";
+import {
+  defaultFormValues,
+  validateForm,
+  validateCustomConfig,
+  PreparePayload,
+  PrepareCustomConfig,
+  defaultCustomConfigValues
+} from "../utils/setConfigPageUtil";
+
+import CustomConfigSection from '../components/CustomConfigSection';
+
 export default function SetConfigPage() {
   const [LType, setLType] = useState('single');
   const [SType, setSType] = useState('single');
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(defaultFormValues);
+  const [customConfig, setCustomConfig] = useState(defaultCustomConfigValues);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -16,22 +27,35 @@ export default function SetConfigPage() {
     }));
   };
 
-  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (formData.config_type === 0) {
+      // Validate custom config if "custom" type selected
+      const customErrors = validateCustomConfig(customConfig);
+      if (Object.keys(customErrors).length > 0) {
+        setErrors(customErrors);
+        return;
+      }
+    }
     const validationErrors = validateForm(formData);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
-      return; // ❌ Stop submission
+      return;
     }
-    setErrors({}); // ✅ Clear previous errors
+
+    console.log("trying to save data.");
+    setErrors({});
     setIsSubmitting(true);
+
     const jsonPayload = PreparePayload(formData, LType, SType);
 
+    if (formData.config_type === 0) {
+      jsonPayload.custom_config = PrepareCustomConfig(customConfig);
+    }
     console.log("Submitting config:", jsonPayload);
 
     try {
-      const result = await saveConfig(jsonPayload);
+      await saveConfig(jsonPayload);
       alert("✅ Config saved successfully!");
     } catch (err) {
       console.error("❌ Error saving config:", err.message);
@@ -287,7 +311,7 @@ export default function SetConfigPage() {
               <div className="form-group">
                 <label className="form-label">
                   Configuration Type
-                  <span style={{ fontSize: '0.875rem', color: 'var(--secondary-gray)' }}> - Values: 1-6, 0 for costume configuration, -1 for range</span>
+                  <span style={{ fontSize: '0.875rem', color: 'var(--secondary-gray)' }}> - Values: 1-6, 0 for custom configuration, -1 for range</span>
                 </label>
                 <input
                   type="number"
@@ -345,7 +369,14 @@ export default function SetConfigPage() {
               </div>
             </div>
           </div>
-
+          {/* Custom Configuration Section */}
+          {formData.config_type === 0 && (
+            <CustomConfigSection
+              customConfig={customConfig}
+              setCustomConfig={setCustomConfig}
+              errors={errors}
+            />
+          )}
           <div className="flex gap-md">
             <button
               type="submit"
@@ -369,6 +400,7 @@ export default function SetConfigPage() {
               className="btn btn-secondary"
               onClick={() => {
                 setFormData(defaultFormValues);
+                setCustomConfig(defaultCustomConfigValues);
                 setLType('single');
                 setSType('single');
                 setErrors({});
