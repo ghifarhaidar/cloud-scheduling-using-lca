@@ -17,7 +17,7 @@ const RunPage = () => {
         setParams("Loading configurations...");
         const data = await getRunConfigs();
         console.log("configurations loaded: ", data);
-        setParams(JSON.stringify(data, null, 2));
+        setParams(JSON.stringify(data.data, null, 2));
       } catch (err) {
         setParams(`❌ Error loading configs: ${err.message}`);
         console.error(err);

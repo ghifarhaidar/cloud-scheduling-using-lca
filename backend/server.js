@@ -2,16 +2,12 @@ require('dotenv').config();
 const express = require("express");
 const cors = require('cors');
 
-
+const { consoleLogger, fileLogger } = require('./middleware/logging');
 const apiRoutes = require('./routes/api');
 const errorHandler = require('./middleware/errorHandler');
 const corsOptions = require('./config/corsOptions');
 
 const app = express();
-
-
-
-
 const PORT = process.env.PORT || 3000;
 
 app.use(cors(corsOptions));
@@ -19,11 +15,9 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Request logging middleware
-app.use((req, res, next) => {
-	console.log(`${new Date().toISOString()} - ${req.method} ${req.path}`);
-	next();
-});
+// Logging middleware
+app.use(fileLogger);
+app.use(consoleLogger);
 
 
 // API Routes
