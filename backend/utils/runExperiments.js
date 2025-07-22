@@ -103,6 +103,10 @@ async function runExperimentsForConfig(currentConfig) {
 
     const allExperimentResults = [];
 
+    if (currentConfig.config_type === 0) {
+        const CUSTOM_CONFIG_PATH = path.join(config.CONFIGS_DIR, "custom_config.json");
+        writeJsonFile(CUSTOM_CONFIG_PATH, currentConfig.custom_config)
+    }
     // Handle config_type = -1 (loop from 1 to 6)
     const configTypes = (currentConfig.config_type === -1)
         ? Array.from({ length: 6 }, (_, i) => i + 1)

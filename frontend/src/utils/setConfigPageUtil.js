@@ -113,14 +113,14 @@ const PreparePayload = (formData, LType, SType) => {
 
 const PrepareCustomConfig = (formData) => {
     return {
-        cloudlets: {
+        cloudlet: {
             count: { range: [formData.cloudlets.count, formData.cloudlets.count] },
             length: { range: [formData.cloudlets.length.range[0], formData.cloudlets.length.range[1]] },
             pes: { range: [1, 1] },
             fileSize: { range: [300, 300] },
             outputSize: { range: [300, 300] },
         },
-        vms: {
+        VM: {
             count: { range: [formData.vms.count, formData.vms.count] },
             pes: { range: [formData.vms.pes.range[0], formData.vms.pes.range[1]] },
             ram: { range: [512, 512] },
