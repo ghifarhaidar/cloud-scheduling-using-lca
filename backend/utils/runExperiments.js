@@ -56,7 +56,7 @@ async function runExperiments() {
         }
     } catch (error) {
         console.error(`❌ Failed to read run_configs.json: ${error.message}`);
-        return;
+        throw new Error(`Failed to read run_configs.json: ${error.message}`);
     }
 
     console.log(`📂 Found ${allConfigs.length} configs in run_configs.json`);
@@ -73,6 +73,7 @@ async function runExperiments() {
             allConfigsResults.push(resultsWithConfig);
         } catch (err) {
             console.error(`❌ Error running experiments for config #${index + 1}: ${err.message}`);
+            throw new Error(`Error running experiments for config #${index + 1}: ${err.message}`);
         }
     }
 
@@ -82,6 +83,7 @@ async function runExperiments() {
         console.log(`\n✅ All results saved to ${RESULTS_FILE}`);
     } catch (writeError) {
         console.error(`❌ Failed to write combined results: ${writeError.message}`);
+        throw new Error(`Failed to write combined results: ${writeError.message}`);
     }
 
     console.log("\n✅ Finished running all configs.");
@@ -128,7 +130,7 @@ async function runExperimentsForConfig(currentConfig) {
             console.log("✅ Initial configuration generated.");
         } catch (error) {
             console.error("❌ Failed to generate initial configuration:", error.message);
-            return;
+            throw new Error(`Failed to generate initial configuration: ${error.message}`);
         }
 
         for (const l of L_values) {
