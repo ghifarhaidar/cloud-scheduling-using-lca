@@ -52,6 +52,7 @@ calc.py
 */node_modules
 backend/.env
 frontend/.env.local
+!configs/all_algorithms.json
 
 
 

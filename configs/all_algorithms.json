@@ -1,0 +1,29 @@
+{
+    "algorithms": [
+        {
+            "name": "makespan_LCA",
+            "directory": "lca",
+            "description": "Focuses on minimizing the total execution time (makespan)"
+        },
+        {
+            "name": "cost_LCA",
+            "directory": "lca",
+            "description": "Optimizes for cost minimization in cloud resource allocation"
+        },
+        {
+            "name": "Round_Robin",
+            "directory": "algorithms",
+            "description": "Round Robin "
+        },
+        {
+            "name": "MO_LCA",
+            "directory": "lca",
+            "description": "Multi-objective optimization balancing cost and makespan"
+        },
+        {
+            "name": "Vectorized_MO_LCA",
+            "directory": "lca",
+            "description": "using numpy on Multi-objective optimization balancing cost and makespan"
+        }
+    ]
+}
