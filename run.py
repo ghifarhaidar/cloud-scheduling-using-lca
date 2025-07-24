@@ -139,8 +139,8 @@ def main():
         help="(Job 1 only) Configuration type: integer between 0 and 6."
     )
     parser.add_argument(
-        '--cost-config-type', type=int, choices=[0, 1],
-        help="(Job 1 and 2) Cost configuration type: 0 or 1."
+        '--cost-config-type', type=int, choices=[1, 2],
+        help="(Job 1 and 2) Cost configuration type: 1 or 2."
     )
     parser.add_argument(
         '--vm-scheduling-mode', type=str, choices=["time", "space"],
