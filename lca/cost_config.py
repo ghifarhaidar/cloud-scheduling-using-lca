@@ -15,7 +15,7 @@ configs = {
     },
     2: {
         'p_active': 1,
-        'p_idle': 0.5,
+        'p_idle': 0.3,
         'x': 1,
         'p_u': 1000,
         'CostPerSecond': 1,
