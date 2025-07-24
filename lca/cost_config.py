@@ -3,16 +3,6 @@ import json
 
 # Predefined configuration templates for different cost models
 configs = {
-    0: {
-        'p_active': 1,
-        'p_idle': 0,
-        'x': 1,
-        'p_u': 1000,
-        'CostPerSecond': 1,
-        'CostPerMem': 1,
-        'CostPerStorage': 1,
-        'CostPerBw': 1
-    },
     1: {
         'p_active': 1,
         'p_idle': 0,
@@ -22,7 +12,17 @@ configs = {
         'CostPerMem': 0,
         'CostPerStorage': 0,
         'CostPerBw': 0
-    }
+    },
+    2: {
+        'p_active': 1,
+        'p_idle': 0.5,
+        'x': 1,
+        'p_u': 1000,
+        'CostPerSecond': 0,
+        'CostPerMem': 0,
+        'CostPerStorage': 0,
+        'CostPerBw': 0
+    },
 }
 
 
