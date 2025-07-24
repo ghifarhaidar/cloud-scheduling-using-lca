@@ -18,7 +18,7 @@ configs = {
         'p_idle': 0.5,
         'x': 1,
         'p_u': 1000,
-        'CostPerSecond': 0,
+        'CostPerSecond': 1,
         'CostPerMem': 0,
         'CostPerStorage': 0,
         'CostPerBw': 0
