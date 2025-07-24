@@ -1,7 +1,7 @@
 // config/corsOptions.js
 const allowedOrigins = {
-    development: ['http://localhost:5173', 'http://notebook-gpu.hiast.edu.sy', 'http://notebook-gpu.hiast.edu.sy:3000'],
-    production: ['http://localhost:5173', 'http://notebook-gpu.hiast.edu.sy', 'http://notebook-gpu.hiast.edu.sy:3000']
+    development: ['http://localhost:5173', 'http://172.25.1.141:5173'],
+    production: ['http://localhost:5173', 'http://172.25.1.141:5173']
 };
 
 const corsOptions = {
