@@ -16,14 +16,21 @@ function parseRangeOrSingle(type, value) {
     if (type === "range") {
         const { from, to, step } = value;
         const result = [];
-        for (let i = from; i <= to; i += step) {
-            result.push(i);
+
+        // Determine if it's a float step
+        const isFloat = [from, to, step].some(v => !Number.isInteger(v));
+        const fixedStep = isFloat ? Number(step.toFixed(6)) : step;
+        const fixedTo = isFloat ? Number(to.toFixed(6)) : to;
+
+        for (let val = from; val <= fixedTo; val += fixedStep) {
+            result.push(Number(val.toFixed(6)));
         }
+
         return result;
     } else if (type === "single") {
         return [value];
     } else {
-        console.error("Invalid type for L or S. Must be 'range' or 'single'.");
+        console.error("Invalid type. Must be 'range' or 'single'.");
         process.exit(1);
     }
 }
@@ -135,26 +142,40 @@ async function runExperimentsForGroupedConfig(currentConfig) {
 
             const L_values = parseRangeOrSingle(lcaConfig.L_type, lcaConfig.L);
             const S_values = parseRangeOrSingle(lcaConfig.S_type, lcaConfig.S);
+            const p_c_values = parseRangeOrSingle(lcaConfig.p_c_type, lcaConfig.p_c);
+            const PSI1_values = parseRangeOrSingle(lcaConfig.PSI1_type, lcaConfig.PSI1);
+            const PSI2_values = parseRangeOrSingle(lcaConfig.PSI2_type, lcaConfig.PSI2);
+            const q0_values = parseRangeOrSingle(lcaConfig.q0_type, lcaConfig.q0);
 
-            for (const l of L_values) {
-                for (const s of S_values) {
-                    console.log(`\n--- Running experiment for L=${l}, S=${s}, config_type=${configType} ---`);
-                    const lcaParameters = {
-                        L: l,
-                        S: s,
-                        p_c: lcaConfig.p_c,
-                        PSI1: lcaConfig.PSI1,
-                        PSI2: lcaConfig.PSI2,
-                        q0: lcaConfig.q0
-                    };
+            for (const L of L_values) {
+                for (const S of S_values) {
+                    for (const p_c of p_c_values) {
+                        for (const PSI1 of PSI1_values) {
+                            for (const PSI2 of PSI2_values) {
+                                for (const q0 of q0_values) {
+                                    console.log(`\n--- Running experiment for L=${L}, S=${S}, p_c=${p_c}, PSI1=${PSI1}, PSI2=${PSI2}, q0=${q0}, config_type=${configType} ---`);
+                                    const lcaParameters = {
+                                        L,
+                                        S,
+                                        p_c,
+                                        PSI1,
+                                        PSI2,
+                                        q0
+                                    };
 
-                    try {
-                        writeJsonFile(LCA_PARAMS_PATH, lcaParameters);
-                        await runPythonScript();
-                        const results = getResults();
-                        allExperimentResults.push({ L: l, S: s, config_type: configType, results });
-                    } catch (err) {
-                        console.error(`Experiment failed for L=${l}, S=${s}: ${err.message}`);
+                                    try {
+                                        writeJsonFile(LCA_PARAMS_PATH, lcaParameters);
+                                        await runPythonScript();
+                                        const results = getResults();
+                                        allExperimentResults.push({
+                                            L, S, p_c, PSI1, PSI2, q0, config_type: configType, results
+                                        });
+                                    } catch (err) {
+                                        console.error(`Experiment failed for L=${L}, S=${S}, p_c=${p_c}, PSI1=${PSI1}, PSI2=${PSI2}, q0=${q0}: ${err.message}`);
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
