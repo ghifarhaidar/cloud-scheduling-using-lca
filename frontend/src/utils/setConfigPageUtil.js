@@ -8,9 +8,21 @@ const defaultFormValues = {
     S_to: 30,
     S_step: 1,
     p_c: 0.3,
+    p_c_from: 0.1,
+    p_c_to: 0.9,
+    p_c_step: 0.1,
     PSI1: 0.2,
+    PSI1_from: 0.1,
+    PSI1_to: 1,
+    PSI1_step: 0.1,
     PSI2: 1,
+    PSI2_from: 0.1,
+    PSI2_to: 1,
+    PSI2_step: 0.1,
     q0: 1,
+    q0_from: 1,
+    q0_to: 5,
+    q0_step: 1,
     config_type: 1,
     cost_config_type: 1,
     vm_scheduling_mode: 'time',
@@ -26,27 +38,128 @@ const defaultCustomConfigValues = {
         pes: { range: [8, 16] },
     },
 }
-// Validation function
-const validateForm = (formData) => {
-    const newErrors = {};
 
-    if (!(formData.p_c > 0 && formData.p_c < 1)) {
-        newErrors.p_c = "p_c must be > 0 and < 1";
+const defaultParamTypes = {
+    LType: 'single',
+    SType: 'single',
+    p_cType: 'single',
+    PSI1Type: 'single',
+    PSI2Type: 'single',
+    q0Type: 'single',
+}
+
+const LCA_Params_ranges = {
+    L_min: 1,
+    S_min: 1,
+    p_c_min: 0,
+    p_c_max: 1,
+    q0_min: 1,
+    PSI1_min: 0,
+    PSI1_max: 1,
+    PSI2_min: 0,
+    PSI2_max: 1,
+
+}
+const validateLcaConfig = (formData, paramTypes) => {
+    let newErrors = {};
+
+    const validateRange = (name, minVal, maxVal, exclusiveMin = false, exclusiveMax = false) => {
+        const from = formData[`${name}_from`];
+        const to = formData[`${name}_to`];
+        const step = formData[`${name}_step`];
+
+        if (exclusiveMin ? !(from > minVal) : !(from >= minVal)) {
+            newErrors[`${name}_from`] = `${name} from must be ${exclusiveMin ? '>' : '≥'} ${minVal}`;
+        }
+        if (maxVal && (exclusiveMax ? !(from < maxVal) : !(from <= maxVal))) {
+            newErrors[`${name}_from`] = `${name} from must be ${exclusiveMax ? '<' : '≤'} ${maxVal}`;
+        }
+        if (!(to >= from)) {
+            newErrors[`${name}_to`] = `${name} to must be ≥ from`;
+        }
+        if (maxVal && (exclusiveMax ? !(to < maxVal) : !(to <= maxVal))) {
+            newErrors[`${name}_to`] = `${name} to must be ${exclusiveMax ? '<' : '≤'} ${maxVal}`;
+        }
+        if (!(step > 0)) {
+            newErrors[`${name}_step`] = `${name} step must be > 0`;
+        }
+    };
+
+    const validateSingle = (name, minVal, maxVal = null, exclusiveMin = false, exclusiveMax = false) => {
+        const val = formData[name];
+        if (exclusiveMin ? !(val > minVal) : !(val >= minVal)) {
+            newErrors[name] = `${name} must be ${exclusiveMin ? '>' : '≥'} ${minVal}`;
+        }
+        if (
+            maxVal !== null &&
+            (exclusiveMax ? !(val < maxVal) : !(val <= maxVal))
+        ) {
+            newErrors[name] = `${name} must be ${exclusiveMax ? '<' : '≤'} ${maxVal}`;
+        }
+    };
+
+    // Validate L
+    if (paramTypes.LType === 'range') {
+        validateRange('L', LCA_Params_ranges.L_min);
+    } else {
+        validateSingle('L', LCA_Params_ranges.L_min);
     }
-    if (!(formData.PSI1 >= 0 && formData.PSI1 <= 1)) {
-        newErrors.PSI1 = "PSI1 must be between 0 and 1";
+
+    // Validate S
+    if (paramTypes.SType === 'range') {
+        validateRange('S', LCA_Params_ranges.S_min);
+    } else {
+        validateSingle('S', LCA_Params_ranges.S_min);
     }
-    if (!(formData.PSI2 >= 0 && formData.PSI2 <= 1)) {
-        newErrors.PSI2 = "PSI2 must be between 0 and 1";
+
+    // Validate p_c
+    if (paramTypes.p_cType === 'range') {
+        validateRange('p_c', LCA_Params_ranges.p_c_min, LCA_Params_ranges.p_c_max, true, true);
+    } else {
+        validateSingle('p_c', LCA_Params_ranges.p_c_min, LCA_Params_ranges.p_c_max, true, true);
     }
-    if (!(formData.q0 > 0)) {
-        newErrors.q0 = "q0 must be > 0";
+
+    // Validate PSI1
+    if (paramTypes.PSI1Type === 'range') {
+        validateRange('PSI1', LCA_Params_ranges.PSI1_min, LCA_Params_ranges.PSI1_max);
+    } else {
+        validateSingle('PSI1', LCA_Params_ranges.PSI1_min, LCA_Params_ranges.PSI1_max);
     }
-    if (!(formData.config_type >= -1 && formData.config_type <= 6)) {
-        newErrors.config_type = "config_type must be 1-6, 0 for custom configuration or -1 for range";
+
+    // Validate PSI2
+    if (paramTypes.PSI2Type === 'range') {
+        validateRange('PSI2', LCA_Params_ranges.PSI2_min, LCA_Params_ranges.PSI2_max);
+    } else {
+        validateSingle('PSI2', LCA_Params_ranges.PSI2_min, LCA_Params_ranges.PSI2_max);
     }
-    if (!(formData.cost_config_type === 1 || formData.cost_config_type === 2)) {
-        newErrors.cost_config_type = "cost_config_type must be 1 or 2";
+
+    // Validate q0
+    if (paramTypes.q0Type === 'range') {
+        validateRange('q0', LCA_Params_ranges.q0_min);
+    } else {
+        validateSingle('q0', LCA_Params_ranges.q0_min);
+    }
+
+    console.log(newErrors);
+    return newErrors;
+}
+
+// Validation function
+const validateForm = (formData, customConfig) => {
+    let newErrors = {};
+
+    if (formData.config_type < -1 || formData.config_type > 6) {
+        newErrors.config_type = "Configuration type must be between -1 and 6";
+    }
+
+    if (![1, 2].includes(Number(formData.cost_config_type))) {
+        newErrors.cost_config_type = "Cost configuration type must be 1 or 2";
+    }
+
+    // Only validate customConfig if user selected custom config
+    if (Number(formData.config_type) === 0) {
+        const customErrors = validateCustomConfig(customConfig);
+        newErrors = { ...newErrors, ...customErrors };
     }
 
     return newErrors;
@@ -75,44 +188,31 @@ const validateCustomConfig = (customConfig) => {
 };
 
 
-// Prepare JSON payload
-const PreparePayload = (formData, LType, SType) => {
-
+const PreparePayload = (formData, paramTypes) => {
     let jsonPayload = {
-        ...formData,
-        L_type: LType,
-        S_type: SType,
+        L_type: paramTypes["LType"],
+        S_type: paramTypes["SType"],
+        p_c_type: paramTypes["p_cType"],
+        PSI1_type: paramTypes["PSI1Type"],
+        PSI2_type: paramTypes["PSI2Type"],
+        q0_type: paramTypes["q0Type"],
     };
 
-    if (LType === "range") {
-        jsonPayload.L = {
-            from: formData.L_from,
-            to: formData.L_to,
-            step: formData.L_step,
-        };
-        const { L_from, L_to, L_step, ...rest } = jsonPayload;
-        jsonPayload = rest;
-    } else {
-        jsonPayload.L = formData.L;
-        const { L_from, L_to, L_step, ...rest } = jsonPayload;
-        jsonPayload = rest;
-    }
+    // Handle algorithm params
+    ['L', 'S', 'p_c', 'PSI1', 'PSI2', 'q0'].forEach((param) => {
+        if (paramTypes[`${param}Type`] === 'range') {
+            jsonPayload[param] = {
+                from: formData[`${param}_from`],
+                to: formData[`${param}_to`],
+                step: formData[`${param}_step`],
+            };
+        } else {
+            jsonPayload[param] = formData[param];
+        }
+    });
 
-    if (SType === "range") {
-        jsonPayload.S = {
-            from: formData.S_from,
-            to: formData.S_to,
-            step: formData.S_step,
-        };
-        const { S_from, S_to, S_step, ...rest } = jsonPayload;
-        jsonPayload = rest;
-    } else {
-        jsonPayload.S = formData.S;
-        const { S_from, S_to, S_step, ...rest } = jsonPayload;
-        jsonPayload = rest;
-    }
     return jsonPayload;
-}
+};
 
 
 const PrepareCustomConfig = (formData) => {
@@ -145,4 +245,6 @@ export {
     PreparePayload,
     PrepareCustomConfig,
     defaultCustomConfigValues,
+    validateLcaConfig,
+    defaultParamTypes,
 }

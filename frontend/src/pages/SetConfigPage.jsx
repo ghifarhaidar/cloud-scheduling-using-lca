@@ -3,10 +3,11 @@ import { saveConfig } from "../utils/api";
 import {
   defaultFormValues,
   validateForm,
-  validateCustomConfig,
   PreparePayload,
   PrepareCustomConfig,
-  defaultCustomConfigValues
+  defaultCustomConfigValues,
+  validateLcaConfig,
+  defaultParamTypes
 } from "../utils/setConfigPageUtil";
 
 import CustomConfigSection from '../components/CustomConfigSection';
@@ -14,8 +15,7 @@ import AlgorithmConfiguration from '../components/AlgorithmConfiguration';
 import SimulationConfiguration from '../components/SimulationConfiguration';
 
 export default function SetConfigPage() {
-  const [LType, setLType] = useState('single');
-  const [SType, setSType] = useState('single');
+  const [paramTypes, setParamTypes] = useState(defaultParamTypes);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(defaultFormValues);
@@ -31,19 +31,19 @@ export default function SetConfigPage() {
     }));
   };
   const handleAddLcaConfig = () => {
-    const errors = validateForm(formData);
+    const errors = validateLcaConfig(formData, paramTypes);
     if (Object.keys(errors).length > 0) {
       setErrors(errors);
       return;
     }
 
     const { config_type, cost_config_type, vm_scheduling_mode, ...lcaOnlyData } = formData;
-    const processedLcaConfigs = PreparePayload(lcaOnlyData, LType, SType);
+    const processedLcaConfigs = PreparePayload(formData, paramTypes);
 
 
     setLcaConfigs((prev) => [
       ...prev,
-      { ...processedLcaConfigs, L_type: LType, S_type: SType },
+      { ...processedLcaConfigs },
     ]);
     setErrors({});
   };
@@ -51,15 +51,9 @@ export default function SetConfigPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.config_type === 0) {
-      // Validate custom config if "custom" type selected
-      const customErrors = validateCustomConfig(customConfig);
-      if (Object.keys(customErrors).length > 0) {
-        setErrors(customErrors);
-        return;
-      }
-    }
-    const validationErrors = validateForm(formData);
+
+    const validationErrors = validateForm(formData, customConfig);
+    console.log(validationErrors);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
@@ -111,11 +105,9 @@ export default function SetConfigPage() {
               <h2 className="form-section-title">🔧 Algorithm Configuration</h2>
               <AlgorithmConfiguration
                 formData={formData}
-                LType={LType}
-                setLType={setLType}
-                SType={SType}
-                setSType={setSType}
                 handleChange={handleChange}
+                paramTypes={paramTypes}
+                setParamTypes={setParamTypes}
                 errors={errors}
               />
               <button
@@ -176,8 +168,7 @@ export default function SetConfigPage() {
               onClick={() => {
                 setFormData(defaultFormValues);
                 setCustomConfig(defaultCustomConfigValues);
-                setLType("single");
-                setSType("single");
+                setParamTypes(defaultParamTypes);
                 setErrors({});
                 setLcaConfigs([]);
               }}

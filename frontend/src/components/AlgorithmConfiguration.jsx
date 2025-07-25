@@ -1,11 +1,9 @@
 export default function AlgorithmConfiguration({
   formData,
-  LType,
-  setLType,
-  SType,
-  setSType,
   handleChange,
-  errors
+  errors,
+  paramTypes,
+  setParamTypes
 }) {
   return (
     <>
@@ -16,23 +14,28 @@ export default function AlgorithmConfiguration({
 
         <div className="radio-group">
           <label className="radio-option">
-            <input type="radio" name="LType" value="single" checked={LType === "single"} onChange={() => setLType("single")} />
+            <input type="radio" name="LType" value="single" checked={paramTypes['LType'] === "single"} onChange={() =>
+              setParamTypes((prev) => ({ ...prev, ['LType']: "single" }))
+            } />
             Single value
           </label>
           <label className="radio-option">
-            <input type="radio" name="LType" value="range" checked={LType === "range"} onChange={() => setLType("range")} />
+            <input type="radio" name="LType" value="range" checked={paramTypes['LType'] === "range"} onChange={() =>
+              setParamTypes((prev) => ({ ...prev, ['LType']: "range" }))
+            } />
             Range of values
           </label>
         </div>
 
-        {LType === "single" ? (
+        {paramTypes['LType'] === "single" ? (
           <div className="form-group">
             <label className="form-label">League Size</label>
             <input type="number" name="L" value={formData.L} onChange={handleChange} min="1" className="form-input form-input-small" />
+            {errors["L"] && <div className="error-message">⚠️ {errors["L"]}</div>}
           </div>
         ) : (
           <div className="form-input-group">
-            <InputRange namePrefix="L" values={formData} onChange={handleChange} />
+            <InputRange namePrefix="L" values={formData} onChange={handleChange} errors={errors} />
           </div>
         )}
       </div>
@@ -44,23 +47,28 @@ export default function AlgorithmConfiguration({
 
         <div className="radio-group">
           <label className="radio-option">
-            <input type="radio" name="SType" value="single" checked={SType === "single"} onChange={() => setSType("single")} />
+            <input type="radio" name="SType" value="single" checked={paramTypes['SType'] === "single"} onChange={() =>
+              setParamTypes((prev) => ({ ...prev, ['SType']: "single" }))
+            } />
             Single value
           </label>
           <label className="radio-option">
-            <input type="radio" name="SType" value="range" checked={SType === "range"} onChange={() => setSType("range")} />
+            <input type="radio" name="SType" value="range" checked={paramTypes['SType'] === "range"} onChange={() =>
+              setParamTypes((prev) => ({ ...prev, ['SType']: "range" }))
+            } />
             Range of values
           </label>
         </div>
 
-        {SType === "single" ? (
+        {paramTypes['SType'] === "single" ? (
           <div className="form-group">
             <label className="form-label">Number of Seasons</label>
             <input type="number" name="S" value={formData.S} onChange={handleChange} min="1" className="form-input form-input-small" />
+            {errors["S"] && <div className="error-message">⚠️ {errors["S"]}</div>}
           </div>
         ) : (
           <div className="form-input-group">
-            <InputRange namePrefix="S" values={formData} onChange={handleChange} />
+            <InputRange namePrefix="S" values={formData} onChange={handleChange} errors={errors} />
           </div>
         )}
       </div>
@@ -70,58 +78,87 @@ export default function AlgorithmConfiguration({
         <h3 className="form-section-title">⚙️ Algorithm Parameters</h3>
         <p className="form-description">Fine-tune the LCA algorithm behavior</p>
 
-        {['p_c', 'PSI1', 'PSI2'].map((param) => (
-          <div className="form-group" key={param}>
-            <label className="form-label">
-              {param.toUpperCase()} <span className="form-note">- Range: 0 to 1</span>
-            </label>
-            <input
-              type="number"
-              name={param}
-              step="0.01"
-              value={formData[param]}
-              onChange={handleChange}
-              className="form-input form-input-small"
-            />
-            {errors[param] && <div className="error-message">⚠️ {errors[param]}</div>}
+        {['p_c', 'PSI1', 'PSI2', 'q0'].map((param) => (
+          <div className="form-section" key={param}>
+            <h3 className="form-section-title">{param.toUpperCase()}</h3>
+            <div className="radio-group">
+              <label className="radio-option">
+                <input
+                  type="radio"
+                  name={`${param}Type`}
+                  value="single"
+                  checked={paramTypes[`${param}Type`] === "single"}
+                  onChange={() =>
+                    setParamTypes((prev) => ({ ...prev, [`${param}Type`]: "single" }))
+                  }
+                />
+                Single value
+              </label>
+              <label className="radio-option">
+                <input
+                  type="radio"
+                  name={`${param}Type`}
+                  value="range"
+                  checked={paramTypes[`${param}Type`] === "range"}
+                  onChange={() =>
+                    setParamTypes((prev) => ({ ...prev, [`${param}Type`]: "range" }))
+                  }
+                />
+                Range of values
+              </label>
+            </div>
+
+            {paramTypes[`${param}Type`] === "single" ? (
+              <div className="form-group">
+                <input
+                  type="number"
+                  name={param}
+                  step="0.01"
+                  value={formData[param]}
+                  onChange={handleChange}
+                  className="form-input form-input-small"
+                />
+                {errors[param] && <div className="error-message">⚠️ {errors[param]}</div>}
+              </div>
+            ) : (
+              <div className="form-input-group">
+                <InputRange
+                  namePrefix={param}
+                  values={formData}
+                  onChange={handleChange}
+                  step={['q0'].includes(param) ? 1 : 0.01}
+                  errors={errors}
+                />
+              </div>
+            )}
           </div>
         ))}
-        <div className="form-group">
-          <label className="form-label">
-            q0
-          </label>
-          <input
-            type="number"
-            name="q0"
-            step="1"
-            min="1"
-            value={formData["q0"]}
-            onChange={handleChange}
-            className="form-input form-input-small"
-          />
-          {errors["q0"] && <div className="error-message">⚠️ {errors[param]}</div>}
-        </div>
       </div>
     </>
   );
 }
 
-function InputRange({ namePrefix, values, onChange }) {
+function InputRange({ namePrefix, values, onChange, step = 1, errors = {} }) {
   return (
     <>
-      {['from', 'to', 'step'].map((field) => (
-        <div className="form-group" key={field}>
-          <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
-          <input
-            type="number"
-            name={`${namePrefix}_${field}`}
-            value={values[`${namePrefix}_${field}`]}
-            onChange={onChange}
-            min="1"
-            className="form-input form-input-small"
-          />
-        </div>
-      ))}
+      {['from', 'to', 'step'].map((field) => {
+        const name = `${namePrefix}_${field}`;
+        return (
+          <div className="form-group" key={field}>
+            <label className="form-label">{field.charAt(0).toUpperCase() + field.slice(1)}</label>
+            <input
+              type="number"
+              name={name}
+              value={values[name]}
+              onChange={onChange}
+              min="0"
+              step={step}
+              className="form-input form-input-small"
+            />
+            {errors[name] && <div className="error-message">⚠️ {errors[name]}</div>}
+          </div>
+        );
+      })}
     </>
   );
 }
