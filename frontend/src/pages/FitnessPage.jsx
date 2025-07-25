@@ -26,7 +26,7 @@ export default function FitnessPage() {
   useEffect(() => {
     const fetchFitnessData = async () => {
       try {
-        const { data } = await getAllFitness(); // 👈 call API helper
+        let { data } = await getAllFitness(); // 👈 call API helper
         data = sortAlgorithm(data);
         console.log("data loaded: ", data);
         const colors = {};
