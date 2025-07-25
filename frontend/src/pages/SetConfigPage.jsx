@@ -10,6 +10,8 @@ import {
 } from "../utils/setConfigPageUtil";
 
 import CustomConfigSection from '../components/CustomConfigSection';
+import AlgorithmConfiguration from '../components/AlgorithmConfiguration';
+import SimulationConfiguration from '../components/SimulationConfiguration';
 
 export default function SetConfigPage() {
   const [LType, setLType] = useState('single');
@@ -17,6 +19,7 @@ export default function SetConfigPage() {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState(defaultFormValues);
+  const [lcaConfigs, setLcaConfigs] = useState([]);
   const [customConfig, setCustomConfig] = useState(defaultCustomConfigValues);
 
   const handleChange = (e) => {
@@ -26,6 +29,24 @@ export default function SetConfigPage() {
       [name]: type === "number" ? parseFloat(value) : value,
     }));
   };
+  const handleAddLcaConfig = () => {
+    const errors = validateForm(formData);
+    if (Object.keys(errors).length > 0) {
+      setErrors(errors);
+      return;
+    }
+
+    const { config_type, cost_config_type, vm_scheduling_mode, ...lcaOnlyData } = formData;
+    const processedLcaConfigs = PreparePayload(lcaOnlyData, LType, SType);
+
+
+    setLcaConfigs((prev) => [
+      ...prev,
+      { ...processedLcaConfigs, L_type: LType, S_type: SType },
+    ]);
+    setErrors({});
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,20 +64,32 @@ export default function SetConfigPage() {
       return;
     }
 
-    console.log("trying to save data.");
-    setErrors({});
-    setIsSubmitting(true);
+    if (lcaConfigs.length === 0) {
+      alert("Please add at least one LCA configuration.");
+      return;
+    }
 
-    const jsonPayload = PreparePayload(formData, LType, SType);
+    setIsSubmitting(true);
+    setErrors({});
+
+
+
+    const payload = {
+      config_type: formData.config_type,
+      cost_config_type: formData.cost_config_type,
+      vm_scheduling_mode: formData.vm_scheduling_mode,
+      LCA_configs: lcaConfigs,
+    };
 
     if (formData.config_type === 0) {
-      jsonPayload.custom_config = PrepareCustomConfig(customConfig);
+      payload.custom_config = PrepareCustomConfig(customConfig);
     }
-    console.log("Submitting config:", jsonPayload);
+    console.log("Submitting config:", payload);
 
     try {
-      await saveConfig(jsonPayload);
+      await saveConfig(payload);
       alert("✅ Config saved successfully!");
+      setLcaConfigs([]);
     } catch (err) {
       console.error("❌ Error saving config:", err.message);
       alert("❌ Error saving config: " + err.message);
@@ -67,317 +100,61 @@ export default function SetConfigPage() {
 
   return (
     <div>
-      <h1>Algorithm Configuration</h1>
-
-      <div className="form-container">
+      <h1> Experiments Configuration</h1>
+      <div className="mb-lg" >
         <form onSubmit={handleSubmit}>
 
-          {/* L parameter */}
-          <div className="form-section">
-            <h3 className="form-section-title">
-              📊 League Size (L)
-            </h3>
-            <p style={{ color: 'var(--secondary-gray)', marginBottom: 'var(--spacing-lg)' }}>
-              Configure the number of teams in the league championship algorithm
-            </p>
-
-            <div className="radio-group">
-              <label className="radio-option">
-                <input
-                  type="radio"
-                  name="LType"
-                  value="single"
-                  checked={LType === "single"}
-                  onChange={() => setLType("single")}
-                />
-                Single value
-              </label>
-              <label className="radio-option">
-                <input
-                  type="radio"
-                  name="LType"
-                  value="range"
-                  checked={LType === "range"}
-                  onChange={() => setLType("range")}
-                />
-                Range of values
-              </label>
-            </div>
-
-            {LType === "single" ? (
-              <div className="form-group">
-                <label className="form-label">League Size</label>
-                <input
-                  type="number"
-                  name="L"
-                  value={formData.L}
-                  onChange={handleChange}
-                  min="1"
-                  className="form-input form-input-small"
-                />
-              </div>
-            ) : (
-              <div className="form-input-group">
-                <div className="form-group">
-                  <label className="form-label">From</label>
-                  <input
-                    type="number"
-                    name="L_from"
-                    value={formData.L_from}
-                    onChange={handleChange}
-                    min="1"
-                    className="form-input form-input-small"
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">To</label>
-                  <input
-                    type="number"
-                    name="L_to"
-                    value={formData.L_to}
-                    onChange={handleChange}
-                    min="1"
-                    className="form-input form-input-small"
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Step</label>
-                  <input
-                    type="number"
-                    name="L_step"
-                    value={formData.L_step}
-                    onChange={handleChange}
-                    min="1"
-                    className="form-input form-input-small"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* S parameter */}
-          <div className="form-section">
-            <h3 className="form-section-title">
-              🏆 Number of Seasons (S)
-            </h3>
-            <p style={{ color: 'var(--secondary-gray)', marginBottom: 'var(--spacing-lg)' }}>
-              Define the number of seasons (iterations) for the algorithm
-            </p>
-
-            <div className="radio-group">
-              <label className="radio-option">
-                <input
-                  type="radio"
-                  name="SType"
-                  value="single"
-                  checked={SType === "single"}
-                  onChange={() => setSType("single")}
-                />
-                Single value
-              </label>
-              <label className="radio-option">
-                <input
-                  type="radio"
-                  name="SType"
-                  value="range"
-                  checked={SType === "range"}
-                  onChange={() => setSType("range")}
-                />
-                Range of values
-              </label>
-            </div>
-
-            {SType === "single" ? (
-              <div className="form-group">
-                <label className="form-label">Number of Seasons</label>
-                <input
-                  type="number"
-                  name="S"
-                  value={formData.S}
-                  onChange={handleChange}
-                  min="1"
-                  className="form-input form-input-small"
-                />
-              </div>
-            ) : (
-              <div className="form-input-group">
-                <div className="form-group">
-                  <label className="form-label">From</label>
-                  <input
-                    type="number"
-                    name="S_from"
-                    value={formData.S_from}
-                    onChange={handleChange}
-                    min="1"
-                    className="form-input form-input-small"
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">To</label>
-                  <input
-                    type="number"
-                    name="S_to"
-                    value={formData.S_to}
-                    onChange={handleChange}
-                    min="1"
-                    className="form-input form-input-small"
-                  />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">Step</label>
-                  <input
-                    type="number"
-                    name="S_step"
-                    value={formData.S_step}
-                    onChange={handleChange}
-                    min="1"
-                    className="form-input form-input-small"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Algorithm Parameters */}
-          <div className="form-section">
-            <h3 className="form-section-title">
-              ⚙️ Algorithm Parameters
-            </h3>
-            <p style={{ color: 'var(--secondary-gray)', marginBottom: 'var(--spacing-lg)' }}>
-              Fine-tune the LCA algorithm behavior
-            </p>
-
-            <div className="form-input-group">
-              <div className="form-group">
-                <label className="form-label">
-                  Crossover Probability (p_c)
-                  <span style={{ fontSize: '0.875rem', color: 'var(--secondary-gray)' }}> - Range: 0 to 1</span>
-                </label>
-                <input
-                  type="number"
-                  name="p_c"
-                  step="0.01"
-                  value={formData.p_c}
-                  onChange={handleChange}
-                  className="form-input form-input-small"
-                />
-                {errors.p_c && <div className="error-message">⚠️ {errors.p_c}</div>}
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">
-                  PSI1 Parameter
-                  <span style={{ fontSize: '0.875rem', color: 'var(--secondary-gray)' }}> - Range: 0 to 1</span>
-                </label>
-                <input
-                  type="number"
-                  name="PSI1"
-                  step="0.01"
-                  value={formData.PSI1}
-                  onChange={handleChange}
-                  className="form-input form-input-small"
-                />
-                {errors.PSI1 && <div className="error-message">⚠️ {errors.PSI1}</div>}
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">
-                  PSI2 Parameter
-                  <span style={{ fontSize: '0.875rem', color: 'var(--secondary-gray)' }}> - Range: 0 to 1</span>
-                </label>
-                <input
-                  type="number"
-                  name="PSI2"
-                  step="0.01"
-                  value={formData.PSI2}
-                  onChange={handleChange}
-                  className="form-input form-input-small"
-                />
-                {errors.PSI2 && <div className="error-message">⚠️ {errors.PSI2}</div>}
-              </div>
+          {/* --- Algorithm Configuration Card --- */}
+          <div className="card">
+            <div className="card-body">
+              <h2 className="form-section-title">🔧 Algorithm Configuration</h2>
+              <AlgorithmConfiguration
+                formData={formData}
+                LType={LType}
+                setLType={setLType}
+                SType={SType}
+                setSType={setSType}
+                handleChange={handleChange}
+                errors={errors}
+              />
+              <button
+                type="button"
+                className="btn btn-secondary mt-3"
+                onClick={handleAddLcaConfig}
+              >
+                ➕ Add LCA Config
+              </button>
             </div>
           </div>
 
-          {/* Simulation Configuration */}
-          <div className="form-section">
-            <h3 className="form-section-title">
-              🖥️ Simulation Configuration
-            </h3>
-            <p style={{ color: 'var(--secondary-gray)', marginBottom: 'var(--spacing-lg)' }}>
-              Configure the cloud simulation environment
-            </p>
-
-            <div className="form-input-group">
-              <div className="form-group">
-                <label className="form-label">
-                  Configuration Type
-                  <span style={{ fontSize: '0.875rem', color: 'var(--secondary-gray)' }}> - Values: 1-6, 0 for custom configuration, -1 for range</span>
-                </label>
-                <input
-                  type="number"
-                  name="config_type"
-                  value={formData.config_type}
-                  onChange={handleChange}
-                  min="-1"
-                  max="6"
-                  className="form-input form-input-small"
-                />
-                {errors.config_type && <div className="error-message">⚠️ {errors.config_type}</div>}
-              </div>
-
-              <div className="form-group">
-                <label className="form-label">
-                  Cost Configuration Type
-                  <span style={{ fontSize: '0.875rem', color: 'var(--secondary-gray)' }}> - Values: 1 or 2</span>
-                </label>
-                <input
-                  type="number"
-                  name="cost_config_type"
-                  value={formData.cost_config_type}
-                  onChange={handleChange}
-                  min="1"
-                  max="2"
-                  className="form-input form-input-small"
-                />
-                {errors.cost_config_type && <div className="error-message">⚠️ {errors.cost_config_type}</div>}
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label className="form-label">VM Scheduling Mode</label>
-              <div className="radio-group">
-                <label className="radio-option">
-                  <input
-                    type="radio"
-                    name="vm_scheduling_mode"
-                    value="time"
-                    checked={formData.vm_scheduling_mode === "time"}
-                    onChange={handleChange}
-                  />
-                  Time-Shared
-                </label>
-                <label className="radio-option">
-                  <input
-                    type="radio"
-                    name="vm_scheduling_mode"
-                    value="space"
-                    checked={formData.vm_scheduling_mode === "space"}
-                    onChange={handleChange}
-                  />
-                  Space-Shared
-                </label>
-              </div>
+          {/* --- Simulation Configuration Card --- */}
+          <div className="card mt-4">
+            <div className="card-body">
+              <h2 className="form-section-title">🖥️ Simulation Configuration</h2>
+              <SimulationConfiguration
+                formData={formData}
+                handleChange={handleChange}
+                errors={errors}
+              />
             </div>
           </div>
-          {/* Custom Configuration Section */}
+
+          {/* --- Custom Config (if selected) --- */}
           {formData.config_type === 0 && (
-            <CustomConfigSection
-              customConfig={customConfig}
-              setCustomConfig={setCustomConfig}
-              errors={errors}
-            />
+            <div className="card mt-4">
+              <div className="card-body">
+                <h2 className="form-section-title">🛠️ Custom Configuration</h2>
+                <CustomConfigSection
+                  customConfig={customConfig}
+                  setCustomConfig={setCustomConfig}
+                  errors={errors}
+                />
+              </div>
+            </div>
           )}
-          <div className="flex gap-md">
+
+          {/* --- Form Action Buttons --- */}
+          <div className="flex gap-md mt-4">
             <button
               type="submit"
               className="btn btn-primary"
@@ -385,13 +162,10 @@ export default function SetConfigPage() {
             >
               {isSubmitting ? (
                 <>
-                  <div className="spinner"></div>
-                  Saving Configuration...
+                  <div className="spinner"></div> Saving Configuration...
                 </>
               ) : (
-                <>
-                  💾 Save Configuration
-                </>
+                <>💾 Save Full Configuration</>
               )}
             </button>
 
@@ -401,15 +175,45 @@ export default function SetConfigPage() {
               onClick={() => {
                 setFormData(defaultFormValues);
                 setCustomConfig(defaultCustomConfigValues);
-                setLType('single');
-                setSType('single');
+                setLType("single");
+                setSType("single");
                 setErrors({});
+                setLcaConfigs([]);
               }}
             >
               🔄 Reset to Defaults
             </button>
           </div>
         </form>
+      </div>
+
+      {/* --- Preview Added LCA Configs --- */}
+      <div className="card mt-md" >
+        <div className="card-body">
+          <h3>📦 LCA Configs</h3>
+          {lcaConfigs.length === 0 ? (
+            <p className="card-text">No LCA configs added yet.</p>
+          ) : (
+            <div className="algorithm-grid ">
+              {lcaConfigs.map((cfg, idx) => (
+                <div key={idx} className="card ">
+                  <div className="code-block">
+                    <pre>{JSON.stringify(cfg, null, 2)}</pre>
+                  </div>
+                  <button
+                    className="btn btn-danger btn-sm "
+                    onClick={() => {
+                      setLcaConfigs(lcaConfigs.filter((_, i) => i !== idx));
+                    }}
+                  >
+                    ❌ Remove
+                  </button>
+
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

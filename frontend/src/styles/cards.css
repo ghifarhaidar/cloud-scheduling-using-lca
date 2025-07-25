@@ -58,3 +58,10 @@
     gap: var(--spacing-lg);
     padding: var(--spacing-md) 0;
 }
+
+.config-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md) 0;
+}

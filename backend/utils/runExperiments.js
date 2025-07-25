@@ -90,6 +90,88 @@ async function runExperiments() {
 }
 
 async function runExperimentsForConfig(currentConfig) {
+    if (Array.isArray(currentConfig.LCA_configs)) {
+        return await runExperimentsForGroupedConfig(currentConfig);
+    } else {
+        return await runExperimentsForSingleConfig(currentConfig);
+    }
+}
+
+async function runExperimentsForGroupedConfig(currentConfig) {
+    const timeStart = performance.now();
+    const RUN_CONFIG_PATH = path.join(config.CONFIGS_DIR, "run_config.json");
+    const allExperimentResults = [];
+
+    const configTypes = (currentConfig.config_type === -1)
+        ? Array.from({ length: 6 }, (_, i) => i + 1)
+        : [currentConfig.config_type];
+
+    for (const configType of configTypes) {
+        console.log(`\n🔁 Using config_type = ${configType}`);
+
+        try {
+            await runPythonScript({
+                job: 1,
+                'config-type': configType,
+                'cost-config-type': currentConfig.cost_config_type,
+                'vm-scheduling-mode': currentConfig.vm_scheduling_mode
+            });
+            console.log("✅ Initial configuration generated.");
+        } catch (error) {
+            console.error("❌ Failed to generate initial configuration:", error.message);
+            throw error;
+        }
+
+        for (const lcaConfig of currentConfig.LCA_configs) {
+            const mergedConfig = {
+                ...currentConfig,
+                ...lcaConfig,
+                config_type: configType
+            };
+            console.log(`\n💾lcaConfig:`, lcaConfig);
+
+            writeJsonFile(RUN_CONFIG_PATH, mergedConfig);
+            console.log(`\n💾 Saved current config to run_config.json:`, mergedConfig);
+
+            const L_values = parseRangeOrSingle(lcaConfig.L_type, lcaConfig.L);
+            const S_values = parseRangeOrSingle(lcaConfig.S_type, lcaConfig.S);
+
+            for (const l of L_values) {
+                for (const s of S_values) {
+                    console.log(`\n--- Running experiment for L=${l}, S=${s}, config_type=${configType} ---`);
+                    const lcaParameters = {
+                        L: l,
+                        S: s,
+                        p_c: lcaConfig.p_c,
+                        PSI1: lcaConfig.PSI1,
+                        PSI2: lcaConfig.PSI2
+                    };
+
+                    try {
+                        writeJsonFile(LCA_PARAMS_PATH, lcaParameters);
+                        await runPythonScript();
+                        const results = getResults();
+                        allExperimentResults.push({ L: l, S: s, config_type: configType, results });
+                    } catch (err) {
+                        console.error(`Experiment failed for L=${l}, S=${s}: ${err.message}`);
+                    }
+                }
+            }
+        }
+    }
+
+    const timeEnd = performance.now();
+    console.log("\n✅ Finished all grouped experiments.");
+    console.log(`⏱️ Time: ${(timeEnd - timeStart).toFixed(2)} ms`);
+
+    return {
+        config: currentConfig,
+        results: allExperimentResults
+    };
+}
+
+
+async function runExperimentsForSingleConfig(currentConfig) {
     const timeStart = performance.now();
 
     // Save the current config to run_config.json
