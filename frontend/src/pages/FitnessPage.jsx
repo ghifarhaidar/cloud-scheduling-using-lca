@@ -13,7 +13,7 @@ import {
 import { getAllFitness } from "../utils/api"; // 👈 import your API helper
 import Loading from "../components/loading"
 import LoadingError from "../components/loadingError"
-import { chartOptions, getAlgorithmColor } from "../utils/fitnessPageUtil";
+import { chartOptions, getAlgorithmColor, sortAlgorithm } from "../utils/fitnessPageUtil";
 
 ChartJS.register(LineElement, PointElement, LinearScale, Title, Tooltip, Legend, CategoryScale);
 
@@ -27,6 +27,7 @@ export default function FitnessPage() {
     const fetchFitnessData = async () => {
       try {
         const { data } = await getAllFitness(); // 👈 call API helper
+        data = sortAlgorithm(data);
         console.log("data loaded: ", data);
         const colors = {};
         Object.keys(data).forEach((algo, index) => {

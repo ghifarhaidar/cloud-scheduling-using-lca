@@ -104,8 +104,19 @@ const getAlgorithmColor = (algoName, index) => {
     return colorPalette[index % colorPalette.length];
 };
 
+const sortAlgorithm = (data) => {
+    const keys = Object.keys(data);
+    keys.sort((a, b) => a.localeCompare(b, undefined, { sensitivity: 'base' }));
+    const sortedData = {};
+    keys.forEach(key => {
+        sortedData[key] = data[key];
+    });
+    return sortedData;
+}
+
 export {
     chartOptions,
     getAlgorithmColor,
+    sortAlgorithm,
 
 }

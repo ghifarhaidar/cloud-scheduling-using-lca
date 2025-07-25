@@ -94,7 +94,9 @@ export const getAllAlgorithmNames = (groupedData) => {
             run.algorithms.forEach(algo => uniqueNames.add(algo.name));
         });
     });
-    return Array.from(uniqueNames).sort();
+    return Array.from(uniqueNames).sort((a, b) =>
+        a.localeCompare(b, undefined, { sensitivity: 'base' })
+    );
 };
 
 /**

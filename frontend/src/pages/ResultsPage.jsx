@@ -30,7 +30,7 @@ export default function ResultsPage() {
         const fetchResultsData = async () => {
             try {
                 const data = await getGroupedResults();
-                const algorithms = getAllAlgorithmNames(data).sort(); // Sort alphabetically
+                const algorithms = getAllAlgorithmNames(data);
                 const colors = {};
 
                 algorithms.forEach((algo, index) => {
