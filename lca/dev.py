@@ -12,13 +12,14 @@ n = 0
 p_c = params['p_c']
 PSI1 = params['PSI1']
 PSI2 = params['PSI2']
+q0 = params['q0']
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
 
 
 class LeagueChampionshipAlgorithm(object):
-    def __init__(self, L=L, S=S, n=n, p_c=p_c, PSI1=PSI1, PSI2=PSI2, min_xi=0, max_xi=0, path_w="LCA.txt", mode="time"):
+    def __init__(self, L=L, S=S, n=n, p_c=p_c, PSI1=PSI1, PSI2=PSI2, min_xi=0, max_xi=0,q0=q0, path_w="LCA.txt", mode="time"):
         self.L = L
         self.L_half = L // 2
         self.S = S
@@ -28,6 +29,7 @@ class LeagueChampionshipAlgorithm(object):
         self.PSI2 = PSI2
         self.min_xi = min_xi
         self.max_xi = max_xi
+        self.q0 = q0
         self.path_w = os.path.join(BASE_DIR, f"lca/{path_w}")
         self.mode = mode
         self.configure()
@@ -285,14 +287,14 @@ class LeagueChampionshipAlgorithm(object):
         Returns:
             list: List of binary vectors (1=update parameter, 0=keep current)
         """
-        q0 = 1
+        self.q0 = 1
         Y = list()
         y_sample = [i for i in range(self.n)]
         for i in range(self.L):
             y = [0] * self.n
             a = random.uniform(0.0, 1.0)
-            flagNum = (math.log(1 - (1 - (1 - p_c)**(self.n - q0 + 1)) * a) //
-                       math.log(1 - p_c)) + q0 - 1
+            flagNum = (math.log(1 - (1 - (1 - p_c)**(self.n - self.q0 + 1)) * a) //
+                       math.log(1 - p_c)) + self.q0 - 1
             q = int(flagNum)
             poInt = list(random.sample(range(self.n), q))
             poInt.sort()

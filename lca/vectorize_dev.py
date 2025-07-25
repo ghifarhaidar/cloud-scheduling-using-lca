@@ -18,13 +18,14 @@ n = 0
 p_c = params['p_c']
 PSI1 = params['PSI1']
 PSI2 = params['PSI2']
+q0 = params['q0']
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 BASE_DIR = os.path.abspath(os.path.join(CURRENT_DIR, ".."))
 
 
 class LeagueChampionshipAlgorithm:
-    def __init__(self, L=L, S=S, n=n, p_c=p_c, PSI1=PSI1, PSI2=PSI2, min_xi=0, max_xi=0, path_w="LCA.txt", mode="time"):
+    def __init__(self, L=L, S=S, n=n, p_c=p_c, PSI1=PSI1, PSI2=PSI2, min_xi=0, max_xi=0,q0=q0 ,path_w="LCA.txt", mode="time"):
         self.L = L
         self.L_half = L // 2
         self.S = S
@@ -34,6 +35,7 @@ class LeagueChampionshipAlgorithm:
         self.PSI2 = PSI2
         self.min_xi = min_xi
         self.max_xi = max_xi
+        self.q0 = q0
         self.path_w = os.path.join(BASE_DIR, f"lca/{path_w}")
         self.mode = mode
         self.configure()
@@ -155,12 +157,12 @@ class LeagueChampionshipAlgorithm:
         return 100 * np.array([self.calc_fitness(x) for x in X]) / self.fitness_scale
 
     def get_Y(self):
-        q0 = 1
+        self.q0 = 1
         a = np.random.uniform(0.0, 1.0, size=(self.L,))
         flagNum = (
-            np.log(1 - (1 - (1 - self.p_c) ** (self.n - q0 + 1)) * a)
+            np.log(1 - (1 - (1 - self.p_c) ** (self.n - self.q0 + 1)) * a)
             // np.log(1 - self.p_c)
-            + q0 - 1
+            + self.q0 - 1
         ).astype(int)
 
         Y = np.zeros((self.L, self.n), dtype=int)

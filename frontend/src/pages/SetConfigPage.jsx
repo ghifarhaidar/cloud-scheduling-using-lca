@@ -24,6 +24,7 @@ export default function SetConfigPage() {
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
+    console.log(name, value, type)
     setFormData((prev) => ({
       ...prev,
       [name]: type === "number" ? parseFloat(value) : value,

@@ -10,6 +10,7 @@ const defaultFormValues = {
     p_c: 0.3,
     PSI1: 0.2,
     PSI2: 1,
+    q0: 1,
     config_type: 1,
     cost_config_type: 1,
     vm_scheduling_mode: 'time',
@@ -37,6 +38,9 @@ const validateForm = (formData) => {
     }
     if (!(formData.PSI2 >= 0 && formData.PSI2 <= 1)) {
         newErrors.PSI2 = "PSI2 must be between 0 and 1";
+    }
+    if (!(formData.q0 > 0)) {
+        newErrors.q0 = "q0 must be > 0";
     }
     if (!(formData.config_type >= -1 && formData.config_type <= 6)) {
         newErrors.config_type = "config_type must be 1-6, 0 for custom configuration or -1 for range";

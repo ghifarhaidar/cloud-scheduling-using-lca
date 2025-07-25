@@ -144,7 +144,8 @@ async function runExperimentsForGroupedConfig(currentConfig) {
                         S: s,
                         p_c: lcaConfig.p_c,
                         PSI1: lcaConfig.PSI1,
-                        PSI2: lcaConfig.PSI2
+                        PSI2: lcaConfig.PSI2,
+                        q0: lcaConfig.q0
                     };
 
                     try {
@@ -170,7 +171,7 @@ async function runExperimentsForGroupedConfig(currentConfig) {
     };
 }
 
-
+// this is no more used nor maintained single config will be handled as a group of one, see runExperimentsForGroupedConfig
 async function runExperimentsForSingleConfig(currentConfig) {
     const timeStart = performance.now();
 

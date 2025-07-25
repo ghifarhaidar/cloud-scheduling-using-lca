@@ -86,6 +86,21 @@ export default function AlgorithmConfiguration({
             {errors[param] && <div className="error-message">⚠️ {errors[param]}</div>}
           </div>
         ))}
+        <div className="form-group">
+          <label className="form-label">
+            q0
+          </label>
+          <input
+            type="number"
+            name="q0"
+            step="1"
+            min="1"
+            value={formData["q0"]}
+            onChange={handleChange}
+            className="form-input form-input-small"
+          />
+          {errors["q0"] && <div className="error-message">⚠️ {errors[param]}</div>}
+        </div>
       </div>
     </>
   );
