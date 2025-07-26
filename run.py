@@ -146,6 +146,10 @@ def main():
         '--vm-scheduling-mode', type=str, choices=["time", "space"],
         help="(Job 1 and 2) VM scheduling mode: 'time shared' or 'space shared'."
     )
+    parser.add_argument(
+        '--run', type=str, choices=["lca", "algorithms"],
+        help="(Job 0) run only lca algorithms or only other algorithms."
+    )
 
     args = parser.parse_args()
     print(args)
@@ -161,16 +165,21 @@ def main():
             parser.error(
                 "Job 2 requires --cost-config-type or --vm-scheduling-mode."
             )
+    if args.run is None:
+        args.run = "algorithms"
 
     if args.job == 0:
         algorithms_to_run = load_algorithms().get('algorithms', [])
         for algorithm in algorithms_to_run:
             print(
                 f"\n=== Running algorithm: {algorithm["directory"]}/{algorithm["name"]} ===")
+            if(args.run == "lca" and algorithm["directory"]=="lca"):
+                run_python_script(algorithm["directory"], algorithm["name"])
+                run_java_program((algorithm["name"] + "\n"), algorithm["name"])
+            elif(args.run == "algorithms" and algorithm["directory"]=="algorithms"):
+                run_python_script(algorithm["directory"], algorithm["name"])
+                run_java_program((algorithm["name"] + "\n"), algorithm["name"])
 
-            run_python_script(algorithm["directory"], algorithm["name"])
-
-            run_java_program((algorithm["name"] + "\n"), algorithm["name"])
 
     if args.job == 1:
         generate_config(args)

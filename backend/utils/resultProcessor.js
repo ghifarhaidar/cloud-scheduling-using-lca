@@ -3,7 +3,7 @@ const path = require("path");
 const { RESULTS_DIR } = require("../config/config");
 const { readJsonFile } = require("./fileHandlers");
 
-const getResults = () => {
+const getResults = (str = '') => {
     try {
         const fileTypes = ["result", "sim_results"];
         const results = {};
@@ -14,7 +14,7 @@ const getResults = () => {
 
         files.forEach((file) => {
             const match = file.match(/^(.*?)_(result|sim_results)\.json$/);
-            if (match) {
+            if (match && (str === 'algorithms' || match[1].toLowerCase().includes(str.toLowerCase()))) {
                 algorithms.add(match[1]);
             }
         });
