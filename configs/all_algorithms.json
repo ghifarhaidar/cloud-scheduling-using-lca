@@ -24,6 +24,16 @@
             "name": "Vectorized_MO_LCA",
             "directory": "lca",
             "description": "using numpy on Multi-objective optimization balancing cost and makespan"
+        },
+        {
+            "name": "ACO",
+            "directory": "algorithms",
+            "description": "Ant Colony Optimization algorithm "
+        },
+        {
+            "name": "PSO",
+            "directory": "algorithms",
+            "description": "Particle Swarm Optimization algorithm "
         }
     ]
 }
