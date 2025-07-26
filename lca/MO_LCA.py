@@ -1,6 +1,6 @@
 """
-this is a vectorized version of MO_LCA.py,
-check MO_LCA.py for code documentation.
+this is a vectorized version of Non_Vectorized_MO_LCA.py,
+check Non_Vectorized_MO_LCA.py for code documentation.
 
 it uses numpy for its calculations.
 """
