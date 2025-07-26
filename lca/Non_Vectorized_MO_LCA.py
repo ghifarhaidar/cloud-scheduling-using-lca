@@ -18,7 +18,7 @@ cloudlets = list()
 cost_config = {}
 
 
-class MO_LCA(LeagueChampionshipAlgorithm):
+class Non_Vectorized_MO_LCA(LeagueChampionshipAlgorithm):
     """
     Multi-Objective League Championship Algorithm variant for cost and makespan optimization.
 
@@ -167,12 +167,12 @@ def run():
     cost_config = get_cost_config()
     vms, original_indices = sort_vms(vms)
     start_time = time.time()
-    lca = MO_LCA(n=n, max_xi=len(
-        vms)-1, path_w="MO_LCA.txt", mode=mode)
+    lca = Non_Vectorized_MO_LCA(n=n, max_xi=len(
+        vms)-1, path_w="Non_Vectorized_MO_LCA.txt", mode=mode)
     best = lca.league()
     running_tme = time.time() - start_time
     print(f"Time taken: {running_tme:.4f} sec")
-    export_results("MO_LCA", best, lca.calc_fitness,
+    export_results("Non_Vectorized_MO_LCA", best, lca.calc_fitness,
                    original_indices, running_tme)
 
 
