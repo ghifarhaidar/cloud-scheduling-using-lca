@@ -16,12 +16,12 @@
             "description": "Round Robin "
         },
         {
-            "name": "MO_LCA",
+            "name": "Non_Vectorized_MO_LCA",
             "directory": "lca",
             "description": "Multi-objective optimization balancing cost and makespan"
         },
         {
-            "name": "Vectorized_MO_LCA",
+            "name": "MO_LCA",
             "directory": "lca",
             "description": "using numpy on Multi-objective optimization balancing cost and makespan"
         },
