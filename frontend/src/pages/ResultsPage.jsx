@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { Bar } from "react-chartjs-2";
+import { Bar, Scatter } from "react-chartjs-2";
 import {
     Chart as ChartJS,
     BarElement,
@@ -8,52 +8,59 @@ import {
     Legend,
     CategoryScale,
     LinearScale,
+    PointElement,
 } from "chart.js";
+import ResultsSection from "../components/ResultsSection"
 import Loading from "../components/loading"
 import LoadingError from "../components/loadingError"
 
-import { getGroupedResults, getAlgorithmColor, getAllAlgorithmNames } from "../utils/resultPreprocessing";
+import { getGroupedResults, getAlgorithmColor, getAllAlgorithmNames, getSomeParetoSols, getLCAConfigKey, createDatasets } from "../utils/resultPreprocessing";
 import "../styles/resultsPage.css"
 
-ChartJS.register(BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale);
+ChartJS.register(BarElement, Title, Tooltip, Legend, CategoryScale, LinearScale, PointElement);
+
+
 
 export default function ResultsPage() {
     const [groupedData, setGroupedData] = useState([]);
     const [algorithmColors, setAlgorithmColors] = useState({});
     const [allAlgorithms, setAllAlgorithms] = useState([]);
+    const [configTypeFilters, setConfigTypeFilters] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const loaded = useRef(false);
 
-    
+    const handleConfigTypeChange = (groupIdx, value) => {
+        setConfigTypeFilters(prev => ({ ...prev, [groupIdx]: value }));
+    };
+
+    const fetchResultsData = async () => {
+        try {
+            const data = await getGroupedResults();
+            const algorithms = getAllAlgorithmNames(data);
+            const colors = {};
+
+            algorithms.forEach((algo, index) => {
+                colors[algo] = getAlgorithmColor(algo, index)
+            });
+
+            setGroupedData(data);
+            setAlgorithmColors(colors);
+            setAllAlgorithms(algorithms);
+            setLoading(false);
+        } catch (err) {
+            console.error("Error loading results data:", err);
+            setError("Failed to load results data. Please make sure experiments have been run.");
+            setLoading(false);
+        }
+    };
     useEffect(() => {
-        const fetchResultsData = async () => {
-            try {
-                const data = await getGroupedResults();
-                const algorithms = getAllAlgorithmNames(data);
-                const colors = {};
-
-                algorithms.forEach((algo, index) => {
-                    colors[algo] = getAlgorithmColor(algo, index)
-                });
-
-                setGroupedData(data);
-                setAlgorithmColors(colors);
-                setAllAlgorithms(algorithms);
-                setLoading(false);
-            } catch (err) {
-                console.error("Error loading results data:", err);
-                setError("Failed to load results data. Please make sure experiments have been run.");
-                setLoading(false);
-            }
-        };
-
         if (!loaded.current) {
             loaded.current = true;
             fetchResultsData();
         }
     }, []);
-            console.log(groupedData)
+    console.log("groupedData", groupedData)
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
@@ -84,15 +91,7 @@ export default function ResultsPage() {
         },
     };
 
-    const createDatasets = (metricData) => {
-        return allAlgorithms.map((algoName) => ({
-            label: algoName.replace('_', ' '),
-            data: metricData.map((d) => d[algoName] ?? 0),
-            backgroundColor: algorithmColors[algoName] + "cc",
-            borderColor: algorithmColors[algoName],
-            borderWidth: 1,
-        }));
-    };
+
 
     return (
         <div>
@@ -123,13 +122,85 @@ export default function ResultsPage() {
 
                         {/* Group Cards */}
                         {groupedData.map((group, groupIdx) => {
+                            // Get unique config types in this group
+                            const typesSet = new Set(group.runs.map(run => run.config_type));
+                            const configTypes = Array.from(typesSet);
+
+                            // Determine selected filter for this group
+                            const selectedType = configTypeFilters[groupIdx] ?? "all";
+
+                            // Filter runs in this group
+                            const filteredRuns = group.runs.filter(
+                                run => selectedType === "all" || run.config_type === selectedType
+                            );
+
+
+                            const lcaRuns = filteredRuns.filter(run =>
+                                run.algorithms.some(algo => algo.name.toLowerCase().includes("mo_lca"))
+                            );
+
+                            const nonLCARuns = filteredRuns.filter(run =>
+                                run.algorithms.every(algo => !algo.name.toLowerCase().includes("mo_lca"))
+                            );
+                            const lcaConfigsMap = {};
+                            lcaRuns.forEach(run => {
+                                const key = getLCAConfigKey(run);
+                                if (!lcaConfigsMap[key]) {
+                                    lcaConfigsMap[key] = [];
+                                }
+                                lcaConfigsMap[key].push(run);
+                            });
+                            console.log("lcaRuns:", lcaRuns);
+                            const singleLCAConfigs = Object.values(lcaConfigsMap).filter(cfgRuns => cfgRuns.length === 1).flat();
+                            const multiLCAConfigs = Object.entries(lcaConfigsMap).filter(([_, cfgRuns]) => cfgRuns.length > 1);
+
+                            console.log("multiLCAConfigs:", multiLCAConfigs);
+                            console.log("singleLCAConfigs:", singleLCAConfigs);
+
+                            if (multiLCAConfigs.length > 0) {
+                                // Flatten all LCA runs
+                                const allLcaRuns = multiLCAConfigs.flatMap(([_, runs]) => runs);
+                                var paretoData = allLcaRuns.map((run, idx) => {
+                                    const algo = run.algorithms.find(a => a.name.toLowerCase().includes("mo_lca")) ?? {};
+
+                                    return {
+                                        id: `Run ${idx + 1}`,
+                                        cost: algo.totalCost,
+                                        makespan: algo.makespan,
+                                        fitness: algo.fitness,
+                                        algorithms: run.algorithms,
+                                        PSI1: run.PSI1,
+                                        PSI2: run.PSI2,
+                                        q0: run.q0,
+                                        p_c: run.p_c,
+                                        L: run.L,
+                                        S: run.S,
+
+                                    };
+                                });
+
+
+                                // Find Pareto front
+                                const isDominated = (a, b) =>
+                                    (b.cost <= a.cost && b.makespan <= a.makespan) &&
+                                    (b.cost < a.cost || b.makespan < a.makespan);
+
+                                var paretoFront = paretoData.filter(a =>
+                                    !paretoData.some(b => b !== a && isDominated(a, b))
+                                );
+                                // setParetoFrontData(paretoFront)
+                                console.log("allLcaRuns:", allLcaRuns);
+                                console.log("paretoFront:", paretoFront);
+                                var someParetoSols = getSomeParetoSols(paretoFront)
+                            }
+
+
                             const labels = [];
                             const totalCostData = [];
                             const makespanData = [];
                             const runTimeData = [];
-
-                            group.runs.forEach((run, runIdx) => {
-                                const label = `Run ${runIdx + 1} (L:${run.L}, S:${run.S})`;
+                            [...nonLCARuns, ...singleLCAConfigs, ...someParetoSols].forEach((run, runIdx) => {
+                                const label = run.id ? `${run.id}` : `Run ${runIdx + 1}`;
                                 labels.push(label);
 
                                 const totalCostEntry = {};
@@ -147,24 +218,51 @@ export default function ResultsPage() {
                                 runTimeData.push(runTimeEntry);
                             });
 
+                            console.log("totalCostData", totalCostData);
                             const groupChartData = {
                                 labels,
-                                totalCost: createDatasets(totalCostData),
-                                makespan: createDatasets(makespanData),
-                                runTime: createDatasets(runTimeData),
+                                totalCost: createDatasets(totalCostData, allAlgorithms, algorithmColors),
+                                makespan: createDatasets(makespanData, allAlgorithms, algorithmColors),
+                                runTime: createDatasets(runTimeData, allAlgorithms, algorithmColors),
                             };
-
+                            console.log("groupChartData", groupChartData)
                             return (
                                 <div key={groupIdx} className="group-card mb-xl">
                                     <div className="card-header">
                                         <h2 className="card-title">
-                                            Group {groupIdx + 1}: L={group.groupConfig.L_type === 'range' ?
-                                                `${group.groupConfig.from}-${group.groupConfig.to}` :
-                                                group.groupConfig.L},
-                                            S={group.groupConfig.S},
-                                            p_c={group.groupConfig.p_c}
+                                            Group {groupIdx + 1}:
                                         </h2>
                                     </div>
+                                    {/* Filter UI for this group */}
+                                    {configTypes.length > 1 && (
+                                        <div className="filter-container">
+                                            <label className="filter-label">Filter by Config Type:</label>
+                                            <div className="radio-group">
+                                                <label>
+                                                    <input
+                                                        type="radio"
+                                                        name={`configType-${groupIdx}`}
+                                                        value="all"
+                                                        checked={selectedType === "all"}
+                                                        onChange={() => handleConfigTypeChange(groupIdx, "all")}
+                                                    />
+                                                    All
+                                                </label>
+                                                {configTypes.map((type) => (
+                                                    <label key={type}>
+                                                        <input
+                                                            type="radio"
+                                                            name={`configType-${groupIdx}`}
+                                                            value={type}
+                                                            checked={selectedType === type}
+                                                            onChange={() => handleConfigTypeChange(groupIdx, type)}
+                                                        />
+                                                        {type}
+                                                    </label>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
 
                                     <div className="result-cards-container">
                                         {/* Total Cost Card */}
@@ -216,32 +314,82 @@ export default function ResultsPage() {
                                         </div>
                                     </div>
 
-                                    {/* Detailed Runs */}
-                                    <div className="runs-details">
-                                        <h3>Detailed Results</h3>
-                                        <div className="runs-grid">
-                                            {group.runs.map((run, runIdx) => (
-                                                <div key={runIdx} className="run-card">
-                                                    <h4>Run {runIdx + 1}</h4>
-                                                    <p>L: {run.L}, S: {run.S}, Type: {run.config_type}</p>
-                                                    <div className="algorithm-results">
-                                                        {run.algorithms.map((algo, algoIdx) => (
-                                                            <div
-                                                                key={algoIdx}
-                                                                className="algorithm-result"
-                                                                style={{ borderLeft: `4px solid ${algorithmColors[algo.name]}` }}
-                                                            >
-                                                                <h5>{algo.name.replace('_', ' ')}</h5>
-                                                                <p>Cost: {algo.totalCost?.toFixed(2) ?? 'N/A'}</p>
-                                                                <p>Makespan: {algo.makespan?.toFixed(2) ?? 'N/A'}</p>
-                                                                <p>Runtime: {algo.run_time?.toFixed(4) ?? 'N/A'}s</p>
-                                                            </div>
-                                                        ))}
-                                                    </div>
+                                    {multiLCAConfigs.length > 0 && (() => {
+
+
+                                        return (
+                                            <div className="gridsearch-results">
+                                                <h3>Grid Search Results (LCA)</h3>
+
+                                                {/* Pareto Scatter Plot */}
+                                                <div style={{ height: 400, marginBottom: "2rem" }}>
+                                                    <h4>Pareto Front: Makespan vs Total Cost</h4>
+                                                    <Scatter
+                                                        data={{
+                                                            datasets: [
+                                                                {
+                                                                    label: "All Runs",
+                                                                    data: paretoData.map(p => ({ x: p.makespan, y: p.cost })),
+                                                                    backgroundColor: "#93c5fd",
+                                                                    pointRadius: 4,
+                                                                },
+                                                                {
+                                                                    label: "Pareto Front",
+                                                                    data: paretoFront.map(p => ({ x: p.makespan, y: p.cost })),
+                                                                    backgroundColor: "#ef4444",
+                                                                    pointRadius: 6,
+                                                                },
+                                                            ],
+                                                        }}
+                                                        options={{
+                                                            responsive: true,
+                                                            plugins: {
+                                                                tooltip: {
+                                                                    callbacks: {
+                                                                        label: (ctx) => {
+                                                                            const point = paretoData.find(p =>
+                                                                                p.makespan === ctx.parsed.x && p.cost === ctx.parsed.y
+                                                                            );
+                                                                            return [
+                                                                                `Run: ${point?.id ?? "?"}`,
+                                                                                `Makespan: ${ctx.parsed.x.toFixed(2)}`,
+                                                                                `Cost: ${ctx.parsed.y.toFixed(2)}`,
+                                                                                ...(point?.fitness !== undefined ? [`Fitness: ${point.fitness.toFixed(4)}`] : []),
+                                                                            ];
+                                                                        }
+                                                                    }
+                                                                },
+                                                                legend: { position: "top" },
+                                                                title: {
+                                                                    display: true,
+                                                                    text: "Pareto Front: Makespan vs Total Cost",
+                                                                }
+                                                            },
+                                                            scales: {
+                                                                x: {
+                                                                    title: { display: true, text: "Makespan" },
+                                                                },
+                                                                y: {
+                                                                    title: { display: true, text: "Total Cost" },
+                                                                }
+                                                            }
+                                                        }}
+                                                    />
+
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </div>
+
+
+                                            </div>
+                                        );
+                                    })()}
+
+                                    {/* Detailed Runs */}
+                                    <ResultsSection
+                                        nonLCARuns={nonLCARuns}
+                                        singleLCAConfigs={singleLCAConfigs}
+                                        paretoFront={paretoFront}
+                                        algorithmColors={algorithmColors}
+                                    />
                                 </div>
                             );
                         })}</>

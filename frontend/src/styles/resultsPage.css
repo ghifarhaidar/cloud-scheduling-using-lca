@@ -159,3 +159,41 @@
         grid-template-columns: 1fr;
     }
 }
+
+.filter-container {
+    margin: 1rem 0;
+    background-color: #f9fafb;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+}
+
+.radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 14px;
+}
+
+.gridsearch-results {
+    margin-top: 2rem;
+    padding: 1rem;
+    background: #f9fafb;
+    border-radius: 0.5rem;
+}
+
+.gridsearch-group {
+    margin-bottom: 2rem;
+}
+
+.gridsearch-group h4 {
+    margin-bottom: 0.5rem;
+    color: #374151;
+}

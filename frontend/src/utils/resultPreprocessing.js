@@ -33,7 +33,12 @@ export const getGroupedResults = async () => {
             const groupConfig = group.config;
 
             const runs = group.results.map(run => {
-                const { L, S, config_type, results } = run;
+                const { L, S,
+                    p_c = null,
+                    PSI1 = null,
+                    PSI2 = null,
+                    q0 = null,
+                    config_type, results } = run;
 
                 // Dynamically detect algorithms (any keys ending with _result)
                 const algorithms = Object.keys(results.result)
@@ -59,6 +64,10 @@ export const getGroupedResults = async () => {
                 return {
                     L,
                     S,
+                    p_c,
+                    PSI1,
+                    PSI2,
+                    q0,
                     config_type,
                     algorithms,
                     config: {
@@ -128,4 +137,77 @@ export const getAllResultsFlat = (groupedData) => {
             }))
         )
     );
+};
+
+export function getSomeParetoSols(data) {
+    const clone = obj => JSON.parse(JSON.stringify(obj));
+
+    // Lowest makespan
+    const lowestMakespan = data.reduce((min, curr) =>
+        curr.makespan < min.makespan ? curr : min
+    );
+
+    // Lowest cost
+    const lowestCost = data.reduce((min, curr) =>
+        curr.cost < min.cost ? curr : min
+    );
+
+    // Calculate averages
+    const totals = {
+        run_time: 0,
+        makespan: 0,
+        totalCost: 0
+    };
+
+    data.forEach(item => {
+        const algo = item.algorithms[0];
+        totals.run_time += algo.run_time;
+        totals.makespan += algo.makespan;
+        totals.totalCost += algo.totalCost;
+    });
+
+    const count = data.length;
+    const avgObj = {
+        id: "Average",
+        cost: null,
+        makespan: null,
+        fitness: null,
+        config: null,
+        algorithms: [
+            {
+                name: "MO_LCA",
+                displayName: "MO LCA",
+                fitness: null,
+                run_time: totals.run_time / count,
+                makespan: totals.makespan / count,
+                totalCost: totals.totalCost / count,
+                processingCost: null,
+                vmCount: null
+            }
+        ]
+    };
+
+    return [lowestMakespan, lowestCost, avgObj];
+}
+
+
+export const getLCAConfigKey = (run) => {
+    const cfg = run.config.LCA_configs?.[0] ?? {};
+    return JSON.stringify({
+        L: cfg.L,
+        S: cfg.S,
+        p_c: cfg.p_c,
+        PSI1: cfg.PSI1,
+        PSI2: cfg.PSI2,
+        q0: cfg.q0
+    });
+};
+export const createDatasets = (metricData, allAlgorithms ,algorithmColors) => {
+    return allAlgorithms.map((algoName) => ({
+        label: algoName.replace('_', ' '),
+        data: metricData.map((d) => d[algoName] ?? 0),
+        backgroundColor: algorithmColors[algoName] + "cc",
+        borderColor: algorithmColors[algoName],
+        borderWidth: 1,
+    }));
 };
