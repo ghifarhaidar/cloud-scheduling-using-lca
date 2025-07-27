@@ -53,6 +53,7 @@ export default function ResultsPage() {
             fetchResultsData();
         }
     }, []);
+            console.log(groupedData)
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,

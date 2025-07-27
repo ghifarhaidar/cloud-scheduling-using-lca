@@ -129,6 +129,18 @@ async function runExperimentsForGroupedConfig(currentConfig) {
             throw error;
         }
 
+        deleteFilesInDir(resultsDir, ".json");
+        
+        try {
+            await runPythonScript();
+            const results = getResults("algorithms");
+            allExperimentResults.push({
+                config_type: configType, results
+            });
+        } catch (err) {
+            console.error(`Experiment failed for config_type = ${configType}: ${err.message}`);
+        }
+
         for (const lcaConfig of currentConfig.LCA_configs) {
             const mergedConfig = {
                 ...currentConfig,
@@ -140,15 +152,6 @@ async function runExperimentsForGroupedConfig(currentConfig) {
             writeJsonFile(RUN_CONFIG_PATH, mergedConfig);
             console.log(`\n💾 Saved current config to run_config.json:`, mergedConfig);
 
-            try {
-                await runPythonScript();
-                const results = getResults("algorithms");
-                allExperimentResults.push({
-                    config_type: configType, results
-                });
-            } catch (err) {
-                console.error(`Experiment failed for config_type = ${configType}: ${err.message}`);
-            }
 
             const L_values = parseRangeOrSingle(lcaConfig.L_type, lcaConfig.L);
             const S_values = parseRangeOrSingle(lcaConfig.S_type, lcaConfig.S);

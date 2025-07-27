@@ -171,14 +171,16 @@ def main():
     if args.job == 0:
         algorithms_to_run = load_algorithms().get('algorithms', [])
         for algorithm in algorithms_to_run:
-            print(
-                f"\n=== Running algorithm: {algorithm["directory"]}/{algorithm["name"]} ===")
             if(args.run == "lca" and algorithm["directory"]=="lca"):
                 run_python_script(algorithm["directory"], algorithm["name"])
                 run_java_program((algorithm["name"] + "\n"), algorithm["name"])
+                print(
+                    f"\n=== Running algorithm: {algorithm["directory"]}/{algorithm["name"]} ===")
             elif(args.run == "algorithms" and algorithm["directory"]=="algorithms"):
                 run_python_script(algorithm["directory"], algorithm["name"])
                 run_java_program((algorithm["name"] + "\n"), algorithm["name"])
+                print(
+                    f"\n=== Running algorithm: {algorithm["directory"]}/{algorithm["name"]} ===")
 
 
     if args.job == 1:
