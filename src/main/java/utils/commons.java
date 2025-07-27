@@ -23,7 +23,7 @@ import org.cloudsimplus.vms.VmCost;
 import org.cloudsimplus.vms.VmSimple;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.simulations.BasicExample;
+import org.simulations.Simulation;
 import vms.MyVmCost;
 
 import java.io.FileWriter;
@@ -192,7 +192,7 @@ public class commons {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String jsonOutput = gson.toJson(jsonMap);
 
-        String filePath = "results/" + BasicExample.name + "_sim_results.json";
+        String filePath = "results/" + Simulation.name + "_sim_results.json";
         try (FileWriter fileWriter = new FileWriter(filePath)) {
             fileWriter.write(jsonOutput);
             System.out.println("JSON data successfully written to " + filePath);

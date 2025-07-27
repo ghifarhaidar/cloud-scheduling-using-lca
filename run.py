@@ -64,7 +64,7 @@ def run_java_program(input, algorithm_name):
     with open(run_log_file, "w") as run_log:
         result = subprocess.run([
             "mvn", "exec:java",
-            "-Dexec.mainClass=org.simulations.BasicExample"
+            "-Dexec.mainClass=org.simulations.Simulation"
         ],
             input=input, text=True,
             stdout=run_log,

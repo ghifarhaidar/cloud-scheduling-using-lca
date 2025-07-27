@@ -17,23 +17,23 @@ import java.util.Scanner;
 
 import utils.commons;
 
-public class BasicExample {
-    private static final Logger log = LoggerFactory.getLogger(BasicExample.class);
+public class Simulation {
+    private static final Logger log = LoggerFactory.getLogger(Simulation.class);
     private final CloudSimPlus simulation;
-    private final DatacenterBroker broker0;
+    private final MyDatacenterBroker broker;
     private final List<Vm> vmList;
     private final List<Cloudlet> cloudletList;
-    private final Datacenter datacenter0;
+    private final Datacenter datacenter;
 
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String algorithm = scanner.nextLine();
-        new BasicExample(algorithm);
+        new Simulation(algorithm);
     }
 
     public static String name;
 
-    private BasicExample(String algorithm) {
+    private Simulation(String algorithm) {
         /*Enables just some level of log messages.
           Make sure to import org.cloudsimplus.util.Log;*/
 //        Log.setLevel(Level.TRACE)
@@ -44,22 +44,22 @@ public class BasicExample {
         simulation = new CloudSimPlus();
         commons.initConfig();
 
-        datacenter0 = commons.createDatacenter(simulation);
-        broker0 = new MyDatacenterBroker(simulation,name);
-        ((MyDatacenterBroker) broker0).loadSchedule(name + "_schedule.json");
+        datacenter = commons.createDatacenter(simulation);
+        broker = new MyDatacenterBroker(simulation,name);
+        broker.loadSchedule(name + "_schedule.json");
 
         vmList = commons.createVms();
         cloudletList = commons.createCloudlets();
 
-        broker0.submitVmList(vmList);
-        broker0.submitCloudletList(cloudletList);
+        broker.submitVmList(vmList);
+        broker.submitCloudletList(cloudletList);
 
         simulation.start();
 
-        final var cloudletFinishedList = broker0.getCloudletFinishedList();
+        final var cloudletFinishedList = broker.getCloudletFinishedList();
         new CloudletsTableBuilder(cloudletFinishedList).build();
-        commons.printTotalVmsCost(datacenter0,broker0);
-        commons.exportResult(datacenter0, broker0);
+        commons.printTotalVmsCost(datacenter,broker);
+        commons.exportResult(datacenter, broker);
     }
 
 
