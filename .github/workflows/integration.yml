@@ -12,11 +12,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Conda Environment
-        uses: conda-incubator/setup-miniconda@v2
+      - name: Set up Python
+        uses: actions/setup-python@v4
         with:
-          auto-update-conda: true
-          environment-name: my
           python-version: 3.10
 
       - name: Install System Dependencies (Node.js, Maven)
@@ -26,8 +24,8 @@ jobs:
           node -v
           mvn -v
 
-      - name: Install Python Dependencies
-        run: conda install numpy -y
+      - name: Install Python Packages
+        run: pip install numpy pytest requests
 
       - name: Install Backend Dependencies
         run: npm install
@@ -41,6 +39,4 @@ jobs:
         run: python3 run.py --job3
 
       - name: Run Integration Tests
-        run: |
-          pip install pytest requests
-          pytest integration-tests/test_full_workflow.py -s
+        run: pytest integration-tests/test_full_workflow.py -s
