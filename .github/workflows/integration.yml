@@ -1,0 +1,42 @@
+name: Integration Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+
+      - name: Install System Dependencies (Node.js, Maven)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y maven nodejs
+          node -v
+          mvn -v
+
+      - name: Install Python Packages
+        run: pip install numpy pytest requests
+
+      - name: Install Backend Dependencies
+        run: npm install
+        working-directory: ./backend
+
+      - name: Install Frontend Dependencies
+        run: npm install
+        working-directory: ./frontend
+
+      - name: Build Java Simulator via Python (run.py)
+        run: python3 run.py --job 3
+
+      - name: Run Integration Tests
+        run: pytest integration-tests/test_full_workflow.py -s
