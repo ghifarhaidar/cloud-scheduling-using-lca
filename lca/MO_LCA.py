@@ -16,7 +16,7 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sys.path.append(parent_dir)
 
 from lca.util import get_config, get_cost_config, sort_vms, get_solution, export_results  # nopep8
-from lca.vectorize_dev import LeagueChampionshipAlgorithm  # nopep8
+from lca.vectorized_dev import LeagueChampionshipAlgorithm  # nopep8
 
 
 vms = list()
