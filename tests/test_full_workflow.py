@@ -2,8 +2,14 @@ import requests
 import time
 import subprocess
 import pytest
+import os
 
-API_BASE_URL = "http://172.25.1.141:3000"  # or 127.0.0.1:3000 if frontend proxies
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+ROOT_DIR = os.path.abspath(os.path.join(THIS_DIR, ".."))
+BACKEND_DIR = os.path.join(ROOT_DIR, "backend")
+
+# API_BASE_URL = "localhost:3000"  # or http://172.25.1.141:3000 
+API_BASE_URL = "http://172.25.1.141:3000"  # or localhost:3000
 
 @pytest.fixture(scope="session", autouse=True)
 def backend():
@@ -12,7 +18,7 @@ def backend():
     # Step 1: Build/prepare the simulator
     build_proc = subprocess.run(
         ["python3", "run.py", "--job", "3"],
-        cwd="..",  # or adjust path if run.py lives somewhere else
+        cwd=ROOT_DIR, 
         capture_output=True,
         text=True
     )
@@ -24,7 +30,7 @@ def backend():
     # Step 2: Start the backend server
     backend_proc = subprocess.Popen(
         ["npm", "run", "dev"],
-        cwd="../backend",
+        cwd=BACKEND_DIR,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE
     )
