@@ -39,4 +39,4 @@ jobs:
         run: python3 run.py --job 3
 
       - name: Run Integration Tests
-        run: pytest integration-tests/test_full_workflow.py -s
+        run: pytest tests/test_full_workflow.py -s
