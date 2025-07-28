@@ -175,12 +175,12 @@ def main():
                 run_python_script(algorithm["directory"], algorithm["name"])
                 run_java_program((algorithm["name"] + "\n"), algorithm["name"])
                 print(
-                    f"\n=== Running algorithm: {algorithm["directory"]}/{algorithm["name"]} ===")
+                    f"\n=== Running algorithm: {algorithm['directory']}/{algorithm['name']} ===")
             elif(args.run == "algorithms" and algorithm["directory"]=="algorithms"):
                 run_python_script(algorithm["directory"], algorithm["name"])
                 run_java_program((algorithm["name"] + "\n"), algorithm["name"])
                 print(
-                    f"\n=== Running algorithm: {algorithm["directory"]}/{algorithm["name"]} ===")
+                    f"\n=== Running algorithm: {algorithm['directory']}/{algorithm['name']} ===")
 
 
     if args.job == 1:
