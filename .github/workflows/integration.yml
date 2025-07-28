@@ -36,7 +36,7 @@ jobs:
         working-directory: ./frontend
 
       - name: Build Java Simulator via Python (run.py)
-        run: python3 run.py --job3
+        run: python3 run.py --job 3
 
       - name: Run Integration Tests
         run: pytest integration-tests/test_full_workflow.py -s
