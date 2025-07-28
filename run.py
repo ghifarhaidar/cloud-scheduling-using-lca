@@ -130,8 +130,8 @@ def main():
             "Job type: "
             "0 = run algorithm and simulations (default), "
             "1 = generate config, "
-            "2 = edit config"
-            "3 = build java"
+            "2 = edit config, "
+            "3 = build java, "
         )
     )
     parser.add_argument(
