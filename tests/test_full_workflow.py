@@ -8,8 +8,8 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.abspath(os.path.join(THIS_DIR, ".."))
 BACKEND_DIR = os.path.join(ROOT_DIR, "backend")
 
-API_BASE_URL = "localhost:3000"  # or http://172.25.1.141:3000 
-# API_BASE_URL = "http://172.25.1.141:3000"  # or localhost:3000
+API_BASE_URL = "http://127.0.0.1:3000"  # or http://172.25.1.141:3000 
+# API_BASE_URL = "http://172.25.1.141:3000"  # or "http://127.0.0.1:3000"
 
 @pytest.fixture(scope="session", autouse=True)
 def backend():
