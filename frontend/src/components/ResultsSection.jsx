@@ -5,7 +5,6 @@ export default function ResultsSection({ nonLCARuns, singleLCAConfigs, paretoFro
     const [showDetails, setShowDetails] = useState(false);
 
     const toggleDetails = () => setShowDetails(prev => !prev);
-    console.log(paretoFront[4])
 
     return (
         <div className="runs-details">

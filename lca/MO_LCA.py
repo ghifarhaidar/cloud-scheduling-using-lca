@@ -43,6 +43,8 @@ class MO_LCA(LeagueChampionshipAlgorithm):
             self.makespan = self.makespan_space_shared
 
         self.calc_fitness = self.Z
+        self.makespan_scale , _= self.makespan(np.array(self.round_robin()))
+        self.cost_scale = self.cost(np.array(self.round_robin()))
 
     def makespan_space_shared(self, x):
         vm_mips = self.vm_mips
@@ -140,9 +142,9 @@ class MO_LCA(LeagueChampionshipAlgorithm):
         return total_cost
 
     def Z(self, x):
-        cost = self.cost(x) / self.fitness_scale
+        cost = self.cost(x) / self.cost_scale
         makespan, _ = self.makespan(x)
-        makespan /= self.fitness_scale
+        makespan /= self.makespan_scale
 
         z = (0.3 * cost + 0.7 * makespan) * self.fitness_scale
         return z

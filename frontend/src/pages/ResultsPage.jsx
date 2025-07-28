@@ -140,7 +140,7 @@ export default function ResultsPage() {
                             );
 
                             const nonLCARuns = filteredRuns.filter(run =>
-                                run.algorithms.every(algo => !algo.name.toLowerCase().includes("mo_lca"))
+                                run.algorithms.length > 0 && run.algorithms.every(algo => !algo.name.toLowerCase().includes("mo_lca"))
                             );
                             const lcaConfigsMap = {};
                             lcaRuns.forEach(run => {
@@ -156,7 +156,8 @@ export default function ResultsPage() {
 
                             console.log("multiLCAConfigs:", multiLCAConfigs);
                             console.log("singleLCAConfigs:", singleLCAConfigs);
-
+                            var someParetoSols = [];
+                            var paretoFront =[];
                             if (multiLCAConfigs.length > 0) {
                                 // Flatten all LCA runs
                                 const allLcaRuns = multiLCAConfigs.flatMap(([_, runs]) => runs);
@@ -185,13 +186,13 @@ export default function ResultsPage() {
                                     (b.cost <= a.cost && b.makespan <= a.makespan) &&
                                     (b.cost < a.cost || b.makespan < a.makespan);
 
-                                var paretoFront = paretoData.filter(a =>
+                                paretoFront = paretoData.filter(a =>
                                     !paretoData.some(b => b !== a && isDominated(a, b))
                                 );
                                 // setParetoFrontData(paretoFront)
                                 console.log("allLcaRuns:", allLcaRuns);
                                 console.log("paretoFront:", paretoFront);
-                                var someParetoSols = getSomeParetoSols(paretoFront)
+                                someParetoSols = getSomeParetoSols(paretoFront)
                             }
 
 
@@ -199,6 +200,8 @@ export default function ResultsPage() {
                             const totalCostData = [];
                             const makespanData = [];
                             const runTimeData = [];
+                            console.log("nonLCARuns", nonLCARuns);
+                            
                             [...nonLCARuns, ...singleLCAConfigs, ...someParetoSols].forEach((run, runIdx) => {
                                 const label = run.id ? `${run.id}` : `Run ${runIdx + 1}`;
                                 labels.push(label);
