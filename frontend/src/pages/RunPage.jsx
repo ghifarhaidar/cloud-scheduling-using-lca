@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getRunConfigs, runExperiments, getAllAlgorithms, saveAlgorithms } from "../utils/api"; // adjust path if needed
+import { getRunConfigs, runExperiments, getAllAlgorithms, saveAlgorithms } from "../utils/api"; 
 import SelectableAlgorithmCard from "../components/SelectableAlgorithmCard"
 
 const RunPage = () => {

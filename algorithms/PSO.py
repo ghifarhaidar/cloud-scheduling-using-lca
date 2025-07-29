@@ -7,7 +7,7 @@ parent_dir = os.path.abspath(os.path.join(current_dir, os.pardir))
 sys.path.append(parent_dir)
 from lca.util import get_config, get_cost_config, sort_vms, get_solution, export_results
 
-# Numpy-optimized PSO scheduler adapted to generate time matrix from cloudlets and vms
+# PSO scheduler
 class PSO:
     def __init__(self, num_particles=30, max_iter=500, w=0.9, c1=2.0, c2=2.0, alpha=0.3):
         self.num_particles = num_particles

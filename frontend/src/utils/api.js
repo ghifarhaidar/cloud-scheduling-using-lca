@@ -63,20 +63,6 @@ export async function getAllResults() {
     return await res.json();
 }
 
-// Run Python script
-export async function runPython(args) {
-    const res = await fetch(`${API_BASE_URL}/api/run-python`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(args),
-    });
-    if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.output || "Failed to run Python script");
-    }
-    return await res.json();
-}
-
 // Get all fitness data
 export async function getAllFitness() {
     const res = await fetch(`${API_BASE_URL}/api/fitness/all`);

@@ -11,9 +11,8 @@ export default function EditConfigPage() {
         setResetStatus(null);
 
         try {
-            await resetConfiguration(); // Call your API function
+            await resetConfiguration(); 
             setResetStatus('success');
-            // Optional: Add any post-reset logic here
         } catch (error) {
             console.error('Reset failed:', error);
             setResetStatus('error');

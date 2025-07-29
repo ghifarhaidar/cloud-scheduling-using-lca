@@ -8,7 +8,7 @@ sys.path.append(parent_dir)
 from lca.util import get_config, get_cost_config, sort_vms, get_solution, export_results
 
 
-# Numpy-optimized ACO scheduler
+# ACO scheduler
 class Ant:
     def __init__(self, lengths, eff_mips, pheromone, alpha=1.0, beta=1.0, Q=100):
         self.lengths = lengths                # array of task lengths, shape (N,)
