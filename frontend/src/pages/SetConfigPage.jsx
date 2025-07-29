@@ -102,7 +102,7 @@ export default function SetConfigPage() {
           {/* --- Algorithm Configuration Card --- */}
           <div className="card">
             <div className="card-body">
-              <h2 className="form-section-title">🔧 Algorithm Configuration</h2>
+              <h2 className="form-section-title grid-title no-gap">🔧 Algorithm Configuration</h2>
               <AlgorithmConfiguration
                 formData={formData}
                 handleChange={handleChange}
@@ -112,7 +112,7 @@ export default function SetConfigPage() {
               />
               <button
                 type="button"
-                className="btn btn-secondary mt-3"
+                className="btn btn-secondary mt-3 grid-button"
                 onClick={handleAddLcaConfig}
               >
                 ➕ Add LCA Config
@@ -123,7 +123,7 @@ export default function SetConfigPage() {
           {/* --- Simulation Configuration Card --- */}
           <div className="card mt-4">
             <div className="card-body">
-              <h2 className="form-section-title">🖥️ Simulation Configuration</h2>
+              <h2 className="form-section-title grid-title no-gap">🖥️ Simulation Configuration</h2>
               <SimulationConfiguration
                 formData={formData}
                 handleChange={handleChange}
@@ -136,7 +136,7 @@ export default function SetConfigPage() {
           {formData.config_type === 0 && (
             <div className="card mt-4">
               <div className="card-body">
-                <h2 className="form-section-title">🛠️ Custom Configuration</h2>
+                <h2 className="form-section-title grid-title no-gap">🛠️ Custom Configuration</h2>
                 <CustomConfigSection
                   customConfig={customConfig}
                   setCustomConfig={setCustomConfig}
@@ -182,11 +182,11 @@ export default function SetConfigPage() {
       {/* --- Preview Added LCA Configs --- */}
       <div className="card mt-md" >
         <div className="card-body">
-          <h3>📦 LCA Configs</h3>
+          <h3 className='grid-title'>📦 LCA Configs</h3>
           {lcaConfigs.length === 0 ? (
             <p className="card-text">No LCA configs added yet.</p>
           ) : (
-            <div className="algorithm-grid ">
+            <div className="algorithm-grid grid-full">
               {lcaConfigs.map((cfg, idx) => (
                 <div key={idx} className="card ">
                   <div className="code-block">

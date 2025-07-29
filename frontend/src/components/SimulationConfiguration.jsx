@@ -1,15 +1,13 @@
 export default function SimulationConfiguration({ formData, handleChange, errors }) {
   return (
-    <div className="form-section">
-      <h3 className="form-section-title">🖥️ Simulation Configuration</h3>
-      <p className="form-description">Configure the cloud simulation environment</p>
+    <>
+      <p className="grid-text card-text">Configure the cloud simulation environment</p>
+      {/* Configuration Type */}
+      <div className="form-section">
+        <h3 className="form-section-title grid-title">⚙️ Configuration Type</h3>
+        <p className="form-description">Values: 1–6, 0 for custom, -1 for range</p>
 
-      <div className="form-input-group">
         <div className="form-group">
-          <label className="form-label">
-            Configuration Type
-            <span className="form-note"> - Values: 1–6, 0 for custom, -1 for range</span>
-          </label>
           <input
             type="number"
             name="config_type"
@@ -17,16 +15,18 @@ export default function SimulationConfiguration({ formData, handleChange, errors
             onChange={handleChange}
             min="-1"
             max="6"
-            className="form-input form-input-small"
+              className="form-input form-input-small"
           />
           {errors.config_type && <div className="error-message">⚠️ {errors.config_type}</div>}
         </div>
+      </div>
+
+      {/* Cost Configuration Type */}
+      <div className="form-section">
+        <h3 className="form-section-title grid-title">💰 Cost Configuration</h3>
+        <p className="form-description">Values: 1 or 2</p>
 
         <div className="form-group">
-          <label className="form-label">
-            Cost Configuration Type
-            <span className="form-note"> - Values: 1 or 2</span>
-          </label>
           <input
             type="number"
             name="cost_config_type"
@@ -40,8 +40,11 @@ export default function SimulationConfiguration({ formData, handleChange, errors
         </div>
       </div>
 
-      <div className="form-group">
-        <label className="form-label">VM Scheduling Mode</label>
+      {/* VM Scheduling Mode */}
+      <div className="form-section">
+        <h3 className="form-section-title grid-title">⏱️ VM Scheduling</h3>
+        <p className="form-description">Select VM scheduling mode</p>
+
         <div className="radio-group">
           {['time', 'space'].map((mode) => (
             <label className="radio-option" key={mode}>
@@ -57,6 +60,7 @@ export default function SimulationConfiguration({ formData, handleChange, errors
           ))}
         </div>
       </div>
-    </div>
+    </>
+
   );
 }

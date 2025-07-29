@@ -21,8 +21,8 @@
   --black: #111827;
 
   /* Typography */
-  --font-primary: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  --font-primary: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", "Consolas", monospace;
 
   /* Spacing */
   --spacing-xs: 0.25rem;
@@ -40,7 +40,8 @@
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
 }
 
 /* Reset and base styles */
@@ -64,7 +65,6 @@ body {
   display: flex;
   flex-direction: column;
 }
-
 
 /* Main content */
 .main-content {
@@ -104,27 +104,35 @@ p {
   color: var(--secondary-gray);
 }
 
-/* Cards */
-.card {
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  padding: var(--spacing-xl);
-  margin-bottom: var(--spacing-lg);
-  border: 1px solid var(--border-gray);
+.grid-full {
+  grid-column: 1 / -1; /* Span all columns */
+}
+.grid-title {
+  grid-column: 1 / -1; /* Span all columns */
+  margin-bottom: var(--spacing-xs);
+}
+.grid-text {
+  grid-column: 1 / -1; /* Span all columns */
+  margin-bottom: var(--spacing-xs);
+}
+.grid-button {
+  grid-column: 1 / -1; /* Span all columns */
 }
 
-.card-header {
-  border-bottom: 1px solid var(--border-gray);
-  padding-bottom: var(--spacing-md);
-  margin-bottom: var(--spacing-lg);
-}
+/* Responsive */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 
-.card-title {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--primary-blue);
-  margin: 0;
+  .form-group.full-width {
+    grid-column: span 1;
+  }
+
+  .radio-group {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
 }
 
 /* Forms */
@@ -134,11 +142,12 @@ p {
   box-shadow: var(--shadow-md);
   padding: var(--spacing-2xl);
   border: 1px solid var(--border-gray);
+  display: grid;
 }
 
 .form-section {
-  margin-bottom: var(--spacing-2xl);
   padding: var(--spacing-lg);
+  padding-bottom: var(--spacing-xs);
   border: 1px solid var(--border-gray);
   border-radius: var(--radius-md);
   background: var(--light-gray);
@@ -155,7 +164,7 @@ p {
 }
 
 .form-group {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: var(--spacing-md);
 }
 
 .form-label {
@@ -364,3 +373,4 @@ p {
 .gap-md {
   gap: var(--spacing-md);
 }
+

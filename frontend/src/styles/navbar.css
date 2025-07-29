@@ -1,53 +1,119 @@
+/* =============== */
+/* Navigation Styles */
+/* =============== */
+:root {
+  --nav-height: 4rem;
+  --nav-gradient: linear-gradient(135deg, 
+                  var(--primary-blue) 0%, 
+                  var(--secondary-blue) 100%);
+}
 
-/* Navigation */
+/* Main Navigation Container */
 .nav-container {
-  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--secondary-blue) 100%);
-  box-shadow: var(--shadow-md);
   position: sticky;
   top: 0;
   z-index: 100;
+  background: var(--nav-gradient);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(8px); /* Adds subtle frosted glass effect */
 }
 
+/* Navigation Content Wrapper */
 .nav-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-lg);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  height: 4rem;
+  height: var(--nav-height);
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
 }
 
+/* Brand/Logo Styles */
 .nav-brand {
-  color: var(--white);
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-decoration: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   gap: var(--spacing-sm);
+  color: var(--white);
+  font-size: 1.25rem; /* Slightly smaller for better proportion */
+  font-weight: 700;
+  text-decoration: none;
+  transition: transform 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+  
+  svg { /* If using an icon */
+    width: 1.5rem;
+    height: 1.5rem;
+  }
 }
 
+/* Navigation Links Container */
 .nav-links {
   display: flex;
-  gap: var(--spacing-md);
+  gap: var(--spacing-sm); /* Reduced gap for tighter layout */
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
+/* Individual Link Styles */
 .nav-link {
+  position: relative;
+  display: inline-block;
   color: var(--white);
   text-decoration: none;
   padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-md);
-  transition: all 0.2s ease;
   font-weight: 500;
+  transition: all 0.2s ease;
+  opacity: 0.9;
+  
+  &:hover {
+    opacity: 1;
+    background-color: rgba(255, 255, 255, 0.1);
+    transform: translateY(-1px);
+  }
+  
+  &.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    
+    &::after { /* Adds subtle underline for active state */
+      content: '';
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50%;
+      height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+    }
+  }
 }
 
-.nav-link:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-1px);
+/* Mobile Menu Toggle (if needed) */
+.nav-toggle {
+  display: none; /* Hidden by default */
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 
-.nav-link.active {
-  background-color: rgba(255, 255, 255, 0.2);
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .nav-content {
+    padding: 0 var(--spacing-md);
+  }
+  
+  .nav-links {
+    gap: 0; /* Remove gap on mobile */
+  }
+  
+  .nav-link {
+    padding: var(--spacing-sm);
+  }
 }
