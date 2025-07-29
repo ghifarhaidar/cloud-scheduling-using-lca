@@ -71,7 +71,7 @@ body {
   flex: 1;
   max-width: 100vw;
   margin: 0 auto;
-  padding: var(--spacing-2xl) var(--spacing-lg);
+  padding: var(--spacing-lg) var(--spacing-lg);
   width: 100%;
 }
 
@@ -308,7 +308,7 @@ p {
   }
 
   .main-content {
-    padding: var(--spacing-lg) var(--spacing-md);
+    padding: var(--spacing-md) var(--spacing-sm);
   }
 
   h1 {
