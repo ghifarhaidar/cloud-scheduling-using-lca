@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getRunConfigs, runExperiments, getAllAlgorithms, saveAlgorithms } from "../utils/api"; 
+import { getRunConfigs, runExperiments, getAllAlgorithms, saveAlgorithms } from "../utils/api";
 import SelectableAlgorithmCard from "../components/SelectableAlgorithmCard"
 
 const RunPage = () => {
@@ -86,11 +86,11 @@ const RunPage = () => {
 
       <div className="card">
         <div className="card-header">
-          <h2 className="card-title">🔬 Run LCA Experiments</h2>
+          <h2 className="card-title">🔬 Run Experiments</h2>
         </div>
         <p>
           Select which algorithms to execute from the available options below.
-          The system will run the selected algorithms and generate fitness evolution data for analysis.
+          The system will run the selected algorithms and generate results data for analysis.
         </p>
       </div>
 
@@ -166,7 +166,7 @@ const RunPage = () => {
             <li>Selected algorithms: {selectedAlgorithms.length > 0 ? selectedAlgorithms.join(", ") : "None"}</li>
             <li>Results are automatically saved for analysis</li>
             <li>Execution time depends on your parameter settings</li>
-            <li>Monitor progress in the output section below</li>
+            <li>Monitor progress in the output section below (coming soon)</li>
           </ul>
         </div>
       </div>

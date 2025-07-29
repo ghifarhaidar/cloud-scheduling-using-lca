@@ -16,14 +16,9 @@
             "description": "Round Robin "
         },
         {
-            "name": "Non_Vectorized_MO_LCA",
-            "directory": "lca",
-            "description": "Multi-objective optimization balancing cost and makespan"
-        },
-        {
             "name": "MO_LCA",
             "directory": "lca",
-            "description": "using numpy on Multi-objective optimization balancing cost and makespan"
+            "description": "Multi-objective optimization balancing cost and makespan"
         },
         {
             "name": "ACO",

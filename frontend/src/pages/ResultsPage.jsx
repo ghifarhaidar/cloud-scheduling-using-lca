@@ -327,6 +327,9 @@ export default function ResultsPage() {
                                                 </div>
 
                                                 <div className="card-body ">
+                                                    <p className="grid-full">
+                                                        These charts display the Pareto front results obtained from a grid search optimization of the MO-LCA 
+                                                        parameters.</p>
                                                     <div className="gridsearch-results grid-full">
                                                         <h3>Grid Search Results (MO-LCA)</h3>
 

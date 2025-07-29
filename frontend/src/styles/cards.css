@@ -53,6 +53,12 @@
   border: 1px solid var(--border-gray);
 }
 
+.algorithm-card-body {
+  display: grid;
+  gap: var(--spacing-lg);
+  align-items: start;
+  padding: var(--spacing-sm);
+}
 
 /* Selectable card styles */
 .selectable-card {
