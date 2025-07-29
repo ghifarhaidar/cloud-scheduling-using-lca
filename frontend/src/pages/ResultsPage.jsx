@@ -157,7 +157,7 @@ export default function ResultsPage() {
                             console.log("multiLCAConfigs:", multiLCAConfigs);
                             console.log("singleLCAConfigs:", singleLCAConfigs);
                             var someParetoSols = [];
-                            var paretoFront =[];
+                            var paretoFront = [];
                             if (multiLCAConfigs.length > 0) {
                                 // Flatten all LCA runs
                                 const allLcaRuns = multiLCAConfigs.flatMap(([_, runs]) => runs);
@@ -201,7 +201,7 @@ export default function ResultsPage() {
                             const makespanData = [];
                             const runTimeData = [];
                             console.log("nonLCARuns", nonLCARuns);
-                            
+
                             [...nonLCARuns, ...singleLCAConfigs, ...someParetoSols].forEach((run, runIdx) => {
                                 const label = run.id ? `${run.id}` : `Run ${runIdx + 1}`;
                                 labels.push(label);
@@ -321,67 +321,71 @@ export default function ResultsPage() {
 
 
                                         return (
-                                            <div className="gridsearch-results">
-                                                <h3>Grid Search Results (LCA)</h3>
-
-                                                {/* Pareto Scatter Plot */}
-                                                <div style={{ height: 400, marginBottom: "2rem" }}>
+                                            <div className="card">
+                                                <div className="card-title mb-0">
                                                     <h4>Pareto Front: Makespan vs Total Cost</h4>
-                                                    <Scatter
-                                                        data={{
-                                                            datasets: [
-                                                                {
-                                                                    label: "All Runs",
-                                                                    data: paretoData.map(p => ({ x: p.makespan, y: p.cost })),
-                                                                    backgroundColor: "#93c5fd",
-                                                                    pointRadius: 4,
-                                                                },
-                                                                {
-                                                                    label: "Pareto Front",
-                                                                    data: paretoFront.map(p => ({ x: p.makespan, y: p.cost })),
-                                                                    backgroundColor: "#ef4444",
-                                                                    pointRadius: 6,
-                                                                },
-                                                            ],
-                                                        }}
-                                                        options={{
-                                                            responsive: true,
-                                                            plugins: {
-                                                                tooltip: {
-                                                                    callbacks: {
-                                                                        label: (ctx) => {
-                                                                            const point = paretoData.find(p =>
-                                                                                p.makespan === ctx.parsed.x && p.cost === ctx.parsed.y
-                                                                            );
-                                                                            return [
-                                                                                `Run: ${point?.id ?? "?"}`,
-                                                                                `Makespan: ${ctx.parsed.x.toFixed(2)}`,
-                                                                                `Cost: ${ctx.parsed.y.toFixed(2)}`,
-                                                                                ...(point?.fitness !== undefined ? [`Fitness: ${point.fitness.toFixed(4)}`] : []),
-                                                                            ];
-                                                                        }
-                                                                    }
-                                                                },
-                                                                legend: { position: "top" },
-                                                                title: {
-                                                                    display: true,
-                                                                    text: "Pareto Front: Makespan vs Total Cost",
-                                                                }
-                                                            },
-                                                            scales: {
-                                                                x: {
-                                                                    title: { display: true, text: "Makespan" },
-                                                                },
-                                                                y: {
-                                                                    title: { display: true, text: "Total Cost" },
-                                                                }
-                                                            }
-                                                        }}
-                                                    />
-
                                                 </div>
 
+                                                <div className="card-body ">
+                                                    <div className="gridsearch-results grid-full">
+                                                        <h3>Grid Search Results (MO-LCA)</h3>
 
+                                                        {/* Pareto Scatter Plot */}
+                                                        <div style={{ height: 400, }}>
+                                                            <Scatter
+                                                                data={{
+                                                                    datasets: [
+                                                                        {
+                                                                            label: "All Runs",
+                                                                            data: paretoData.map(p => ({ x: p.makespan, y: p.cost })),
+                                                                            backgroundColor: "#93c5fd",
+                                                                            pointRadius: 4,
+                                                                        },
+                                                                        {
+                                                                            label: "Pareto Front",
+                                                                            data: paretoFront.map(p => ({ x: p.makespan, y: p.cost })),
+                                                                            backgroundColor: "#ef4444",
+                                                                            pointRadius: 6,
+                                                                        },
+                                                                    ],
+                                                                }}
+                                                                options={{
+                                                                    responsive: true,
+                                                                    plugins: {
+                                                                        tooltip: {
+                                                                            callbacks: {
+                                                                                label: (ctx) => {
+                                                                                    const point = paretoData.find(p =>
+                                                                                        p.makespan === ctx.parsed.x && p.cost === ctx.parsed.y
+                                                                                    );
+                                                                                    return [
+                                                                                        `Run: ${point?.id ?? "?"}`,
+                                                                                        `Makespan: ${ctx.parsed.x.toFixed(2)}`,
+                                                                                        `Cost: ${ctx.parsed.y.toFixed(2)}`,
+                                                                                        ...(point?.fitness !== undefined ? [`Fitness: ${point.fitness.toFixed(4)}`] : []),
+                                                                                    ];
+                                                                                }
+                                                                            }
+                                                                        },
+                                                                        legend: { position: "top" },
+                                                                        title: {
+                                                                            display: true,
+                                                                            text: "Pareto Front: Makespan vs Total Cost",
+                                                                        }
+                                                                    },
+                                                                    scales: {
+                                                                        x: {
+                                                                            title: { display: true, text: "Makespan" },
+                                                                        },
+                                                                        y: {
+                                                                            title: { display: true, text: "Total Cost" },
+                                                                        }
+                                                                    }
+                                                                }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
                                         );
                                     })()}

@@ -279,6 +279,7 @@ p {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   padding: var(--spacing-md);
+  padding-bottom: var(--spacing-xs);
   margin: var(--spacing-md) 0;
   border: 1px solid var(--border-gray);
   height: auto;
