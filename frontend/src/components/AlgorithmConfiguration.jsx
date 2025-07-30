@@ -75,7 +75,7 @@ export default function AlgorithmConfiguration({
       <div></div>
       <>
         <h3 className="form-section-title grid-title no-gap">⚙️ Algorithm Parameters</h3>
-        <p className="form-description  grid-text">Fine-tune the LCA algorithm behavior</p>
+        <p className="form-description  grid-text">Tune the LCA Hyperparameter</p>
       </>
 
       {['p_c', 'PSI1', 'PSI2', 'q0'].map((param) => (
