@@ -10,7 +10,7 @@ if (!fs.existsSync(logsDir)) {
     fs.mkdirSync(logsDir, { recursive: true });
 }
 
-// 📜 Morgan for HTTP request logging
+// Morgan for HTTP request logging
 const accessLogStream = fs.createWriteStream(
     path.join(logsDir, 'access.log'),
     { flags: 'a' }
@@ -20,7 +20,7 @@ const morganFormat = ':date - :method :url :status :response-time ms - :res[cont
 const consoleLogger = morgan(morganFormat);
 const fileLogger = morgan(morganFormat, { stream: accessLogStream });
 
-// 🖊️ Winston for general-purpose logging
+// Winston for general-purpose logging
 const appLogger = createLogger({
     level: 'info',
     format: format.combine(

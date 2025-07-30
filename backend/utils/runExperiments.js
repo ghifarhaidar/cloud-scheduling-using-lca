@@ -3,7 +3,7 @@ const fs = require("fs");
 
 const config = require("../config/config");
 const { readJsonFile, writeJsonFile, deleteFilesInDir } = require("./fileHandlers");
-const { runPythonScript } = require("./pythonRunner");
+const { executeOrchestrator } = require("./runOrchestrator");
 const { getResults } = require("./resultProcessor");
 const { log } = require("console");
 
@@ -68,7 +68,7 @@ async function runExperiments() {
 
     console.log(`📂 Found ${allConfigs.length} configs in run_configs.json`);
 
-    // 📦 Collect results for ALL configs
+    // Collect results for ALL configs
     const allConfigsResults = [];
 
     for (const [index, cfg] of allConfigs.entries()) {
@@ -84,7 +84,7 @@ async function runExperiments() {
         }
     }
 
-    // ✍️ Save all results to a single file
+    // Save all results to a single file
     try {
         writeJsonFile(RESULTS_FILE, allConfigsResults);
         console.log(`\n✅ All results saved to ${RESULTS_FILE}`);
@@ -117,7 +117,7 @@ async function runExperimentsForGroupedConfig(currentConfig) {
         console.log(`\n🔁 Using config_type = ${configType}`);
 
         try {
-            await runPythonScript({
+            await executeOrchestrator({
                 job: 1,
                 'config-type': configType,
                 'cost-config-type': currentConfig.cost_config_type,
@@ -132,7 +132,7 @@ async function runExperimentsForGroupedConfig(currentConfig) {
         deleteFilesInDir(resultsDir, ".json");
         
         try {
-            await runPythonScript();
+            await executeOrchestrator();
             const results = getResults("algorithms");
             allExperimentResults.push({
                 config_type: configType, results
@@ -178,7 +178,7 @@ async function runExperimentsForGroupedConfig(currentConfig) {
 
                                     try {
                                         writeJsonFile(LCA_PARAMS_PATH, lcaParameters);
-                                        await runPythonScript({
+                                        await executeOrchestrator({
                                             run: "lca",
                                         });
                                         const results = getResults("lca");
@@ -237,10 +237,10 @@ async function runExperimentsForSingleConfig(currentConfig) {
     for (const configType of configTypes) {
         console.log(`\n🔁 Using config_type = ${configType}`);
 
-        // 1️⃣ Pre-run: Create configuration by calling Python script
+        // Pre-run: Create configuration by calling Python script
         console.log("📄 Preparing configuration...");
         try {
-            await runPythonScript({
+            await executeOrchestrator({
                 job: 1, // job 1 = generate config
                 'config-type': configType,
                 'cost-config-type': currentConfig.cost_config_type,
@@ -274,7 +274,7 @@ async function runExperimentsForSingleConfig(currentConfig) {
                 }
 
                 try {
-                    await runPythonScript(); // Execute the Python script
+                    await executeOrchestrator(); // Execute the Python script
                     const results = getResults(); // Get results after Python script runs
                     allExperimentResults.push({ L: l, S: s, config_type: configType, results });
                 } catch (runError) {

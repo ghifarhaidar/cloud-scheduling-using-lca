@@ -35,7 +35,7 @@ app.get('/health', (req, res) => {
 
 const hostname = process.env.HOST_NAME
 
-// Error handling middleware (must be last)
+// Error handling middleware
 app.use(errorHandler);
 
 // Start server

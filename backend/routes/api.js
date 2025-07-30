@@ -4,13 +4,9 @@ const path = require('path');
 const router = express.Router();
 
 const { getConfigs, getRunConfigs, saveConfig, getAllResults, resetRunConfigs, saveAlgorithms, getAllAlgorithms, getFitnessData } = require('../utils/fileHandlers');
-const { runPythonScript } = require('../utils/pythonRunner');
 const { getResults } = require('../utils/resultProcessor');
 const { runExperiments } = require('../utils/runExperiments');
 const asyncHandler = require('../middleware/asyncHandler');
-const { log } = require('console');
-// const { validate, schemas } = require('../middleware/validation');
-
 
 
 // Get configurations

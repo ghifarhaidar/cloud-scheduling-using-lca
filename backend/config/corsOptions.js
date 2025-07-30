@@ -1,4 +1,3 @@
-// config/corsOptions.js
 const allowedOrigins = {
     development: ['http://localhost:5173', 'http://172.25.1.141:5173'],
     production: ['http://localhost:5173', 'http://172.25.1.141:5173']

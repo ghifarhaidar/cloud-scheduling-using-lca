@@ -3,18 +3,17 @@ const path = require("path");
 const { MAIN_DIR } = require("../config/config");
 const { appLogger } = require("../middleware/logging");
 
-const runPythonScript = (args = {}) => {
+const executeOrchestrator = (args = {}) => {
     return new Promise((resolve, reject) => {
-        // 🛠️ Build CLI args string
+        // Build CLI args string
         const cliArgs = Object.entries(args)
             .filter(([_, value]) => value !== undefined && value !== null) // skip empty values
             .map(([key, value]) => `--${key} ${value}`)
             .join(" ");
 
-        // 🐍 Full command
         const command = `python3 ${path.join(MAIN_DIR, "run.py")} ${cliArgs}`;
 
-        appLogger.info(`Running: ${command}`); // Debugging
+        appLogger.info(`Running: ${command}`);
 
         exec(
             command,
@@ -37,5 +36,5 @@ const runPythonScript = (args = {}) => {
 };
 
 module.exports = {
-    runPythonScript,
+    executeOrchestrator,
 };
