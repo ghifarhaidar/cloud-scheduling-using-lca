@@ -6,16 +6,18 @@
 
 - Multi-objective cloud scheduling optimization using MO-LCA
 - Comparative analysis of algorithms (ACO, PSO, Round Robin)
-- Modular architecture for easy algorithm integration
+- Modular architecture with orchestration for easy integration
 - Interactive web interface for configuration and visualization
+- Plugin architecture for the algorithm module for easy algorithms integration
+- Cloud simulation environment using CloudSim-Plus framework
 
 ### Requirements
 
-- **Python**: 3.8+
-- **Node.js**: 16.x+
-- **Java**: JDK 11+ (for simulator)
+- **Python**: 3.7+
+- **Node.js**: 20.x+
+- **Java**: JDK 17+ (for simulator)
 - **Maven**: 3.6+ (for Java build)
-- **npm**: 8.x+
+- **npm**: 10.x+
 
 ## 1. Setup using Conda
 
@@ -116,7 +118,82 @@ then run npm run start in both backend and frontend folders
 pytest tests/test_full_workflow.py
 ```
 
-over files all architecture:
+## Project Architecture
+
+### Core Components
+
+**1. Algorithms Module**  
+Contains implementations of scheduling algorithms:
+
+- **`/lca/`**:
+  - `MO_LCA.py`: Multi-Objective League Championship Algorithm
+  - `makespan_LCA.py`, `cost_LCA.py` (single-objective variants)
+- **`/algorithms/`**:
+  - `ACO.py`: Ant Colony Optimization implementation
+  - `PSO.py`: Particle Swarm Optimization variant
+  - `Round_Robin.py`: Traditional round-robin baseline
+
+**2. CloudSim-Plus Integration (`/src/main/java/`)**
+
+- Custom Java classes extending CloudSim-Plus:
+  - `MyDatacenterBroker.java`: Modified broker for custom scheduling
+  - `MyVmCost.java`: Custom VM cost modeling
+  - `Simulation.java`: Core simulation runner
+
+**3. Backend Service (`/backend/`)**
+
+- Node.js API features:
+  - `runOrchestrator.js`: Invokes The main Orchestrator that runs algorithm and simulation execution
+  - `resultProcessor.js`: Handles simulation output
+  - REST API routes in `api.js` for frontend communication
+
+**4. Frontend Interface (`/frontend/`)**
+
+- React-based UI with:
+  - Configuration setup Page (`SetConfigPage.jsx`)
+  - Fitness evolution visualization (`FitnessPage.jsx`)
+  - Results visualization (`ResultsSection.jsx`)
+  - Pareto front visualization (`resultsPage.jsx`)
+
+### Key Workflows
+
+**Simulation Pipeline:**
+
+1. **Configuration Phase**
+
+   - User sets up MO-LCA parameters (population size, iterations, etc.)
+   - Configures simulation environment (VM counts, cloudlets, etc.)
+
+2. **Execution Phase**
+
+   - Frontend sends configuration to Backend API
+   - Backend orchestrates:  
+     a. Runs MO-LCA and other desired scheduling algorithm  
+     b. Triggers Java simulator  
+     c. Processes CloudSim-Plus output metrics
+
+3. **Visualization Phase**
+   - Backend returns processed results to Frontend
+   - Interactive React components display:
+     - Scheduling performance metrics
+     - Comparative algorithm analysis
+     - Pareto fronts for multi-objective optimization
+     - Fitness evolution
+
+**Plugin Architecture:**
+
+- New algorithms can be added by:
+  1. Adding implementation in `/algorithms/`
+  2. Updating `configs/all_algorithms.json`
+  3. No core changes required
+
+### Configuration System
+
+- JSON configs in `/configs/` control:
+  - Algorithm parameters
+  - Cloud infrastructure specs
+
+detailed files architecture:
 
 ```
 .
@@ -223,3 +300,6 @@ over files all architecture:
 └── tests
     └── test_full_workflow.py
 ```
+## Documentation
+
+Project documentation is available in `/.docs/` directory:
