@@ -1,6 +1,12 @@
-# Cloud Scheduling using MO-LCA
+# Cloud Scheduling using Multi-Objective League Championship Algorithm
 
-### this project allows to test and analys cloud scheduling algorithms, it focus mainly on MO-LCA
+### Project Overview
+
+This project enables testing and analysis of cloud scheduling algorithms, with primary focus on:
+
+- **MO-LCA** (Multi-Objective League Championship Algorithm)
+- Comparative analysis with other algorithms (ACO, PSO, Round Robin)
+- Performance evaluation in simulated cloud environments
 
 ### Key Features
 
@@ -300,6 +306,7 @@ detailed files architecture:
 └── tests
     └── test_full_workflow.py
 ```
+
 ## Documentation
 
 Project documentation is available in `/.docs/` directory:
