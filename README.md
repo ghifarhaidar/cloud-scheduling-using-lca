@@ -2,6 +2,21 @@
 
 ### this project allows to test and analys cloud scheduling algorithms, it focus mainly on MO-LCA
 
+### Key Features
+
+- Multi-objective cloud scheduling optimization using MO-LCA
+- Comparative analysis of algorithms (ACO, PSO, Round Robin)
+- Modular architecture for easy algorithm integration
+- Interactive web interface for configuration and visualization
+
+### Requirements
+
+- **Python**: 3.8+
+- **Node.js**: 16.x+
+- **Java**: JDK 11+ (for simulator)
+- **Maven**: 3.6+ (for Java build)
+- **npm**: 8.x+
+
 ## 1. Setup using Conda
 
 ```bash
@@ -126,28 +141,55 @@ over files all architecture:
 │   ├── server.js
 │   └── utils
 │       ├── fileHandlers.js
-│       ├── pythonRunner.js
 │       ├── resultProcessor.js
-│       └── runExperiments.js
+│       ├── runExperiments.js
+│       └── runOrchestrator.js
 ├── clean_and_update.sh
 ├── configs
 │   └── all_algorithms.json
 ├── frontend
-│   └── src
-│       ├── App.css
-│       ├── App.jsx
-│       ├── components
-│       ├── index.css
-│       ├── main.jsx
-│       ├── pages
-│       │   ├── EditConfigPage.jsx
-│       │   ├── FitnessPage.jsx
-│       │   ├── HomePage.jsx
-│       │   ├── ResultsPage.jsx
-│       │   ├── RunPage.jsx
-│       │   └── SetConfigPage.jsx
-│       ├── styles
-│       └── utils
+│   ├── eslint.config.js
+│   ├── example.env.local
+│   ├── index.html
+│   ├── package.json
+│   ├── package-lock.json
+│   ├── public
+│   │   └── icon.svg
+│   ├── src
+│   │   ├── App.css
+│   │   ├── App.jsx
+│   │   ├── assets
+│   │   │   └── react.svg
+│   │   ├── components
+│   │   │   ├── AlgorithmCard.jsx
+│   │   │   ├── AlgorithmConfiguration.jsx
+│   │   │   ├── CustomConfigSection.jsx
+│   │   │   ├── loadingError.jsx
+│   │   │   ├── loading.jsx
+│   │   │   ├── NavBar.jsx
+│   │   │   ├── ResultsSection.jsx
+│   │   │   ├── SelectableAlgorithmCard.jsx
+│   │   │   └── SimulationConfiguration.jsx
+│   │   ├── index.css
+│   │   ├── main.jsx
+│   │   ├── pages
+│   │   │   ├── EditConfigPage.jsx
+│   │   │   ├── FitnessPage.jsx
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── ResultsPage.jsx
+│   │   │   ├── RunPage.jsx
+│   │   │   └── SetConfigPage.jsx
+│   │   ├── styles
+│   │   │   ├── buttons.css
+│   │   │   ├── cards.css
+│   │   │   ├── navbar.css
+│   │   │   └── resultsPage.css
+│   │   └── utils
+│   │       ├── api.js
+│   │       ├── fitnessPageUtil.js
+│   │       ├── resultPreprocessing.js
+│   │       └── setConfigPageUtil.js
+│   └── vite.config.js
 ├── .github
 │   └── workflows
 │       └── integration.yml
