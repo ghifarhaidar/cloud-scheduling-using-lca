@@ -108,7 +108,10 @@ async function runExperimentsForGroupedConfig(currentConfig) {
     const timeStart = performance.now();
     const RUN_CONFIG_PATH = path.join(config.CONFIGS_DIR, "run_config.json");
     const allExperimentResults = [];
-
+    if (currentConfig.config_type === 0) {
+        const CUSTOM_CONFIG_PATH = path.join(config.CONFIGS_DIR, "custom_config.json");
+        writeJsonFile(CUSTOM_CONFIG_PATH, currentConfig.custom_config)
+    }
     const configTypes = (currentConfig.config_type === -1)
         ? Array.from({ length: 6 }, (_, i) => i + 1)
         : [currentConfig.config_type];
