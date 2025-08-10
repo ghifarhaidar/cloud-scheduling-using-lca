@@ -76,6 +76,29 @@ def run_java_program(input, algorithm_name):
     print(f"✅ Java program finished! (log: {run_log_file})")
 
 
+def run_dynamic_java_program(input, algorithm_name):
+    logs_dir = os.path.join(SCRIPT_DIR, "logs")
+    if not os.path.exists(logs_dir):
+        os.makedirs(logs_dir)
+
+    run_log_file = os.path.join(
+        logs_dir, f"run_{algorithm_name}.log")
+    print(f"\n🚀 Running Java program... (log: {run_log_file})")
+    with open(run_log_file, "w") as run_log:
+        result = subprocess.run([
+            "mvn", "exec:java",
+            "-Dexec.mainClass=org.simulations.DynamicSimulation"
+        ],
+            input=input, text=True,
+            stdout=run_log,
+            stderr=subprocess.STDOUT)
+
+    if result.returncode != 0:
+        print(f"❌ Java program execution failed! Check {run_log_file}")
+        exit(1)
+    print(f"✅ Java program finished! (log: {run_log_file})")
+
+
 def run_python_script(directory, name):
     python_file = os.path.join(SCRIPT_DIR, directory, "main.py")
     print(f"\n🐍 Running Python script {python_file} with algorithm: {name}")
@@ -125,7 +148,7 @@ def main():
     )
 
     parser.add_argument(
-        '--job', type=int, choices=[0, 1, 2, 3], default=0,
+        '--job', type=int, choices=[0, 1, 2, 3, 4, 5], default=0,
         help=(
             "Job type: "
             "0 = run algorithm and simulations (default), "
@@ -150,6 +173,9 @@ def main():
         '--run', type=str, choices=["lca", "algorithms"],
         help="(Job 0) run only lca algorithms or only other algorithms."
     )
+    parser.add_argument(
+        '--name', type=str
+    )
 
     args = parser.parse_args()
     print(args)
@@ -171,17 +197,16 @@ def main():
     if args.job == 0:
         algorithms_to_run = load_algorithms().get('algorithms', [])
         for algorithm in algorithms_to_run:
-            if(args.run == "lca" and algorithm["directory"]=="lca"):
+            if (args.run == "lca" and algorithm["directory"] == "lca"):
                 run_python_script(algorithm["directory"], algorithm["name"])
                 run_java_program((algorithm["name"] + "\n"), algorithm["name"])
                 print(
                     f"\n=== Running algorithm: {algorithm['directory']}/{algorithm['name']} ===")
-            elif(args.run == "algorithms" and algorithm["directory"]=="algorithms"):
+            elif (args.run == "algorithms" and algorithm["directory"] == "algorithms"):
                 run_python_script(algorithm["directory"], algorithm["name"])
                 run_java_program((algorithm["name"] + "\n"), algorithm["name"])
                 print(
                     f"\n=== Running algorithm: {algorithm['directory']}/{algorithm['name']} ===")
-
 
     if args.job == 1:
         generate_config(args)
@@ -191,6 +216,18 @@ def main():
 
     if args.job == 3:
         build_java_project()
+
+    if args.job == 4:
+        algorithms_to_run = load_algorithms().get('algorithms', [])
+        for algorithm in algorithms_to_run:
+            if (args.run == "lca" and algorithm["directory"] == "lca"):
+                run_dynamic_java_program(
+                    (algorithm["name"] + "\n"), algorithm["name"])
+                print(
+                    f"\n=== Running algorithm: {algorithm['directory']}/{algorithm['name']} ===")
+
+    if args.job == 5:
+        run_python_script("lca", args.name)
 
 
 if __name__ == "__main__":

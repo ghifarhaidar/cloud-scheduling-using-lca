@@ -59,7 +59,7 @@ public class Simulation {
         final var cloudletFinishedList = broker.getCloudletFinishedList();
         new CloudletsTableBuilder(cloudletFinishedList).build();
         commons.printTotalVmsCost(datacenter,broker);
-        commons.exportResult(datacenter, broker);
+        commons.exportResult(datacenter, broker, name);
     }
 
 

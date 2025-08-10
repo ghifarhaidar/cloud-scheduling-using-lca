@@ -57,3 +57,4 @@ frontend/.env.local
 
 
 
+results/*.keep_json

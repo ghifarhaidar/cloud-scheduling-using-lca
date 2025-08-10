@@ -165,7 +165,7 @@ public class commons {
      * Computes and print the cost ($) of resources (processing, bw, memory, storage)
      * for each VM inside the datacenter.
      */
-    public static void exportResult(Datacenter datacenter0, DatacenterBroker broker0) {
+    public static void exportResult(Datacenter datacenter0, DatacenterBroker broker0, String name) {
         double totalCost = 0.0;
         double processingTotalCost = 0, memoryTotaCost = 0, storageTotalCost = 0, bwTotalCost = 0;
         for (final Vm vm : broker0.getVmCreatedList()) {
@@ -192,7 +192,7 @@ public class commons {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         String jsonOutput = gson.toJson(jsonMap);
 
-        String filePath = "results/" + Simulation.name + "_sim_results.json";
+        String filePath = "results/" + name + "_sim_results.json";
         try (FileWriter fileWriter = new FileWriter(filePath)) {
             fileWriter.write(jsonOutput);
             System.out.println("JSON data successfully written to " + filePath);
